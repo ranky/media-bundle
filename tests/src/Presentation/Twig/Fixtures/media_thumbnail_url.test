@@ -1,0 +1,8 @@
+--TEST--
+"ranky_media_thumbnail_url" function
+--TEMPLATE--
+{{ ranky_media_thumbnail_url('image.jpg','large') }}
+--DATA--
+return [];
+--EXPECT--
+/uploads/large/image.jpg

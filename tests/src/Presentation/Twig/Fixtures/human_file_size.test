@@ -1,0 +1,8 @@
+--TEST--
+"human_file_size" filter
+--TEMPLATE--
+{{200|human_file_size}}
+--DATA--
+return [];
+--EXPECT--
+200 B

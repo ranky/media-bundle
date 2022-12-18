@@ -1,0 +1,15 @@
+{
+  "entrypoints": {
+    "ranky_media": {
+      "js": [
+        "/bundles/rankymedia/react.17.0.2.js?v=fb425c0c",
+        "/bundles/rankymedia/ranky_media.vendors.js?v=fb425c0c",
+        "/bundles/rankymedia/ranky_media.js?v=fb425c0c"
+      ],
+      "css": [
+        "/bundles/rankymedia/ranky_media.vendors.css?v=fb425c0c",
+        "/bundles/rankymedia/ranky_media.css?v=fb425c0c"
+      ]
+    }
+  }
+}

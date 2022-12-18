@@ -1,0 +1,12 @@
+/assets/
+**/cache
+**/vendor
+**/node_modules
+tools/**/var
+/tests/.env.test
+**/composer.lock
+tools/phpstan/phpstan.md
+tools/php-cs-fixer/phpcs.md
+ranky.media-bundle.1.0.json
+!.gitkeep
+!.gitignore

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         cacheResultFile="var/.phpunit.result.cache"
+         failOnRisky="true"
+         failOnWarning="true"
+         stopOnFailure="true"
+         bootstrap="../../tests/bootstrap.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <testsuites>
+    <testsuite name="user_security">
+      <directory suffix="Test.php">../../tests/src/UserSecurity</directory>
+    </testsuite>
+    <testsuite name="media_bundle">
+      <directory suffix="Test.php">../../tests/src/Application</directory>
+      <directory suffix="Test.php">../../tests/src/Domain</directory>
+      <directory suffix="Test.php">../../tests/src/Infrastructure</directory>
+      <directory suffix="Test.php">../../tests/src/Presentation</directory>
+    </testsuite>
+    <testsuite name="clean">
+      <file>../../tests/src/CleanTest.php</file>
+    </testsuite>
+  </testsuites>
+  <php>
+    <ini name="error_reporting" value="-1"/>
+    <ini name="memory_limit" value="-1"/>
+    <env name="SYMFONY_DEPRECATIONS_HELPER" value="max[direct]=0"/>
+  </php>
+  <listeners>
+    <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener">
+      <arguments>
+        <array>
+          <!-- set this option to 0 to disable the DebugClassLoader integration -->
+          <element key="debug-class-loader"><integer>0</integer></element>
+        </array>
+      </arguments>
+    </listener>
+  </listeners>
+</phpunit>

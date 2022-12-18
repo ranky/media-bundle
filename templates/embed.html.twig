@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ title }}</title>
+    {{ encore_entry_link_tags('ranky_media',null,'ranky_media') }}
+    {{ encore_entry_script_tags('ranky_media',null,'ranky_media', attributes={
+        defer: true
+    }) }}
+</head>
+<body>
+    <div class="ranky-media" data-api-prefix="{{ ranky_media_api_prefix ?? ''}}"></div>
+</body>
+</html>
+
+

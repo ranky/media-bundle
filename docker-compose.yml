@@ -1,0 +1,81 @@
+version: "3.7"
+
+networks:
+  db:
+    name: ${PROJECT_NAME}-network-db
+
+# this is a YAML anchor to avoid repetition
+# Any top-level key starting with x- in a Docker Compose file will be ignored
+# replica with <<: *logging
+x-logging: &logging
+  logging:
+    driver: json-file
+
+services:
+  mariadb:
+    container_name: ${PROJECT_NAME}-mariadb
+    build:
+      context: ./
+      dockerfile: tools/docker/mariadb/Dockerfile
+      args:
+        - MARIA_VERSION=${MARIA_VERSION}
+        - DOCKER_ENV=${DOCKER_ENV}
+        - TZ=${TZ}
+    mem_limit: 250m
+    restart: always
+    <<: *logging
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      TZ: ${TZ}
+    expose:
+      - 3306
+    networks:
+      - db
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+      timeout: 20s
+      retries: 10
+  php:
+    container_name: ${PROJECT_NAME}-php
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    build:
+      target: final
+      context: ./
+      dockerfile: ./tools/docker/php-fpm/Dockerfile
+      args:
+        - PHP_VERSION=${PHP_VERSION}
+        - DOCKER_ENV=${DOCKER_ENV}
+        - APP_DIRECTORY=${APP_DIRECTORY}
+        - PUBLIC_APP_DIRECTORY=${PUBLIC_APP_DIRECTORY}
+        - HOST_UID=${HOST_UID:-1000}
+        - HOST_GID=${HOST_GID:-1000}
+        - INSTALL_PHP_XDEBUG=${INSTALL_PHP_XDEBUG}
+    restart: always
+    <<: *logging
+    environment:
+      - TZ=${TZ}
+      - APP_DIRECTORY=${APP_DIRECTORY}
+      - DOCKER_ENV=${DOCKER_ENV}
+      - MARIA_VERSION=${MARIA_VERSION}
+      - VIRTUAL_HOST=${VIRTUAL_HOST}
+      - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
+      - XDEBUG_CONFIG=${XDEBUG_CONFIG}
+      - XDEBUG_MODE=${XDEBUG_MODE}
+      #- COMPOSER_TOKEN=${GITHUB_TOKEN}
+      #- TRUSTED_PROXIES=
+    volumes:
+      - ${HOST_MOUNT_APP_DIRECTORY}:${MOUNT_APP_DIRECTORY}
+      - ../SharedBundle:/var/www/SharedBundle
+    working_dir: ${APP_DIRECTORY}
+    expose:
+      - "9000" # php-fpm
+      - "9003" # xdebug
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    networks:
+      db:

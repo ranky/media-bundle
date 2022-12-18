@@ -1,0 +1,15 @@
+includes:
+  - phpstan-baseline.neon
+  - vendor/phpstan/phpstan-symfony/extension.neon
+  - vendor/phpstan/phpstan-symfony/rules.neon
+  - vendor/phpstan/phpstan-doctrine/extension.neon
+  - vendor/phpstan/phpstan-doctrine/rules.neon
+
+parameters:
+  editorUrl: 'phpstorm://open?file=%%file%%&line=%%line%%'
+  level: 8
+  paths:
+    - ../../src
+    - ../../tests
+#  scanDirectories:
+#    - /tmp/ranky_media_bundle_test/cache

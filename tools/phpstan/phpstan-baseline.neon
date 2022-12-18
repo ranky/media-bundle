@@ -1,0 +1,18 @@
+parameters:
+  excludePaths:
+    - ../../tests/config/*
+    - ../../tests/src/TestKernel.php
+    - ../../tests/src/BaseIntegrationTestCase.php
+    - ../../src/Presentation/Form/DataTransformer/
+    - ../../src/Infrastructure/DependencyInjection/Configuration.php
+  reportUnmatchedIgnoredErrors: false
+  ignoreErrors:
+    - '#(.*)\\Icu\\IntlDateFormatter(.*)#'
+    - '#^Call to method getManager\(\) on an unknown class doctrine#'
+    - '#Parameter (.*) \$classOrId of static method(.*)#'
+    - '#Cannot call method dispatch\(\) on Doctrine\\ORM\\Query\\AST\\Node(.*)#'
+    - '#Property (.*)\$medias (.*)Doctrine\\Common\\Collections\\Collection(.*) does not accept(.*)#'
+    -
+      message: '#Property (.*) is never written, only read#'
+      paths:
+        - ../../tests/src/Dummy/User/Domain

@@ -1,0 +1,31 @@
+{# {% import '@RankyMedia/macros.html.twig' as rankyMedia %} #}
+{#
+<style>
+    .ranky-media-responsive-image{
+        max-inline-size: 100%;
+        block-size: auto;
+    }
+</style>
+#}
+{% macro reponsive_image(mediaResponse, absolute = false, loading = "lazy") %}
+    {# @var mediaResponse \Ranky\MediaBundle\Application\DataTransformer\Response\MediaResponse #}
+    {# @var thumbnail \Ranky\MediaBundle\Application\DataTransformer\Response\ThumbnailResponse #}
+    {% if mediaResponse %}
+        {% set srcset = '' %}
+        {% set sizes = '' %}
+        {% set srcset = ranky_media_url(mediaResponse.file.name, absolute) ~ ' ' ~ mediaResponse.dimension.width ~ 'w,' %}
+        {% for thumbnail in mediaResponse.thumbnails %}
+            {% set srcset = srcset ~ ranky_media_thumbnail_url(thumbnail.name, thumbnail.breakpoint, absolute) ~ ' ' ~ thumbnail.dimension.width ~ 'w'~(loop.last == false ? ',' : '') %}
+        {% endfor %}
+        <img loading="{{ loading }}"
+             decoding="async"
+             class="ranky-media-responsive-image"
+             width="{{ mediaResponse.dimension.width }}"
+             height="{{ mediaResponse.dimension.height }}"
+             srcset="{{ srcset }}"
+             src="{{ ranky_media_url(mediaResponse.file.name, absolute) }}"
+             title="{{ mediaResponse.description.title }}"
+             alt="{{ mediaResponse.description.alt }}"/>
+    {% endif %}
+{% endmacro %}
+

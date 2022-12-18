@@ -1,0 +1,19 @@
+default:
+  gherkin:
+    cache: ~
+  extensions:
+    FriendsOfBehat\SymfonyExtension:
+      kernel:
+        class: Ranky\MediaBundle\Tests\TestKernel
+      bootstrap: tests/bootstrap.php
+    Behat\MinkExtension:
+      sessions:
+        symfony:
+          symfony: ~
+      base_url: ''
+
+  suites:
+    api:
+      paths: [ tests/src/Presentation/Behat/features/api.feature ]
+      contexts:
+        - Ranky\MediaBundle\Tests\Presentation\Behat\ApiMediaContext
