@@ -479,7 +479,7 @@ class MyFormType extends AbstractType
         $builder
             ->add('media', RankyMediaFileManagerType::class, [
               'label'              => 'Media ManyToOne',
-              'mapping'            => true,
+              'association'        => true,
               'modal_title'        => 'Featured image',
             ])
         ;
@@ -513,7 +513,7 @@ class MyFormType extends AbstractType
         $builder
             ->add('medias', RankyMediaFileManagerType::class, [
                 'label'              => 'Media Collection',
-                'mapping'            => true,
+                'association'        => true,
                 'modal_title'        => 'Gallery',
                 'multiple_selection' => true,
             ])
@@ -697,7 +697,6 @@ You can see how to install PHP extensions and compression tools through Docker i
 * Create, view and edit EXIF data
 * Creation and organization of directories
 * Adapters for [file storage](https://github.com/thephpleague/flysystem-bundle): S3, Azure, Google Cloud, etc.
-* Adapters for database: Dbal, MongoDB, etc.
 * Add more tests
 
 ## License
