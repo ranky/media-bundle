@@ -21,7 +21,7 @@ final class GifsicleGifFileResize implements FileResizeInterface
     ) {
     }
 
-    public function resize(string $inputPath, string $outputPath, Dimension $dimension): void
+    public function resize(string $inputPath, string $outputPath, Dimension $dimension): bool
     {
         $command = <<<END
             gifsicle --resize-fit-width {$dimension->width()} -i $inputPath > $outputPath
@@ -47,6 +47,8 @@ final class GifsicleGifFileResize implements FileResizeInterface
             'Finish gifsicle gif resize',
             [...$loggerContext, ...['time' => \microtime(true) - $timeStart.' seconds']]
         );
+
+        return true;
     }
 
     public function support(File $file): bool

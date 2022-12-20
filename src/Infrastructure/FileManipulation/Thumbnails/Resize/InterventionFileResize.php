@@ -22,18 +22,51 @@ final class InterventionFileResize implements FileResizeInterface
     /**
      * @throws \Throwable
      */
-    public function resize(string $inputPath, string $outputPath, Dimension $dimension): void
+    public function resize(string $inputPath, string $outputPath, Dimension $dimension): bool
     {
-        if ($this->resizeImageDriver === ImageResizeDriver::GD->value && !\extension_loaded('exif')) {
-            $this->logger->warning('GD driver require exif extension to be installed');
-
-            return;
-        }
         $loggerContext = [
+            'class' => self::class,
             'input' => $inputPath,
             'output' => $outputPath,
             'dimension' => $dimension->toArray(),
         ];
+
+        if ($this->resizeImageDriver === ImageResizeDriver::GD->value && !\extension_loaded('exif')) {
+            $this->logger->warning('GD driver require exif extension to be installed', $loggerContext);
+
+            return false;
+        }
+
+        $extension = \pathinfo($inputPath, PATHINFO_EXTENSION);
+        if ($this->resizeImageDriver === ImageResizeDriver::IMAGICK->value &&
+            !\in_array(\strtoupper($extension), \Imagick::queryFormats(), true))
+        {
+            $this->logger->warning(
+                \sprintf('The %s extension is not supported by the current Imagick installation.', $extension),
+                $loggerContext
+            );
+
+            return false;
+        }
+
+        if ($this->resizeImageDriver === ImageResizeDriver::GD->value)
+        {
+            $gdInfo = \gd_info();
+
+            if ($extension === 'webp' && (!\array_key_exists('WebP Support', $gdInfo) || !$gdInfo['WebP Support'] === true)){
+                $this->logger->warning('WebP is not supported by the current GD installation.', $loggerContext);
+                return false;
+            }
+            if ($extension === 'avif' && (!\array_key_exists('AVIF Support', $gdInfo) || !$gdInfo['AVIF Support'] === true)){
+                $this->logger->warning('AVIF is not supported by the current GD installation.', $loggerContext);
+                return false;
+            }
+            if ($extension === 'bmp' && (!\array_key_exists('WBMP Support', $gdInfo) || !$gdInfo['WBMP Support'] === true)){
+                $this->logger->warning('WBMP is not supported by the current GD installation.', $loggerContext);
+                return false;
+            }
+
+        }
 
         $this->logger->info('Start Intervention Image resizes', $loggerContext);
         if (!$dimension->width()) {
@@ -42,7 +75,7 @@ final class InterventionFileResize implements FileResizeInterface
                 $loggerContext
             );
 
-            return;
+            return false;
         }
         $timeStart = \microtime(true);
         $manager   = new ImageManager(['driver' => $this->resizeImageDriver]);
@@ -70,6 +103,8 @@ final class InterventionFileResize implements FileResizeInterface
             'Finish Intervention Image resizes',
             [...$loggerContext, ...['time' => \microtime(true) - $timeStart.' seconds']]
         );
+
+        return true;
     }
 
 

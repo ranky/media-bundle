@@ -21,7 +21,7 @@ final class FfmpegGifFileResize implements FileResizeInterface
     ) {
     }
 
-    public function resize(string $inputPath, string $outputPath, Dimension $dimension): void
+    public function resize(string $inputPath, string $outputPath, Dimension $dimension): bool
     {
         $command = <<<END
             ffmpeg -y -i $inputPath
@@ -50,6 +50,8 @@ final class FfmpegGifFileResize implements FileResizeInterface
             'Finish ffmpeg gif resize',
             [...$loggerContext, ...['time' => \microtime(true) - $timeStart.' seconds']]
         );
+
+        return true;
     }
 
     public function support(File $file): bool

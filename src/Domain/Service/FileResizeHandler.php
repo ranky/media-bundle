@@ -27,8 +27,7 @@ class FileResizeHandler
 
         foreach ($this->handlers as $handler) {
             if ($handler instanceof FileResizeInterface && $handler->support($file)) {
-                $handler->resize($inputPath, $outputPath, $dimension);
-                return true;
+                return $handler->resize($inputPath, $outputPath, $dimension);
             }
         }
 

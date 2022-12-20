@@ -83,35 +83,52 @@ https://user-images.githubusercontent.com/2461400/208732093-44cf5a21-62f9-4402-b
 ### Imagick extension
 
 #### Requirements
-Imagick extension requires the `imagemagick >= 6.2.4` library installed in your system. You can install it with the following command:
+Imagick extension requires the `imagemagick` library installed in your system.
+If you are not going to use Docker remember that many distros come with outdated `imagemagick`  and no `WebP` support. Most likely you will have to compile it manually:
+
+##### Ubuntu example
+
 ```bash
-sudo apt-get install imagemagick
+sudo apt-get update
+sudo apt-get install build-essential
 ```
+```bash
+sudo apt-get install pkg-config libx11-dev libxext-dev libxt-dev liblcms2-dev libwmf-dev libjpeg-dev libpng-dev libgif-dev libfreetype6-dev libtiff5-dev libwebp-dev libzip-dev
+```
+```bash
+wget https://www.imagemagick.org/download/ImageMagick.tar.gz
+tar xvzf ImageMagick.tar.gz
+cd ImageMagick-7.*
+./configure
+make
+sudo make install
+identify -version
+identify -version | grep webp
+```
+
+Docker: [Dockerfile](tools/docker/php-fpm/Dockerfile)
+
 #### Install Imagick extension
 
-##### Case Debian/Ubuntu:
-```sh
-apt-get install php-imagick
-```
-##### Case Pecl
-```sh
-pecl install imagick
-```
 ##### Case Docker
 [Dockerfile](tools/docker/php-fpm/Dockerfile)
 
-#### Enable the extension if it is not done automatically 👀
+##### Case Pecl
+```sh
+sudo pecl install imagick
+```
+
+##### Enable the extension if it is not done automatically 👀
 ```ini
 ; php.ini
 extension=imagick.so
 ```
-#### Verify Installation
+##### Verify Installation
 ```bash
 php -m | grep imagick
 php -r 'phpinfo();' | grep imagick
 php -r 'phpinfo();' | grep ImageMagick
 ```
-
 
 ### Compression Tools
 None of these tools is mandatory; it already depends on the need to optimize the images or not.

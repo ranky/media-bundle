@@ -21,7 +21,7 @@ final class ImagickGifFileResize implements FileResizeInterface
     /**
      * @throws \ImagickException
      */
-    public function resize(string $inputPath, string $outputPath, Dimension $dimension): void
+    public function resize(string $inputPath, string $outputPath, Dimension $dimension): bool
     {
         /*
          $height   ??= '';
@@ -34,7 +34,7 @@ final class ImagickGifFileResize implements FileResizeInterface
                 'output' => $outputPath,
                 'dimension' => $dimension->toArray(),
             ]);
-            return;
+            return false;
         }
 
         $loggerContext = [
@@ -70,6 +70,8 @@ final class ImagickGifFileResize implements FileResizeInterface
             'Finish Imagick gif resize',
             [...$loggerContext, ...['time' => \microtime(true) - $timeStart.' seconds']]
         );
+
+        return true;
     }
 
     public function support(File $file): bool

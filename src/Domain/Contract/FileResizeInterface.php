@@ -8,7 +8,7 @@ use Ranky\MediaBundle\Domain\ValueObject\File;
 
 interface FileResizeInterface
 {
-    public function resize(string $inputPath, string $outputPath, Dimension $dimension): void;
+    public function resize(string $inputPath, string $outputPath, Dimension $dimension): bool;
 
     public function support(File $file): bool;
 }
