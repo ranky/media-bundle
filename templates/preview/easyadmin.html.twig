@@ -1,0 +1,44 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+{# @var media \Ranky\MediaBundle\Application\DataTransformer\Response\MediaResponse #}
+
+{% set media = null %}
+{% set medias = null %}
+
+{% set isMultiple = field.formTypeOption('multiple_selection') %}
+{% set isAssociation = field.formTypeOption('association') %}
+
+{% if isMultiple == false %}
+    {% if isAssociation %}
+        {% set media = field.value ? ranky_media.mediaToResponse(field.value) : null %}
+    {% else %}
+        {% set media = field.value ? ranky_media.findById(field.value.asString()) : null %}
+    {% endif %}
+{% else %}
+    {% if isAssociation %}
+        {% set medias = field.value ? ranky_media.mediaCollectionToArrayResponse(field.value) : null %}
+    {% else %}
+        {% set medias = field.value ? ranky_media.findByIds(field.value) : null %}
+    {% endif %}
+{% endif %}
+{% if ea.crud.currentAction == 'detail' %}
+    {% if media or medias %}
+        {% include '@RankyMedia/preview/mime-show/show.html.twig' with {
+            'media': media,
+            'medias': medias,
+            'isMultiple': isMultiple,
+            'isAssociation': isAssociation,
+        } %}
+    {% endif %}
+{% else %}
+    {% set media = medias ? medias[0] : media %}
+    {% if media or medias %}
+        {% include '@RankyMedia/preview/mime-list/list.html.twig' with {
+            'media': media,
+            'medias': medias,
+            'isMultiple': isMultiple,
+            'isAssociation': isAssociation,
+        } %}
+    {% endif %}
+{% endif %}

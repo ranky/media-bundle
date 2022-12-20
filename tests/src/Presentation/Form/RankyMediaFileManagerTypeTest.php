@@ -88,22 +88,22 @@ class RankyMediaFileManagerTypeTest extends TypeTestCase
         /* MediaId */
         $this->assertSame('/admin', $formView->vars['form']['mediaId']->vars['api_prefix']);
         $this->assertFalse($formView->vars['form']['mediaId']->vars['multiple_selection']);
-        $this->assertFalse($formView->vars['form']['mediaId']->vars['mapping']);
+        $this->assertFalse($formView->vars['form']['mediaId']->vars['association']);
 
         /* Gallery Json Array */
         $this->assertSame('/admin', $formView->vars['form']['gallery']->vars['api_prefix']);
         $this->assertTrue($formView->vars['form']['gallery']->vars['multiple_selection']);
-        $this->assertFalse($formView->vars['form']['gallery']->vars['mapping']);
+        $this->assertFalse($formView->vars['form']['gallery']->vars['association']);
 
         /* Media Entity ManyToOne */
         $this->assertSame('/admin', $formView->vars['form']['media']->vars['api_prefix']);
         $this->assertFalse($formView->vars['form']['media']->vars['multiple_selection']);
-        $this->assertTrue($formView->vars['form']['media']->vars['mapping']);
+        $this->assertTrue($formView->vars['form']['media']->vars['association']);
 
         /* Medias Doctrine Collection */
         $this->assertSame('/admin', $formView->vars['form']['medias']->vars['api_prefix']);
         $this->assertTrue($formView->vars['form']['medias']->vars['multiple_selection']);
-        $this->assertTrue($formView->vars['form']['medias']->vars['mapping']);
+        $this->assertTrue($formView->vars['form']['medias']->vars['association']);
     }
 
 }

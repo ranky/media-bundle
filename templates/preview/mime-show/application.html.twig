@@ -1,0 +1,8 @@
+{# @var media \Ranky\MediaBundle\Application\DataTransformer\Response\MediaResponse #}
+<object type="{{ media.file.mime }}" data="{{ ranky_media_url(media.file.url) }}">
+    <img aria-hidden="true"
+         src="{{ asset('images/placeholder/application.jpg','ranky_media') }}"
+         alt="{{ media.description.alt }}"
+         title="{{ media.description.title }} ({{ media.file.mime }}) "
+    />
+</object>

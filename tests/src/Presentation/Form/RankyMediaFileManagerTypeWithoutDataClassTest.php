@@ -49,9 +49,9 @@ class RankyMediaFileManagerTypeWithoutDataClassTest extends TypeTestCase
         ];
     }
 
-    public function testItOneSelectionWithMediaIdTypeAndNoMappingSubmit(): void
+    public function testItOneSelectionWithMediaIdTypeAndNoAssociationSubmit(): void
     {
-        $form    = $this->factory->create(RankyMediaFileManagerType::class, null, [
+        $form = $this->factory->create(RankyMediaFileManagerType::class, null, [
             'data_class' => null,
         ]);
         $form->submit($this->media->id()->asString());
@@ -64,7 +64,7 @@ class RankyMediaFileManagerTypeWithoutDataClassTest extends TypeTestCase
     /**
      * @throws \JsonException
      */
-    public function testItMultipleSelectionWithJsonTypeAndNoMappingSubmit(): void
+    public function testItMultipleSelectionWithJsonTypeAndNoAssociationSubmit(): void
     {
         $data = [$this->media->id()->asString()];
         $form = $this->factory->create(RankyMediaFileManagerType::class, null, [
@@ -77,12 +77,11 @@ class RankyMediaFileManagerTypeWithoutDataClassTest extends TypeTestCase
         $this->assertEquals($data, $form->getData());
     }
 
-    public function testItOneSelectionWithManyToOneTypeAndMappingSubmit(): void
+    public function testItOneSelectionWithManyToOneTypeAndAssociationSubmit(): void
     {
-
         $form = $this->factory->create(RankyMediaFileManagerType::class, null, [
-            'data_class' => null,
-            'mapping' => true,
+            'data_class'  => null,
+            'association' => true,
         ]);
         $form->submit($this->media->id()->asString());
         // This check ensures there are no transformation failures
@@ -90,12 +89,11 @@ class RankyMediaFileManagerTypeWithoutDataClassTest extends TypeTestCase
         $this->assertEquals($this->media, $form->getData());
     }
 
-    public function testItMultipleSelectionWithManyToManyTypeWithJoinTableAndMappingSubmit(): void
+    public function testItMultipleSelectionWithManyToManyTypeWithJoinTableAndAssociationSubmit(): void
     {
-
         $form = $this->factory->create(RankyMediaFileManagerType::class, null, [
-            'data_class' => null,
-            'mapping' => true,
+            'data_class'         => null,
+            'association'        => true,
             'multiple_selection' => true,
         ]);
         $form->submit(\json_encode([$this->media->id()->asString()], JSON_THROW_ON_ERROR));

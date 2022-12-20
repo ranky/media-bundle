@@ -69,6 +69,7 @@ tools-update-packages-local: ## Update all tools vendor/dependencies in local
 generate-ref-flex: ## Generate reference for flex
 	$(DOCKER_EXEC_PHP) php -r 'echo bin2hex(random_bytes(20));'
 
+
 # remember add *.Makefile Configuration -> Editor -> Files Types in PHPSTORM (GNU Makefile)
 -include tools/make/docker.Makefile
 -include tools/make/composer.Makefile

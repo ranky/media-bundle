@@ -23,9 +23,10 @@ use Ranky\MediaBundle\Infrastructure\Filesystem\Local\LocalFilePathResolver;
 use Ranky\MediaBundle\Infrastructure\Filesystem\Local\LocalFileUrlResolver;
 use Ranky\MediaBundle\Infrastructure\Persistence\Dbal\Types\MediaIdType;
 use Ranky\MediaBundle\Infrastructure\Persistence\Dbal\Types\ThumbnailCollectionType;
-use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Month;
-use Ranky\MediaBundle\Infrastructure\Persistence\Dql\SubstringIndex;
-use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Year;
+use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\MimeSubType;
+use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\MimeType;
+use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\Month;
+use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\Year;
 use Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository\DoctrineOrmMediaRepository;
 use Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository\DoctrineOrmUserMediaRepository;
 use Ranky\MediaBundle\Infrastructure\Validation\UploadedFileValidator;
@@ -201,6 +202,7 @@ class MediaBundleExtension extends Extension implements PrependExtensionInterfac
 
     public function prepend(ContainerBuilder $container): void
     {
+
         $container->prependExtensionConfig('twig', [
             'form_themes' => [
                 '@RankyMedia/form.html.twig',
@@ -234,7 +236,8 @@ class MediaBundleExtension extends Extension implements PrependExtensionInterfac
             'orm' => [
                 'dql' => [
                     'string_functions' => [
-                        'SUBSTRING_INDEX' => SubstringIndex::class,
+                        'MIME_TYPE' => MimeType::class,
+                        'MIME_SUBTYPE' => MimeSubType::class,
                     ],
                     'datetime_functions' => [
                         'YEAR' => Year::class,

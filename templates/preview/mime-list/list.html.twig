@@ -1,0 +1,48 @@
+{# @var media \Ranky\MediaBundle\Application\DataTransformer\Response\MediaResponse #}
+<style>
+    .ranky-media-file-list img {
+        max-width: 100%;
+        object-fit: cover;
+        width: 130px;
+        height: 130px;
+        margin-left: 0;
+        text-align: left;
+        flex: 1;
+    }
+    .ranky-media-file-list ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        flex-direction: row;
+        display: flex;
+        flex-flow: nowrap;
+        align-items: center;
+        gap: 10px;
+        justify-content: center;
+    }
+    .ranky-media-file-list ul li {
+        flex: 1;
+    }
+</style>
+<div class="ranky-media-file-list">
+    <div class="ranky-media-file-list__preview">
+        {% if media %}
+            {% include [
+                '@RankyMedia/preview/mime-list/' ~ media.file.mimeType ~ '_' ~ media.file.mimeSubType ~ '.html.twig',
+                '@RankyMedia/preview/mime-list/'~ media.file.mimeType ~'.html.twig'
+            ] %}
+        {% endif %}
+        {% if medias and media == null %}
+            <ul>
+                {% for media in medias %}
+                    <li>
+                        {% include [
+                            '@RankyMedia/preview/mime-list/' ~ media.file.mimeType ~ '_' ~ media.file.mimeSubType ~ '.html.twig',
+                            '@RankyMedia/preview/mime-list/'~ media.file.mimeType ~'.html.twig'
+                        ] %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>

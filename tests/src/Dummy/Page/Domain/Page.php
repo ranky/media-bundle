@@ -21,7 +21,7 @@ class Page
     private ?int $id;
 
 
-    #[ORM\Column(name: 'media_id', type: Types::INTEGER, nullable: true)]
+    #[ORM\Column(name: 'media_id', type: 'media_id', nullable: true)]
     private ?MediaId $mediaId;
 
     /**
@@ -43,6 +43,7 @@ class Page
     #[ORM\JoinColumn(name: 'page_id', referencedColumnName: 'id')]
     #[ORM\InverseJoinColumn(name: 'media_id', referencedColumnName: 'id')]
     #[ORM\ManyToMany(targetEntity: Media::class)]
+    //#[ORM\OrderBy(['createdAt' => 'DESC'])]
     private ?Collection $medias;
 
     public function __construct()

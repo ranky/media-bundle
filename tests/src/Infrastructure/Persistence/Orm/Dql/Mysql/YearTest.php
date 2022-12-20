@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Ranky\MediaBundle\Tests\Infrastructure\Persistence\Orm\Dql;
+namespace Ranky\MediaBundle\Tests\Infrastructure\Persistence\Orm\Dql\Mysql;
 
 use Ranky\MediaBundle\Domain\Model\Media;
 use Ranky\MediaBundle\Tests\BaseIntegrationTestCase;

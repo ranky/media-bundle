@@ -24,7 +24,7 @@ class RankyMediaFileManagerType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        if ($options['mapping'] === true) {
+        if ($options['association'] === true) {
             if ($options['multiple_selection'] === true) {
                 $builder->addModelTransformer(new MediaCollectionTransformer($this->mediaRepository));
             } else {
@@ -43,13 +43,13 @@ class RankyMediaFileManagerType extends AbstractType
             'compound' => false,
             'multiple_selection' => false,
             'modal_title' => 'Media File Manager',
-            'mapping' => false,
+            'association' => false,
             'api_prefix' => null,
         ]);
 
 
         $resolver->setAllowedTypes('multiple_selection', 'bool');
-        $resolver->setAllowedTypes('mapping', 'bool');
+        $resolver->setAllowedTypes('association', 'bool');
         $resolver->setAllowedTypes('modal_title', 'string');
         $resolver->setAllowedTypes('api_prefix', ['string', 'null']);
     }
@@ -60,7 +60,7 @@ class RankyMediaFileManagerType extends AbstractType
             'multiple_selection' => $options['multiple_selection'],
             'api_prefix' => $options['api_prefix'],
             'modal_title' => $options['modal_title'],
-            'mapping' => $options['mapping'],
+            'association' => $options['association'],
         ]);
     }
 

@@ -1,0 +1,6 @@
+{# @var media \Ranky\MediaBundle\Application\DataTransformer\Response\MediaResponse #}
+<video controls title="({{ media.file.mime }}) {{ media.description.title }}">
+    <source src="{{ ranky_media_url(media.file.url) }}"
+            type="{{ media.file.mime }}">
+    Sorry, your browser doesn't support embedded videos.
+</video>

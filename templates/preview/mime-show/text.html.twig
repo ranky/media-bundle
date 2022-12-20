@@ -1,0 +1,6 @@
+{# @var media \Ranky\MediaBundle\Application\DataTransformer\Response\MediaResponse #}
+<a target="_blank" href="{{ ranky_media_url(media.file.url) }}" aria-label="{{ media.description.alt }} (opens in a new window)">
+    <img src="{{ asset('images/placeholder/text.jpg','ranky_media') }}"
+         alt="{{ media.description.alt }}"
+         title="{{ media.description.title }}" />
+</a>

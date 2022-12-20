@@ -43,11 +43,15 @@ return static function (ContainerConfigurator $configurator) {
             '../src/Common', // Helpers
             '../src/Infrastructure/DependencyInjection',
             '../src/Domain', // Entity
+            '../src/Presentation/Form/EasyAdmin', // EasyAdmin
             '../src/Application/**/*Request.php', // DTO
         ]);
 
     $services
-        ->load('Ranky\\MediaBundle\\Presentation\\', '../src/Presentation/*')
+        ->load('Ranky\\MediaBundle\\Presentation\\Api\\', '../src/Presentation/Api/*')
+        ->tag('controller.service_arguments');
+    $services
+        ->load('Ranky\\MediaBundle\\Presentation\\BackOffice\\', '../src/Presentation/BackOffice/*')
         ->tag('controller.service_arguments');
 
     // Repositories

@@ -24,6 +24,7 @@ Table of Contents
   * [Retrieve media files in Twig](#retrieve-media-files-in-twig)
   * [Responsive images with Twig macro](#responsive-images-with-twig-macro)
   * [Standalone button to open the Media File Manager in selection mode](#standalone-button-to-open-the-media-file-manager-in-selection-mode)
+  * [EasyAdmin integration](#easyadmin-integration)
   * [Events](#events)
 * [Caveats](#caveats)
 * [Extra](#extra)
@@ -34,6 +35,8 @@ Table of Contents
 ## Video
 
 https://user-images.githubusercontent.com/2461400/208309129-280d4fdb-d3f5-4cb7-bd32-175db6bb6f70.mp4
+
+https://user-images.githubusercontent.com/2461400/208732093-44cf5a21-62f9-4402-bbcf-0cffa4aa56f6.mp4
 
 ## Features
 
@@ -67,7 +70,7 @@ https://user-images.githubusercontent.com/2461400/208309129-280d4fdb-d3f5-4cb7-b
 
 * PHP 8.1 or higher
 * Symfony 5.4 or higher
-* Doctrine ORM
+* Doctrine ORM (MySQL, MariaDB, SQLite)
 * Imagick or GD extension: **Recommended Imagick** extension because it supports more formats than the GD extension
 * Optional compression tools:
   * Jpegoptim
@@ -126,10 +129,21 @@ sudo apt-get install webp
 ```sh
 composer require ranky/media-bundle
 ```
+While creating the recipes for Symfony Flex, here are the 4 steps to follow:
 
-If you use Symfony Flex, the config/packages/ranky_media.php config file is created automatically. Otherwise:
+#### Step 1: Enable the bundle in the kernel
 
-#### Step 1: Create the following file and configure it for your application. 
+Although this step should be done automatically.
+
+```php
+# config/bundles.php
+return [
+    // ...
+    Ranky\MediaBundle\RankyMediaBundle::class => ['all' => true],
+];
+```
+
+#### Step 2: Create the following file and configure it for your application.
 
 The minimum required configuration is provided, in the [configuration](#configuration) you will see all the options. 
 
@@ -150,17 +164,8 @@ PHP
         ;
 };
 ```
-#### Step 2: Enable the bundle in the kernel:
 
-```php
-# config/bundles.php
-return [
-    // ...
-    Ranky\MediaBundle\RankyMediaBundle::class => ['all' => true],
-];
-```
-
-#### Step 3: Import the routes:
+#### Step 3: Import the routes
 
 YAML
 
@@ -173,7 +178,7 @@ ranky_media:
 
 PHP
 
-```php 
+```php
 # config/routes/ranky_media.php
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
@@ -183,6 +188,13 @@ return static function (RoutingConfigurator $routes) {
         ->prefix('/admin')
         ;
 };
+```
+
+#### Step 4: Schema update and assets install
+
+```sh
+php bin/console doctrine:schema:update --force
+php bin/console assets:install
 ```
 
 ## Configuration
@@ -296,8 +308,6 @@ This is the driver that will be used for image resizing. The available drivers a
  * imagick `ImageResizeDriver::IMAGICK->value`
  * gd `ImageResizeDriver::GD->value`
 
-[Caveats](#caveats)
-
 **resize_gif_driver** (enum, default: `GifResizeDriver::NONE->value`)
 
 This is the driver that will be used for GIF image resizing. The available drivers are:
@@ -354,14 +364,14 @@ It is also possible as we have seen previously that you want to import the route
     - { path: ^/admin,     roles: ROLE_USER }
     - { path: ^/admin/users, roles: ROLE_SUPER_ADMIN }
 ```
-Don't forget to set the [route prefix](#step-1--create-the-following-file-and-configure-it-for-your-application) in the bundle configuration.
+Don't forget to set the [route prefix](#step-3--import-the-routes) in the bundle configuration.
 
 ### Media File Manager
 
 You can do the same as me and create a page and put the following code.
 Note that it is not mandatory to use blocks, you can import the assets as you prefer.
 
-```html
+```twig
 {% block stylesheets %}
     {{- parent() -}}
     {{ encore_entry_link_tags('ranky_media', null, 'ranky_media') }}
@@ -385,8 +395,10 @@ Only one type of form, but with 4 ways to store the data in the database:
 
 #### 1. Single selection. Store the mediaId (Ulid) without association
 
+`media_id` type is a Doctrine ULID type
+
 ```php
-#[ORM\Column(name: 'media_id', type: Types::INTEGER, nullable: true)]
+#[ORM\Column(name: 'media_id', type: 'media_id', nullable: true)]
 private ?MediaId $mediaId;
 ```
 
@@ -465,6 +477,7 @@ class MyFormType extends AbstractType
 #[ORM\JoinColumn(name: 'page_id', referencedColumnName: 'id')]
 #[ORM\InverseJoinColumn(name: 'media_id', referencedColumnName: 'id')]
 #[ORM\ManyToMany(targetEntity: Media::class)]
+#[ORM\OrderBy(["createdAt" => "DESC"])]
 private ?Collection $medias;
 
 public function __construct()
@@ -576,6 +589,29 @@ The `ranky-media-open-modal` class is required, In order not to conflict with th
   });
 });
 ```
+
+### EasyAdmin integration
+
+A [field](templates/preview/easyadmin.html.twig) for EasyAdmin has been created
+that integrates the same functionalities previously explained in [Form Types](#form-types)
+
+Here an example with the 4 variations of the form type
+
+```php
+use Ranky\MediaBundle\Presentation\Form\EasyAdmin\EARankyMediaFileManagerField;
+
+// ...
+
+public function configureFields(string $pageName): iterable
+    {
+       // ...
+        yield EARankyMediaFileManagerField::new('mediaId');
+        yield EARankyMediaFileManagerField::new('gallery')->multipleSelection()->modalTitle('Gallery');
+        yield EARankyMediaFileManagerField::new('media')->association();
+        yield EARankyMediaFileManagerField::new('medias')->association()->multipleSelection();
+    }
+```
+
 ### Events
 
 * PreCreateEvent::NAME
@@ -610,7 +646,7 @@ class MyEventSubscriber implements EventSubscriberInterface
 * Currently, [Uppy](https://github.com/transloadit/uppy) is used to support file uploads through the Media File Manager, and it requires [SSL certificate](#install-local-certificates) or be available via localhost.
   See more https://github.com/transloadit/uppy/issues/4133
 * If you are using React, you will have a problem because this bundle adds React, and you can have two versions of React on one page. This will be fixed as soon as I registered a package in NPM.
-* Currently, Doctrine ORM is required.
+* MariaDB, MySQL and SQLite are supported. PostgreSQL is not supported yet. Only a few DQL functions need to be adapted.
 
 ## Extra
 
@@ -630,8 +666,11 @@ More info https://github.com/FiloSottile/mkcert
 You can see how to install PHP extensions and compression tools through Docker in the [Dockerfile](tools/docker/php-fpm/Dockerfile) I used it for testing.
 
 
-
 ## To Do
+* Recipes
+* Fix some styles being overridden
+* `ORDER BY FIELD` in `WHERE IN` clause
+* PostgreSQL support
 * Image Editor
 * Create NPM package, so you can use/import and not have multiple versions of React 
 * Add sorting filters

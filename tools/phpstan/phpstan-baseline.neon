@@ -5,6 +5,7 @@ parameters:
     - ../../tests/src/BaseIntegrationTestCase.php
     - ../../src/Presentation/Form/DataTransformer/
     - ../../src/Infrastructure/DependencyInjection/Configuration.php
+    - ../../src/Presentation/Form/EasyAdmin/EARankyMediaFileManagerField.php
   reportUnmatchedIgnoredErrors: false
   ignoreErrors:
     - '#(.*)\\Icu\\IntlDateFormatter(.*)#'

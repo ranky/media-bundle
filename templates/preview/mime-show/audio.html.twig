@@ -1,0 +1,4 @@
+{# @var media \Ranky\MediaBundle\Application\DataTransformer\Response\MediaResponse #}
+<audio controls src="{{ ranky_media_url(media.file.url) }}" title="{{ media.description.title }} ({{ media.file.mime }}) ">
+    Your browser does not support the <code>audio</code> element.
+</audio>

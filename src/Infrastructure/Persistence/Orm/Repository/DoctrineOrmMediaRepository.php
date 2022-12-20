@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository;
@@ -7,6 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Criteria\MediaCriteria;
 use Ranky\MediaBundle\Domain\Exception\NotFoundMediaException;
 use Ranky\MediaBundle\Domain\Model\Media;
 use Ranky\MediaBundle\Domain\ValueObject\MediaId;
@@ -100,9 +102,17 @@ final class DoctrineOrmMediaRepository extends ServiceEntityRepository implement
      */
     public function findByIds(MediaId ...$ids): array
     {
-        return $this->findBy([
-            'id' => \array_map(static fn (MediaId $mediaId) => $mediaId->asBinary(), $ids),
-        ]);
+        $mediaIds        = \array_map(static fn(MediaId $mediaId) => $mediaId->asBinary(), $ids);
+        $criteria        = MediaCriteria::default();
+        $orderPagination = $criteria->orderBy();
+
+        return $this
+            ->createQueryBuilder('m')
+            ->where('m.id IN (:ids)')
+            ->setParameter('ids', $mediaIds)
+            ->orderBy($orderPagination->field(), $orderPagination->direction())
+            ->getQuery()
+            ->getResult();
     }
 
     public function getAll(OrderBy $orderPagination): array

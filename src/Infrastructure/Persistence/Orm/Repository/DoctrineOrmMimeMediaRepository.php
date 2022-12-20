@@ -31,19 +31,19 @@ final class DoctrineOrmMimeMediaRepository extends ServiceEntityRepository imple
 
     public function getAllByType(): array
     {
-        return $this
+       return $this
             ->createQueryBuilder('m')
-            ->select("SUBSTRING_INDEX(m.file.mime,'/',1) as mimeType", 'count(m) as count')
+            ->select('MIME_TYPE(m.file.mime) as mimeType', 'count(m) as count')
             ->groupBy('mimeType')
-            ->getQuery()
-            ->getResult();
+            ->getQuery()->getResult();
+
     }
 
     public function getAllBySubType(): array
     {
         return $this
             ->createQueryBuilder('m')
-            ->select("SUBSTRING_INDEX(m.file.mime,'/',-1) as mimeSubType", 'count(m) as count')
+            ->select('MIME_SUBTYPE(m.file.mime) as mimeSubType', 'count(m) as count')
             ->groupBy('mimeSubType')
             ->getQuery()
             ->getResult();

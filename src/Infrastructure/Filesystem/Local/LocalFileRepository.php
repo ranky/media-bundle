@@ -62,11 +62,12 @@ class LocalFileRepository implements FileRepositoryInterface
         if (!\file_exists($oldPathFileName)) {
             throw new RenameFileException(
                 \sprintf(
-                'File did not find when trying to rename the file %s',
-                $oldPathFileName
-            )
+                    'File did not find when trying to rename the file %s',
+                    $oldPathFileName
+                )
             );
         }
+        $this->makeDirectory($newPathFileName);
 
         if (!\rename($oldPathFileName, $newPathFileName)) {
             throw new RenameFileException(

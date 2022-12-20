@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Tests\Dummy\Page\Presentation\Form;
@@ -38,7 +39,7 @@ class PageType extends AbstractType
             'label'              => 'Featured Image',
             'api_prefix'         => '/admin',
             'modal_title'        => 'Media File Manager',
-            'mapping'            => true,
+            'association'        => true,
             'multiple_selection' => false,
         ]);
 
@@ -47,7 +48,7 @@ class PageType extends AbstractType
             'label'              => 'Media Collection',
             'api_prefix'         => '/admin',
             'modal_title'        => 'Media File Manager',
-            'mapping'            => true,
+            'association'        => true,
             'multiple_selection' => true,
         ]);
     }
