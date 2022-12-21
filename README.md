@@ -8,8 +8,9 @@ MediaBundle also integrates with your database to store and manage your media fi
 
 Table of Contents 
 ==================
-* [Features](#features)
 * [Video](#video)
+* [Advantages](#advantages)
+* [Features](#features)
 * [Requirements](#requirements)
   * [Imagick extension](#imagick-extension)
   * [Compression Tools](#compression-tools)
@@ -38,11 +39,23 @@ https://user-images.githubusercontent.com/2461400/208309129-280d4fdb-d3f5-4cb7-b
 
 https://user-images.githubusercontent.com/2461400/208732093-44cf5a21-62f9-4402-bbcf-0cffa4aa56f6.mp4
 
+## Advantages
+
+* The interface is built with React, not jQuery, which means it is more modern and efficient.
+* File resizing and compression is handled on the server side (admin), not endorsed to the client, which saves resources and improves performance.
+* The interface is inspired by WordPress, a widely-used and well-respected platform, which means it is user-friendly and reliable.
+* Media File Manager is managed through the database, rather than the hard drive, which means it is more organized and easier to manage.
+* The Media File Manager is designed with SEO in mind, which means it can help improve your website's search engine rankings.
+* You can choose not to secure the routes, which means you have more flexibility in how you use the Media File Manager.
+* The Media File Manager is designed to be scalable and customizable, thanks to its use of interfaces and Dependency Inversion Principle (DIP). This allows for the creation of reusable and adaptable components that can be modified without changing the existing code.
+* By adhering to a Hexagonal Architecture and Domain-Driven Design (DDD), the Media File Manager is able to maintain a clear separation of concerns and prioritize the business logic.
+
 ## Features
 
 * User-friendly interface:
   * Offers a wide range of configurable options, allowing you to customize its behavior to fit your needs
   * Single or multiple upload
+  * Drag & drop
   * List or grid view
   * Edit alt, title and name
   * Single and bulk delete
@@ -60,7 +73,7 @@ https://user-images.githubusercontent.com/2461400/208732093-44cf5a21-62f9-4402-b
   * Gifsicle
   * Svgo
   * Cwebp
-* Generate thumbnails with 4 types of breakpoint with the following default sizes: 
+* Generate thumbnails with 4 types of breakpoint (responsive formats) with the following default sizes: 
   * **Large:** [1024], I only put the width because that way the height is automatically calculated by saving the aspect ratio. Although you can change it, you can see it in [configuration](#configuration)
   * **Medium:** [768]
   * **Small:** [576]
@@ -381,7 +394,7 @@ It is also possible as we have seen previously that you want to import the route
     - { path: ^/admin,     roles: ROLE_USER }
     - { path: ^/admin/users, roles: ROLE_SUPER_ADMIN }
 ```
-Don't forget to set the [route prefix](#step-3--import-the-routes) in the bundle configuration.
+Don't forget to set the [route prefix](#step-3-import-the-routes) in the bundle configuration.
 
 ### Media File Manager
 
@@ -523,9 +536,17 @@ class MyFormType extends AbstractType
 ```
 
 ### Retrieve media files in Twig
-To retrieve the media files, you have a service will help you. Let's see the examples in the same order as we have looked in the types of forms.
+To retrieve the media files, you have a global twig service will help you. Let's see the examples in the same order as we have looked in the types of forms.
 
-#### 1. ...
+Service: `ranky_media` 
+
+Methods:
+  * **findById:** Retrieve a media response by MediaId 
+  * **findByIds:** Retrieve a collection of media response by MediaId array
+  * **mediaToResponse:** Convert a media entity to a media response
+  * **mediaCollectionToArrayResponse:** Convert a collection of media entity to a collection of media response
+
+#### 1. One media without association [(media_id)](#1-single-selection-store-the-mediaid-ulid-without-association)
 ```twig
 {# @var media \Ranky\MediaBundle\Application\DataTransformer\Response\MediaResponse #}
 {% set media = ranky_media.findById(page.mediaId) %}
@@ -552,7 +573,7 @@ To retrieve the media files, you have a service will help you. Let's see the exa
   {% endfor %}
 {% endif %}
 ```
-#### 2. ...
+#### 2. Array of media without association [(json)](#2-multiple-selection-store-the-array-of-mediaid-json-without-association)
 
 ```twig
 {% set medias = ranky_media.findByIds(page.gallery) %}
@@ -561,13 +582,13 @@ To retrieve the media files, you have a service will help you. Let's see the exa
   {# ... #}
 {% endfor %}
 ```
-#### 3. ...
+#### 3. One media with association [(ManyToOne)](#3-single-selection-store-the-mediaid-ulid-with-manytoone-association)
 
 ```twig
 {% set media = ranky_media.mediaToResponse(page.media) %}
 {# ... #}
 ```
-#### 4. ...
+#### 4. Array of media with association [(collection)](#4-multiple-selection-store-the-media-collection-with-manytomany-association)
 
 ```twig
 {% set medias = ranky_media.mediaCollectionToArrayResponse(page.medias) %}
@@ -609,7 +630,7 @@ The `ranky-media-open-modal` class is required, In order not to conflict with th
 
 ### EasyAdmin integration
 
-A [field](templates/preview/easyadmin.html.twig) for EasyAdmin has been created
+A [field](src/Presentation/Form/EasyAdmin/EARankyMediaFileManagerField.php) for EasyAdmin has been created
 that integrates the same functionalities previously explained in [Form Types](#form-types)
 
 Here an example with the 4 variations of the form type
