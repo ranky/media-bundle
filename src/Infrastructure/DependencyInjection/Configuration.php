@@ -16,17 +16,16 @@ class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        // separate this TreeBuilder in multiple function of the config tree to make it more readable
+        // TODO: separate this TreeBuilder in multiple function of the config tree to make it more readable
         $treeBuilder = new TreeBuilder(MediaBundleExtension::CONFIG_DOMAIN_NAME);
         $treeBuilder->getRootNode()
                     ->children()
                         ->scalarNode('user_entity')
-                            ->isRequired()
-                            ->cannotBeEmpty()
                             ->info(
                                 'This is the fully qualified class name (FQCN) of the user entity class.'.
                                 ' This is required in order to get the username in case you are using a different UserIdentifier.'
                             )
+                            ->defaultValue(null)
                             ->example('App\Entity\User')
                         ->end()
                         ->scalarNode('user_identifier_property')

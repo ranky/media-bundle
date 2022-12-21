@@ -17,7 +17,7 @@ final class DoctrineOrmUserMediaRepository extends ServiceEntityRepository imple
 
     public function __construct(
         ManagerRegistry $registry,
-        private readonly string $userEntity,
+        private readonly ?string $userEntity,
         private readonly string $userIdentifierProperty
     ) {
         parent::__construct($registry, Media::class);
@@ -38,6 +38,9 @@ final class DoctrineOrmUserMediaRepository extends ServiceEntityRepository imple
     {
         if ($this->userIdentifierProperty === 'username') {
             return $userIdentifier->value();
+        }
+        if (!$this->userEntity){
+            return UserIdentifier::DEFAULT_USER_IDENTIFIER;
         }
         try {
             return $this->_em->createQueryBuilder()

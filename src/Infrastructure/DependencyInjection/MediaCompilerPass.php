@@ -15,8 +15,6 @@ class MediaCompilerPass implements CompilerPassInterface
 
     public function process(ContainerBuilder $container): void
     {
-        // $container->setAlias(TranslatorBagInterface::class,'translator.default');
-
         $twigGlobal = $container->getDefinition('twig');
         $twigGlobal->addMethodCall(
             'addGlobal',
@@ -27,9 +25,10 @@ class MediaCompilerPass implements CompilerPassInterface
          * TODO: Criteria Value Resolver
          * Problem: $paginationLimit
          * Alternatives:
-         *  * Maintain as is, but in the other cases of use the CriteriaValueResolver, I will have to explicitly use the argument of the PHP attribute
-         *  * @see \Ranky\MediaBundle\Presentation\Api\ListMediaCriteriaApiController::__invoke()
-         *  * Pass limit only by url query string from frontend or PHP Attribute Controller
+         *  * Maintain as is, but in the other cases of use the CriteriaValueResolver,
+         *    I will have to explicitly use the paginationLimit in the PHP Criteria Attribute
+         *    @see \Ranky\MediaBundle\Presentation\Api\ListMediaCriteriaApiController::__invoke()
+         *  * Pass limit only by url query string from frontend or PHP Attribute
          *  * Duplicate CriteriaValueResolver by MediaCriteriaValueResolver
          *  * https://symfony.com/doc/current/service_container.html#explicitly-configuring-services-and-arguments
          *  * ...
