@@ -1,7 +1,10 @@
 {# @var media \Ranky\MediaBundle\Application\DataTransformer\Response\MediaResponse #}
-<img loading="lazy"
-    aria-hidden="true"
-    src="{{ asset('images/placeholder/image-tiff.jpg','ranky_media') }}"
-    alt="{{ media.description.alt }}"
-    title="{{ media.description.title }} ({{ media.file.mime }})"
-/>
+<a target="_blank" href="{{ ranky_media_url(media.file.url) }}"
+   aria-label="{{ media.description.alt }} (opens in a new window)">
+    <img loading="lazy"
+         aria-hidden="true"
+         src="{{ asset('images/placeholder/image-tiff.jpg','ranky_media') }}"
+         alt="{{ media.description.alt }}"
+         title="{{ media.description.title }} ({{ media.file.mime }})"
+    />
+</a>
