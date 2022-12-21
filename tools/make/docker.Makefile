@@ -11,6 +11,9 @@ docker-php: ## Exec PHP container with arguments
 docker-php-root: ## Exec PHP container with arguments like root user
 	$(DOCKER_COMPOSE) exec -u root php $(ARGUMENTS)
 
+docker-clear-tmp: # clean tmp cache bundle
+	$(DOCKER_EXEC_PHP) rm -rf /tmp/*
+
 docker-up: ## Start the docker
 	$(DOCKER_COMPOSE) up -d
 

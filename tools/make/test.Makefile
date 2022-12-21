@@ -17,4 +17,4 @@ phpunit-testsuite: ## PHPUnit testsuite
 behat: ## behat
 	$(DOCKER_EXEC_PHP) bash -c "$(BEHAT_BIN) --config $(BEHAT_DIRECTORY)/behat.yml --stop-on-failure --snippets-for -vv"
 
-test: phpunit behat ## TEST
+test: phpunit behat ## All in one for test tools

@@ -16,9 +16,9 @@ phpstan-clear: ## Run PHPStan clear
 phpstan: ## Run PHPStan Example: -c phpstan.neon --memory-limit 1G --no-progress --no-interaction
 	$(DOCKER_EXEC_PHP) bash -c "$(PHPSTAN_BIN) analyse -c $(PHPSTAN_DIRECTORY)/phpstan.neon --error-format=table > $(PHPSTAN_DIRECTORY)/phpstan.md"
 
-lint: phpstan-clear phpstan php-cs-fixer ## LINT
+lint: phpstan-clear phpstan php-cs-fixer ## All in one for lint tools
 
 ##@ Validate
 
-validate-composer: ## Composer validate
+validate-composer: ## Composer validate && diagnose && audit
 	$(DOCKER_EXEC_PHP) bash -c "composer validate && composer diagnose && composer audit"
