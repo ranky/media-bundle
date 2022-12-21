@@ -159,7 +159,7 @@ sudo apt-get install webp
 ```sh
 composer require ranky/media-bundle
 ```
-While creating the recipes for Symfony Flex, here are the 4 steps to follow:
+While I create the recipes for Symfony Flex, here are the steps to follow:
 
 #### Step 1: Enable the bundle in the kernel
 
@@ -230,7 +230,7 @@ php bin/console assets:install
 ## Configuration
 
 ### Full configuration with default values
-Except `userEntity`, all the other options are optional. 
+All options are optional, but `user_entity` is necessary to configure if you do not want to include guest users in the user filter.
 
 ```php
 # config/packages/ranky_media.php
@@ -266,7 +266,7 @@ return static function (RankyMediaConfig $rankyMediaConfig) {
 
 ### Configuration Explanation
 
-**user_entity** (string, `required`)
+**user_entity** (string, default: `null`)
 
 This is the fully qualified class name (FQCN) of the user entity class. This is required in order to get the username in case you are using a different UserIdentifier and in that way to be able to filter media by user.
 
@@ -398,16 +398,24 @@ Don't forget to set the [route prefix](#step-3-import-the-routes) in the bundle 
 
 ### Media File Manager
 
-You can do the same as me and create a page and put the following code.
-Note that it is not mandatory to use blocks, you can import the assets as you prefer.
+Once installed, you can access a route that I have created for quick access to the Media File Manager. The path is `/ranky/media/embed`.
+
+But the idea is that you create a page in your admin.
+
+Example:
+  * router: `/admin/media`
+  * template: `media.html.twig`
 
 ```twig
+{# media.html.twig #}
+{# Note that it is not mandatory to use blocks, you can import the assets as you prefer #}
+
 {% block stylesheets %}
     {{- parent() -}}
     {{ encore_entry_link_tags('ranky_media', null, 'ranky_media') }}
 {% endblock %}
 
-{% block javascript %}
+{% block javascripts %}
     {{- parent() -}}
     {{ encore_entry_script_tags('ranky_media', null, 'ranky_media', attributes={
         defer: true
@@ -630,10 +638,9 @@ The `ranky-media-open-modal` class is required, In order not to conflict with th
 
 ### EasyAdmin integration
 
-A [field](src/Presentation/Form/EasyAdmin/EARankyMediaFileManagerField.php) for EasyAdmin has been created
-that integrates the same functionalities previously explained in [Form Types](#form-types)
+A [field](src/Presentation/Form/EasyAdmin/EARankyMediaFileManagerField.php) for EasyAdmin has been created that integrates the same functionalities previously explained in [Form Types](#form-types)
 
-Here an example with the 4 variations of the form type
+Here, I show an example of the four variations:
 
 ```php
 use Ranky\MediaBundle\Presentation\Form\EasyAdmin\EARankyMediaFileManagerField;
@@ -705,6 +712,7 @@ You can see how to install PHP extensions and compression tools through Docker i
 
 
 ## To Do
+* GitHub Actions
 * Recipes
 * Fix some styles being overridden
 * `ORDER BY FIELD` in `WHERE IN` clause
