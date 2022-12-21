@@ -1,0 +1,8 @@
+/.github export-ignore
+/.gitattributes export-ignore
+/.env export-ignore
+/.gitignore export-ignore
+/Makefile export-ignore
+/docker-compose.yml export-ignore
+/tests export-ignore
+/tools export-ignore
