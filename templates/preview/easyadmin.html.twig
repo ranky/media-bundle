@@ -26,9 +26,7 @@
     {% if media or medias %}
         {% include '@RankyMedia/preview/mime-show/show.html.twig' with {
             'media': media,
-            'medias': medias,
-            'isMultiple': isMultiple,
-            'isAssociation': isAssociation,
+            'medias': medias
         } %}
     {% endif %}
 {% else %}
@@ -36,9 +34,7 @@
     {% if media or medias %}
         {% include '@RankyMedia/preview/mime-list/list.html.twig' with {
             'media': media,
-            'medias': medias,
-            'isMultiple': isMultiple,
-            'isAssociation': isAssociation,
+            'medias': medias
         } %}
     {% endif %}
 {% endif %}

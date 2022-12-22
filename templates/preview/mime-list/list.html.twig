@@ -24,22 +24,22 @@
         flex: 1;
     }
 </style>
+{% macro mime_tempate(media) %}
+    {% include [
+        '@RankyMedia/preview/mime-list/' ~ media.file.mimeType ~ '_' ~ media.file.mimeSubType ~ '.html.twig',
+        '@RankyMedia/preview/mime-list/'~ media.file.mimeType ~'.html.twig'
+    ] %}
+{% endmacro %}
 <div class="ranky-media-file-list">
     <div class="ranky-media-file-list__preview">
         {% if media %}
-            {% include [
-                '@RankyMedia/preview/mime-list/' ~ media.file.mimeType ~ '_' ~ media.file.mimeSubType ~ '.html.twig',
-                '@RankyMedia/preview/mime-list/'~ media.file.mimeType ~'.html.twig'
-            ] %}
+            {{ _self.mime_tempate(media) }}
         {% endif %}
         {% if medias and media == null %}
             <ul>
                 {% for media in medias %}
                     <li>
-                        {% include [
-                            '@RankyMedia/preview/mime-list/' ~ media.file.mimeType ~ '_' ~ media.file.mimeSubType ~ '.html.twig',
-                            '@RankyMedia/preview/mime-list/'~ media.file.mimeType ~'.html.twig'
-                        ] %}
+                        {{ _self.mime_tempate(media) }}
                     </li>
                 {% endfor %}
             </ul>

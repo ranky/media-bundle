@@ -1,10 +1,33 @@
 {# @var media \Ranky\MediaBundle\Application\DataTransformer\Response\MediaResponse #}
-<a target="_blank" href="{{ ranky_media_url(media.file.url) }}"
-   aria-label="{{ media.description.alt }} (opens in a new window)">
-    <img loading="lazy"
-         aria-hidden="true"
-         src="{{ ranky_media_url(media.file.url) }}"
-         alt="{{ media.description.alt }}"
-         title="{{ media.description.title }} ({{ media.file.mime }}) "
-    />
-</a>
+{# @var mimeType \Ranky\MediaBundle\Domain\Enum\MimeType #}
+{% set mimeType = enum('\\Ranky\\MediaBundle\\Domain\\Enum\\MimeType') %}
+{% set mimeTypesWithPlaceholder = mimeType.imagesTypesWithPlaceholder() %}
+
+{% if media.file.mimeSubType in mimeTypesWithPlaceholder|keys %}
+    <a target="_blank" href="{{ ranky_media_url(media.file.url) }}"
+       aria-label="{{ media.description.alt }} (opens in a new window)">
+        <img loading="lazy"
+             aria-hidden="true"
+             src="{{ asset(mimeTypesWithPlaceholder[media.file.mimeSubType],'ranky_media') }}"
+             alt="{{ media.description.alt }}"
+             title="{{ media.description.title }}"/>
+    </a>
+{% elseif media.file.mimeSubType not in mimeType.supportedImageTypes() %}
+    <a target="_blank" href="{{ ranky_media_url(media.file.url) }}"
+       aria-label="{{ media.description.alt }} (opens in a new window)">
+        <img loading="lazy"
+             aria-hidden="true"
+             src="{{ asset('images/placeholder/image.jpg','ranky_media') }}"
+             alt="{{ media.description.alt }}"
+             title="{{ media.description.title }}"/>
+    </a>
+{% else %}
+    <a target="_blank" href="{{ ranky_media_url(media.file.url) }}"
+       aria-label="{{ media.description.alt }} (opens in a new window)">
+        <img loading="lazy"
+             aria-hidden="true"
+             src="{{ ranky_media_url(media.file.url) }}"
+             alt="{{ media.description.alt }}"
+             title="{{ media.description.title }}"/>
+    </a>
+{% endif %}
