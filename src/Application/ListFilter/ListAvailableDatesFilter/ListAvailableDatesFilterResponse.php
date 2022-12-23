@@ -26,9 +26,9 @@ class ListAvailableDatesFilterResponse implements ResponseFormFilterDtoInterface
         $dateLabel = (string)\IntlDateFormatter::create(locale: null, pattern: 'MMMM Y')
             ->format(
                 \DateTimeImmutable::createFromFormat(
-                '!Ym',
-                \sprintf('%d%d', $this->year, $this->month)
-            )
+                    '!Ym',
+                    \sprintf('%d%d', $this->year, $this->month)
+                )
             );
 
 

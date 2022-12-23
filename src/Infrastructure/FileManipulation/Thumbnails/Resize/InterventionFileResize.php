@@ -39,7 +39,7 @@ final class InterventionFileResize implements FileResizeInterface
 
         $extension = \pathinfo($inputPath, PATHINFO_EXTENSION);
         if ($this->resizeImageDriver === ImageResizeDriver::IMAGICK->value &&
-            !\in_array(\strtoupper($extension), \Imagick::queryFormats(), true))
+            !\in_array(\mb_strtoupper($extension), \Imagick::queryFormats(), true))
         {
             $this->logger->warning(
                 \sprintf('The %s extension is not supported by the current Imagick installation.', $extension),

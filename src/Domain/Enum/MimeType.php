@@ -40,7 +40,7 @@ enum MimeType: string
             'x-icon',
             'vnd.microsoft.icon',
             'bmp',
-            'x-ms-bmp'
+            'x-ms-bmp',
         ];
     }
     /**
@@ -57,7 +57,7 @@ enum MimeType: string
             'bmp' => 'images/placeholder/bmp.jpg',
             'x-ms-bmp' => 'images/placeholder/bmp.jpg',*/
             'tiff' => 'images/placeholder/tiff.jpg',
-            'vnd.adobe.photoshop' => 'images/placeholder/psd.jpg'
+            'vnd.adobe.photoshop' => 'images/placeholder/psd.jpg',
         ];
     }
 

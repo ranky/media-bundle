@@ -16,10 +16,11 @@ class MediaCompilerPass implements CompilerPassInterface
     public function process(ContainerBuilder $container): void
     {
         $twigGlobal = $container->getDefinition('twig');
-        $twigGlobal->addMethodCall('addGlobal',
+        $twigGlobal->addMethodCall(
+            'addGlobal',
             [
                 'ranky_media_api_prefix',
-                $container->getParameter('ranky_media_api_prefix') ?? ''
+                $container->getParameter('ranky_media_api_prefix') ?? '',
             ]
         );
 

@@ -49,7 +49,8 @@ class DqlFunctionsManager
 
         /** @see \Doctrine\DBAL\Platforms\AbstractPlatform */
         return match (true) {
-            (\str_contains($classPlatform, self::MYSQL) ||
+            (
+                \str_contains($classPlatform, self::MYSQL) ||
                 \str_contains($classPlatform, self::MARIADB)
             ) => MysqlDqlFunctionsFactory::functions(),
             (\str_contains($classPlatform, self::SQLITE)) => SqliteDqlFunctionsFactory::functions(),
