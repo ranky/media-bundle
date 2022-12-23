@@ -2,10 +2,6 @@ name: CI
 
 on: [push, pull_request]
 
-env:
-  ACTIONS_RUNNER_DEBUG: true
-  ACTIONS_STEP_DEBUG: true
-
 jobs:
   build:
     runs-on: ubuntu-latest
