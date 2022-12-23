@@ -50,9 +50,8 @@ services:
         - PHP_VERSION=${PHP_VERSION}
         - DOCKER_ENV=${DOCKER_ENV}
         - APP_DIRECTORY=${APP_DIRECTORY}
-        - PUBLIC_APP_DIRECTORY=${PUBLIC_APP_DIRECTORY}
-        - HOST_UID=${HOST_UID:-1000}
-        - HOST_GID=${HOST_GID:-1000}
+        - HOST_UID=${HOST_UID}
+        - HOST_GID=${HOST_GID}
         - INSTALL_PHP_XDEBUG=${INSTALL_PHP_XDEBUG}
     restart: always
     <<: *logging
@@ -65,12 +64,11 @@ services:
       - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
       - XDEBUG_CONFIG=${XDEBUG_CONFIG}
       - XDEBUG_MODE=${XDEBUG_MODE}
+      - COMPOSER_ALLOW_SUPERUSER=${COMPOSER_ALLOW_SUPERUSER}
       #- COMPOSER_TOKEN=${GITHUB_TOKEN}
       #- TRUSTED_PROXIES=
     volumes:
-      - ${HOST_MOUNT_APP_DIRECTORY}:${MOUNT_APP_DIRECTORY}
-      - ../SharedBundle:/var/www/SharedBundle
-    working_dir: ${APP_DIRECTORY}
+      - ${PWD}:${MOUNT_APP_DIRECTORY}
     expose:
       - "9000" # php-fpm
       - "9003" # xdebug

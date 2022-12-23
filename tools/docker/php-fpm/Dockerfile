@@ -57,19 +57,19 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 ### User & Group ###
 ARG HOST_UID
 ARG HOST_GID
+ARG MY_USER=appuser
+ARG MY_GROUP=appgroup
 ARG HOME_DIR=/home/www-data
-#groupmod -o -g ${HOST_GID} www-data && \
-RUN usermod -u ${HOST_UID} www-data && \
-    groupmod -g ${HOST_GID} www-data && \
-    usermod -o -u ${HOST_UID} -g www-data www-data && \
-    chown -R www-data:www-data /var/www && \
-    # https://stackoverflow.com/a/59743322
-    mkdir -p ${HOME_DIR}/.composer/cache && \
-    chmod +x /usr/bin/composer && \
-    chown -R ${HOST_UID}:${HOST_GID} ${HOME_DIR} && \
-    #chmod -R ug+rwx ${HOME_DIR} && \
-    usermod --uid ${HOST_UID} --home ${HOME_DIR} --shell /bin/bash www-data
-    #groupmod --gid ${HOST_GID} www-data
+
+## Create user & group ###
+## -D - no password ###
+RUN addgroup -g ${HOST_GID} ${MY_GROUP} && \
+    adduser -G ${MY_GROUP} -u ${HOST_UID} ${MY_USER} -D && \
+    ## Add user current user to www-data group
+    usermod -a -G www-data `whoami` && \
+    ## Add user appuser to www-data group
+    usermod -a -G www-data ${MY_USER} && \
+    chmod +x /usr/bin/composer
 
 ### php-fpm config ###
 RUN rm /usr/local/etc/php-fpm.d/* && \
@@ -81,7 +81,6 @@ COPY ./tools/docker/php-fpm/www.conf /usr/local/etc/php-fpm.d/www.conf
 
 WORKDIR ${APP_DIRECTORY}
 
-
 ###  development ###
 FROM build as build_dev
 # $PHP_INI_DIR => /usr/local/etc/php
@@ -91,13 +90,15 @@ RUN echo "I am dev with bind mount (host volumes)" && \
     rm -f $PHP_INI_DIR/php.ini-production
 COPY ./tools/docker/php-fpm/app.ini $PHP_INI_DIR/conf.d/php.ini
 COPY ./composer.* ${APP_DIRECTORY}/
+COPY ./tools ${APP_DIRECTORY}/tools
 RUN if [ "$DOCKER_ENV" = "dev" ] && [ "$INSTALL_PHP_XDEBUG" = "true" ]; then \
     echo 'zend_extension=xdebug' >> $PHP_INI_DIR/conf.d/php.ini; \
 fi
-RUN XDEBUG_MODE=off composer install --no-progress --no-interaction --no-scripts
 
 
 FROM build_${DOCKER_ENV} as final
+ARG APP_DIRECTORY
 COPY --chmod=+x ./tools/docker/php-fpm/entrypoint.sh /entrypoint.sh
-USER www-data
+USER ${MY_USER}
 ENTRYPOINT ["/entrypoint.sh"]
+CMD ["php-fpm"]

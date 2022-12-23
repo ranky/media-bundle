@@ -1,0 +1,42 @@
+name: CI
+
+on: [push, pull_request]
+
+env:
+  ACTIONS_RUNNER_DEBUG: true
+  ACTIONS_STEP_DEBUG: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install make bash docker-compose
+      - name: Build and start containers
+        run: make docker-up
+      - name: Optimize composer
+        run: make composer-optimize
+      - name: Sleep for 60 seconds
+        run: sleep 60s
+        shell: bash
+      - name: Check containers
+        run: make docker -- ps -a
+      - name: Analyze code with PHPStan
+        run: make phpstan-ci
+      - name: Setup tmate session
+        if: ${{ failure() }}
+        uses: mxschmitt/action-tmate@v3
+      - name: Analyze code PHP CS Fixer
+        run: make php-cs-fixer-ci
+      - name: Run PHPUnit tests
+        run: make phpunit-ci
+      - name: Run Behat tests
+        run: make behat-ci
+      - name: Stop and remove containers
+        if: always()
+        run: make docker-down
+

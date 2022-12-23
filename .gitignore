@@ -1,4 +1,5 @@
 /assets/
+.idea/
 **/cache
 **/vendor
 **/node_modules

@@ -14,6 +14,9 @@ composer-update: ## Update vendors according to the current composer.lock file
 composer-dump-autoload: ## Update vendors according to the current composer.lock file
 	$(DOCKER_PHP_COMPOSER) dump-autoload
 
+composer-optimize: ## Optimize autoloader
+	$(DOCKER_PHP_COMPOSER) dump-autoload --optimize
+
 composer-check-updates: ## Checks if any packages will be update
 	$(DOCKER_PHP_COMPOSER) outdated
 
