@@ -4,7 +4,7 @@
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
-         cacheResultFile="var/.phpunit.result.cache"
+         cacheResultFile=".phpunit.result.cache"
          failOnRisky="true"
          failOnWarning="true"
          stopOnFailure="true"

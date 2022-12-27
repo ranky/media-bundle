@@ -1,31 +1,45 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        required: false
+        default: false
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
       - name: Install Docker Compose
         run: |
-          sudo apt-get update
-          sudo apt-get -y install make bash docker-compose
+          sudo apt-get -y install docker-compose
       - name: Build and start containers
         run: make docker-up
       - name: Optimize composer
         run: make composer-optimize
-      - name: Sleep for 60 seconds
-        run: sleep 60s
+      - name: Sleep for 40 seconds
+        run: sleep 40s
         shell: bash
       - name: Check containers
+        if: ${{ inputs.debug_enabled }}
         run: make docker -- ps -a
       - name: Analyze code with PHPStan
         run: make phpstan-ci
       - name: Setup tmate session
-        if: ${{ failure() }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
         uses: mxschmitt/action-tmate@v3
+#        with:
+          #limit-access-to-actor: true
       - name: Analyze code PHP CS Fixer
         run: make php-cs-fixer-ci
       - name: Run PHPUnit tests
@@ -35,4 +49,3 @@ jobs:
       - name: Stop and remove containers
         if: always()
         run: make docker-down
-

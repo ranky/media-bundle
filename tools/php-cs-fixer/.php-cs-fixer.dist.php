@@ -49,15 +49,11 @@ $rules = [
 
 $config         = new PhpCsFixer\Config();
 $rootDir        = \dirname(__DIR__, 2);
-$cacheDirectory = $rootDir.'/var/cache';
-if (!is_dir($cacheDirectory) && !mkdir($cacheDirectory, 0o777, true) && !is_dir($cacheDirectory)) {
-    throw new \RuntimeException(sprintf('Directory "%s" was not created', $cacheDirectory));
-}
 
 return $config
     ->setRules($rules)
     ->setUsingCache(true)
-    ->setCacheFile($cacheDirectory.'/php-cs-fixer.cache')
+    ->setCacheFile(__DIR__.'/php-cs-fixer.cache')
     ->setRiskyAllowed(true)
     ->setFinder(
         Finder::create()->in([

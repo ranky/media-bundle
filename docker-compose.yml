@@ -43,9 +43,8 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     build:
-      target: final
       context: ./
-      dockerfile: ./tools/docker/php-fpm/Dockerfile
+      dockerfile: ./tools/docker/php-fpm/build.Dockerfile
       args:
         - PHP_VERSION=${PHP_VERSION}
         - DOCKER_ENV=${DOCKER_ENV}
@@ -65,8 +64,6 @@ services:
       - XDEBUG_CONFIG=${XDEBUG_CONFIG}
       - XDEBUG_MODE=${XDEBUG_MODE}
       - COMPOSER_ALLOW_SUPERUSER=${COMPOSER_ALLOW_SUPERUSER}
-      #- COMPOSER_TOKEN=${GITHUB_TOKEN}
-      #- TRUSTED_PROXIES=
     volumes:
       - ${PWD}:${MOUNT_APP_DIRECTORY}
     expose:
@@ -75,5 +72,9 @@ services:
     depends_on:
       mariadb:
         condition: service_healthy
+    healthcheck:
+      test: /usr/local/sbin/php-fpm -v
+      timeout: 20s
+      retries: 10
     networks:
       db:

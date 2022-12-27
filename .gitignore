@@ -3,11 +3,14 @@
 **/cache
 **/vendor
 **/node_modules
-tools/**/var
-/tests/.env.test
+/tests/.env.*
+.env.*
 **/composer.lock
-tools/phpstan/phpstan.md
+tools/phpunit/.phpunit.result.cache
+tools/php-cs-fixer/php-cs-fixer.cache
 tools/php-cs-fixer/phpcs.md
+tools/phpstan/phpstan.md
 ranky.media-bundle.1.0.json
 !.gitkeep
 !.gitignore
+test.sh

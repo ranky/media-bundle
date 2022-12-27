@@ -1,8 +1,12 @@
 ARG PHP_VERSION=8.1
-ARG DOCKER_ENV
 FROM php:${PHP_VERSION}-fpm-alpine as build
-ARG APP_DIRECTORY
-
+ARG DOCKER_ENV=dev
+ARG APP_DIRECTORY=/var/www/ranky-media-bundle
+ARG HOST_UID=1000
+ARG HOST_GID=1000
+ARG MY_USER=appuser
+ARG MY_GROUP=appgroup
+ARG INSTALL_PHP_XDEBUG=false
 RUN apk add --no-cache --update-cache $PHPIZE_DEPS \
     curl \
     bash \
@@ -39,8 +43,6 @@ RUN apk add --no-cache --update-cache $PHPIZE_DEPS \
     pecl install apcu-5.1.21 && \
     docker-php-ext-enable apcu
 
-ARG DOCKER_ENV
-ARG INSTALL_PHP_XDEBUG
 RUN if [ "$DOCKER_ENV" = "dev" ] && [ "$INSTALL_PHP_XDEBUG" = "true" ]; then \
     pecl install xdebug-3.1.3 && \
     docker-php-ext-enable xdebug; \
@@ -54,22 +56,18 @@ RUN apk del $PHPIZE_DEPS && \
 ### composer ###
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-### User & Group ###
-ARG HOST_UID
-ARG HOST_GID
-ARG MY_USER=appuser
-ARG MY_GROUP=appgroup
-ARG HOME_DIR=/home/www-data
-
 ## Create user & group ###
 ## -D - no password ###
+ARG HOME_DIR=/home/${MY_USER}
 RUN addgroup -g ${HOST_GID} ${MY_GROUP} && \
-    adduser -G ${MY_GROUP} -u ${HOST_UID} ${MY_USER} -D && \
+    adduser -G ${MY_GROUP} -u ${HOST_UID} ${MY_USER} -D --shell /bin/bash && \
     ## Add user current user to www-data group
     usermod -a -G www-data `whoami` && \
     ## Add user appuser to www-data group
     usermod -a -G www-data ${MY_USER} && \
-    chmod +x /usr/bin/composer
+    chmod +x /usr/bin/composer && \
+    mkdir -p ${APP_DIRECTORY} && \
+    chown -R ${HOST_UID}:${HOST_GID} ${APP_DIRECTORY}
 
 ### php-fpm config ###
 RUN rm /usr/local/etc/php-fpm.d/* && \
@@ -82,22 +80,24 @@ COPY ./tools/docker/php-fpm/www.conf /usr/local/etc/php-fpm.d/www.conf
 WORKDIR ${APP_DIRECTORY}
 
 ###  development ###
-FROM build as build_dev
-# $PHP_INI_DIR => /usr/local/etc/php
-ARG APP_DIRECTORY
-RUN echo "I am dev with bind mount (host volumes)" && \
-    mv $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini  && \
-    rm -f $PHP_INI_DIR/php.ini-production
-COPY ./tools/docker/php-fpm/app.ini $PHP_INI_DIR/conf.d/php.ini
+FROM build as final
+ARG DOCKER_ENV=dev
+ARG APP_DIRECTORY=/var/www/ranky-media-bundle
+ARG HOST_UID=1000
+ARG HOST_GID=1000
+ARG MY_USER=appuser
+ARG MY_GROUP=appgroup
+ARG INSTALL_PHP_XDEBUG=false
 COPY ./composer.* ${APP_DIRECTORY}/
 COPY ./tools ${APP_DIRECTORY}/tools
+# $PHP_INI_DIR => /usr/local/etc/php
+RUN mv $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini && \
+    rm -f $PHP_INI_DIR/php.ini-production && \
+    chown -R ${HOST_UID}:${HOST_GID} /var/www
+COPY ./tools/docker/php-fpm/app.ini $PHP_INI_DIR/conf.d/php.ini
 RUN if [ "$DOCKER_ENV" = "dev" ] && [ "$INSTALL_PHP_XDEBUG" = "true" ]; then \
     echo 'zend_extension=xdebug' >> $PHP_INI_DIR/conf.d/php.ini; \
 fi
-
-
-FROM build_${DOCKER_ENV} as final
-ARG APP_DIRECTORY
 COPY --chmod=+x ./tools/docker/php-fpm/entrypoint.sh /entrypoint.sh
 USER ${MY_USER}
 ENTRYPOINT ["/entrypoint.sh"]
