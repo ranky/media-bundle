@@ -16,7 +16,7 @@ services:
     container_name: ${PROJECT_NAME}-mariadb
     build:
       context: ./
-      dockerfile: tools/docker/mariadb/Dockerfile
+      dockerfile: tools/docker/mariadb/build.Dockerfile
       args:
         - MARIA_VERSION=${MARIA_VERSION}
         - DOCKER_ENV=${DOCKER_ENV}

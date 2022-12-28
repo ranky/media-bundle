@@ -1,7 +1,7 @@
-ARG MARIA_VERSION=8.0.23
+ARG MARIA_VERSION=10.6.5
 FROM mariadb:${MARIA_VERSION}
 
-ARG TZ
+ARG TZ=Europe/Madrid
 RUN echo ${TZ} > /etc/timezone \
     && dpkg-reconfigure --frontend noninteractive tzdata \
     && chown -R mysql:mysql /var/lib/mysql

@@ -39,17 +39,15 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.repository_owner }}
+          username: ${{ github.actor }} # github.actor is the username of the user who triggered the workflow. Alternative: github.repository_owner
           password: ${{ secrets.GITHUB_TOKEN }}
-       # https://github.com/docker/metadata-action
-      - name: Extract Docker metadata
-        id: meta
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata for PHP
+        id: meta-php
         uses: docker/metadata-action@v4
         with:
-          images: |
-            ${{ env.IMAGE_NAME }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-      - name: Build and push image for PHP service
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-php
+      - name: Build and push image for PHP
         uses: docker/build-push-action@v3
         with:
           push: ${{ github.event_name != 'pull_request' }}
@@ -58,7 +56,22 @@ jobs:
           build-args: |
             HOST_UID=1001
             HOST_GID=1001
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-php:latest
+          labels: ${{ steps.meta-php.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Extract Docker metadata for MariaDB
+        id: meta-mariadb
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-mariadb
+      - name: Build and push image for MariaDB
+        uses: docker/build-push-action@v3
+        with:
+          push: ${{ github.event_name != 'pull_request' }}
+          context: .
+          file: tools/docker/mariadb/build.Dockerfile
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-mariadb:latest
+          labels: ${{ steps.meta-mariadb.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

@@ -1,7 +1,11 @@
 name: CI
 
 on:
-  workflow_call:
+  push:
+    branches: [ main ]
+    pull_request:
+      branches: [ main ]
+      types: [ opened, synchronize ]
   workflow_dispatch:
     inputs:
       debug_enabled:
@@ -38,8 +42,8 @@ jobs:
       - name: Setup tmate session
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
         uses: mxschmitt/action-tmate@v3
-#        with:
-          #limit-access-to-actor: true
+          #        with:
+        #limit-access-to-actor: true
       - name: Analyze code PHP CS Fixer
         run: make php-cs-fixer-ci
       - name: Run PHPUnit tests

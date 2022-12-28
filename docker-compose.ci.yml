@@ -4,3 +4,6 @@ services:
   php:
     build:
       dockerfile: ./tools/docker/php-fpm/ci.Dockerfile
+  mariadb:
+    build:
+      dockerfile: tools/docker/mariadb/ci.Dockerfile
