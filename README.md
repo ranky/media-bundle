@@ -1,10 +1,12 @@
 # MediaBundle (Media File Manager for Symfony)
 
+[![CI](https://github.com/ranky/media-bundle/actions/workflows/ci.yaml/badge.svg)](https://github.com/ranky/media-bundle/actions/workflows/ci.yaml)
+
 MediaBundle is a media file manager bundle for Symfony with a REST API and an admin interface (React). It provides a clean and user-friendly way to upload, edit and delete files. It supports multiple formats. You can upload images, videos, audios, documents, zip files, etc.
 
-With MediaBundle, you can easily compress your media files to reduce their size without sacrificing quality. Additionally, MediaBundle offers the ability to resize your media files to fit specific dimensions (breakpoints), making it easy to ensure that your images are the correct size for your website.
+MediaBundle automatically compress your media files to reduce their size without sacrificing quality. Additionally, it offers the ability to resize your media files to fit specific dimensions (breakpoints), making it easy to ensure that your images are the correct size for your website.
 
-MediaBundle also integrates with your database to store and manage your media files. This means that you can easily keep track of all your media assets in one place, similar to how WordPress manages media files.
+MediaBundle also integrates with your database to store and manage your media files efficiently. This means you can keep track of all your media assets in one place, similar to how WordPress manages media files. This way, you can have all your media files organized and accessible in one place.
 
 Table of Contents 
 ==================
@@ -25,6 +27,7 @@ Table of Contents
   * [Retrieve media files in Twig](#retrieve-media-files-in-twig)
   * [Responsive images with Twig macro](#responsive-images-with-twig-macro)
   * [Standalone button to open the Media File Manager in selection mode](#standalone-button-to-open-the-media-file-manager-in-selection-mode)
+  * [TinyMCE integration](#tinymce-integration)
   * [EasyAdmin integration](#easyadmin-integration)
   * [Events](#events)
 * [Caveats](#caveats)
@@ -119,12 +122,12 @@ identify -version
 identify -version | grep webp
 ```
 
-Docker: [Dockerfile](tools/docker/php-fpm/Dockerfile)
+Docker: [Dockerfile](tools/docker/php-fpm/build.Dockerfile)
 
 #### Install Imagick extension
 
 ##### Case Docker
-[Dockerfile](tools/docker/php-fpm/Dockerfile)
+[Dockerfile](tools/docker/php-fpm/build.Dockerfile)
 
 ##### Case Pecl
 ```sh
@@ -152,7 +155,7 @@ sudo apt-get install pngquant
 sudo apt-get install gifsicle
 sudo apt-get install webp
 ```
-[Dockerfile](tools/docker/php-fpm/Dockerfile)
+[Dockerfile](tools/docker/php-fpm/build.Dockerfile)
 
 ## Installation
 
@@ -636,6 +639,45 @@ The `ranky-media-open-modal` class is required, In order not to conflict with th
 });
 ```
 
+### TinyMCE integration
+![TinyMCE Ranky Media Bundle](https://user-images.githubusercontent.com/2461400/209868439-f92bcbec-3a04-443c-a909-4d216a844961.jpg)
+
+The `ranky-media-open-modal` class is required.
+
+
+```twig
+<div class="form-group">
+    <button type="button"
+            data-multiple-selection="true"
+            data-api-prefix="{{ ranky_media_api_prefix }}"
+            class="btn btn-alt-primary ranky-media-open-modal">
+        <i class="fas fa-photo-video"></i> Media File Manager
+    </button>
+    {# Textarea with TinyMCE #}
+    {{ form_row(form.content) }}
+</div>
+```
+```js
+document.addEventListener('DOMContentLoaded', () => {
+  [...document.querySelectorAll('.ranky-media-open-modal')].forEach((element) => {
+    element.addEventListener('ranky-media:selected-media',(event) => {
+      event.detail.medias?.forEach((media) => {
+        if (media.file.mimeType === 'image') {
+          const imageTag = `<img
+                            width="500"
+                            src="${media.file.url}"
+                            alt="${media.description.alt}"
+                            title="${media.description.title}"
+                        />`;
+          tinymce.activeEditor.insertContent(imageTag);
+        }
+      })
+    })
+  });
+});
+```
+  
+
 ### EasyAdmin integration
 
 A [field](src/Presentation/Form/EasyAdmin/EARankyMediaFileManagerField.php) for EasyAdmin has been created that integrates the same functionalities previously explained in [Form Types](#form-types)
@@ -708,25 +750,25 @@ mkcert "*.example.test"
 More info https://github.com/FiloSottile/mkcert
 
 ### Docker
-You can see how to install PHP extensions and compression tools through Docker in the [Dockerfile](tools/docker/php-fpm/Dockerfile) I used it for testing.
+You can see how to install PHP extensions and compression tools through Docker in the [Dockerfile](tools/docker/php-fpm/build.Dockerfile) I used it for testing.
 
 
 ## To Do
-* GitHub Actions
-* Recipes
-* Fix some styles being overridden
-* `ORDER BY FIELD` in `WHERE IN` clause
-* PostgreSQL support
-* Image Editor
-* Create NPM package, so you can use/import and not have multiple versions of React 
-* Add sorting filters
-* PDF compression with Ghostscript
-* Video compression and resizing with FFmpeg
-* Audio compression
-* Create, view and edit EXIF data
-* Creation and organization of directories
-* Adapters for [file storage](https://github.com/thephpleague/flysystem-bundle): S3, Azure, Google Cloud, etc.
-* Add more tests
+- [x] GitHub Actions
+- [ ] Recipes
+- [ ] Fix some styles being overridden
+- [ ] `ORDER BY FIELD` in `WHERE IN` clause
+- [ ] PostgreSQL support
+- [ ] Image Editor
+- [ ] Create NPM package, so you can use/import and not have multiple versions of React 
+- [ ] Add more sorting filters
+- [ ] PDF compression with Ghostscript
+- [ ] Video compression and resizing with FFmpeg
+- [ ] Audio compression
+- [ ] Create, view and edit EXIF data
+- [ ] Creation and organization of directories
+- [ ] Adapters for [file storage](https://github.com/thephpleague/flysystem-bundle): S3, Azure, Google Cloud, etc.
+- [ ] Add more tests
 
 ## License
 
