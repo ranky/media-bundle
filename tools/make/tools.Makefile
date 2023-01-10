@@ -19,3 +19,9 @@ tools-remove-packages: ## Remove all tools vendor/dependencies
 
 generate-ref-flex: ## Generate reference for flex
 	$(DOCKER_EXEC_PHP) php -r 'echo bin2hex(random_bytes(20));'
+
+fix-permissions: ## Fix local permissions
+	$(DOCKER_EXEC_ROOT_PHP) chown -R $(HOST_UID):$(HOST_GID) $(APP_DIRECTORY)
+	$(DOCKER_EXEC_ROOT_PHP) chmod -R 777 $(APP_DIRECTORY)/tools
+	$(DOCKER_EXEC_ROOT_PHP) chmod -R 777 $(APP_DIRECTORY)/tests/public/uploads/
+	$(DOCKER_EXEC_ROOT_PHP) chmod -R g+s $(APP_DIRECTORY)/tests/public/uploads/
