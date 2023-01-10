@@ -13,10 +13,13 @@ class DqlFunctionsManager
     public const MYSQL   = 'mysql';
     public const MARIADB = 'mariadb';
     public const SQLITE  = 'sqlite';
+
+    public const POSTGRESQL  = 'postgresql';
     public const DRIVERS = [
         self::MARIADB,
         self::MYSQL,
         self::SQLITE,
+        self::POSTGRESQL,
     ];
 
     /**
@@ -29,6 +32,7 @@ class DqlFunctionsManager
             self::MARIADB,
             self::MYSQL => MysqlDqlFunctionsFactory::functions(),
             self::SQLITE => SqliteDqlFunctionsFactory::functions(),
+            self::POSTGRESQL => PostgresqlDqlFunctionsFactory::functions(),
             default => throw new \InvalidArgumentException(
                 \sprintf(
                     'Invalid database driver %s. Available drivers: %s',
@@ -54,6 +58,7 @@ class DqlFunctionsManager
                 \str_contains($classPlatform, self::MARIADB)
             ) => MysqlDqlFunctionsFactory::functions(),
             (\str_contains($classPlatform, self::SQLITE)) => SqliteDqlFunctionsFactory::functions(),
+            (\str_contains($classPlatform, self::POSTGRESQL)) => PostgresqlDqlFunctionsFactory::functions(),
             default => throw new \InvalidArgumentException(
                 \sprintf(
                     'Invalid database driver %s. Available drivers: %s',
