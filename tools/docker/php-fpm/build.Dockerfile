@@ -4,8 +4,8 @@ ARG DOCKER_ENV=dev
 ARG APP_DIRECTORY=/var/www/ranky-media-bundle
 ARG HOST_UID=1000
 ARG HOST_GID=1000
-ARG MY_USER=appuser
-ARG MY_GROUP=appgroup
+ARG APP_USER=appuser
+ARG APP_GROUP=appgroup
 ARG INSTALL_PHP_XDEBUG=false
 RUN apk add --no-cache --update-cache $PHPIZE_DEPS \
     curl \
@@ -58,13 +58,13 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 ## Create user & group ###
 ## -D - no password ###
-ARG HOME_DIR=/home/${MY_USER}
-RUN addgroup -g ${HOST_GID} ${MY_GROUP} && \
-    adduser -G ${MY_GROUP} -u ${HOST_UID} ${MY_USER} -D --shell /bin/bash && \
+ARG HOME_DIR=/home/${APP_USER}
+RUN addgroup -g ${HOST_GID} ${APP_GROUP} && \
+    adduser -G ${APP_GROUP} -u ${HOST_UID} ${APP_USER} -D --shell /bin/bash --home ${HOME_DIR} && \
     ## Add user current user to www-data group
     usermod -a -G www-data `whoami` && \
     ## Add user appuser to www-data group
-    usermod -a -G www-data ${MY_USER} && \
+    usermod -a -G www-data ${APP_USER} && \
     chmod +x /usr/bin/composer && \
     mkdir -p ${APP_DIRECTORY} && \
     chown -R ${HOST_UID}:${HOST_GID} ${APP_DIRECTORY}
@@ -85,8 +85,8 @@ ARG DOCKER_ENV=dev
 ARG APP_DIRECTORY=/var/www/ranky-media-bundle
 ARG HOST_UID=1000
 ARG HOST_GID=1000
-ARG MY_USER=appuser
-ARG MY_GROUP=appgroup
+ARG APP_USER=appuser
+ARG APP_GROUP=appgroup
 ARG INSTALL_PHP_XDEBUG=false
 COPY ./composer.* ${APP_DIRECTORY}/
 COPY ./tools ${APP_DIRECTORY}/tools
@@ -99,6 +99,6 @@ RUN if [ "$DOCKER_ENV" = "dev" ] && [ "$INSTALL_PHP_XDEBUG" = "true" ]; then \
     echo 'zend_extension=xdebug' >> $PHP_INI_DIR/conf.d/php.ini; \
 fi
 COPY --chmod=+x ./tools/docker/php-fpm/entrypoint.sh /entrypoint.sh
-USER ${MY_USER}
+USER ${APP_USER}
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["php-fpm"]
