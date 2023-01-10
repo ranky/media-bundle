@@ -49,6 +49,7 @@ $application->run(
     new ArrayInput([
         'command' => 'doctrine:schema:update',
         '--force' => true,
+        '--complete' => true,
     ])
 );
 
