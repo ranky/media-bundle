@@ -15,7 +15,7 @@ docker-clear-tmp: # clean tmp cache bundle
 	$(DOCKER_EXEC_PHP) rm -rf /tmp/*
 
 docker-up: ## Start the docker
-	$(DOCKER_COMPOSE) up -d
+	$(DOCKER_COMPOSE) up -d --wait
 
 docker-logs: ## Show Docker logs
 	$(DOCKER_COMPOSE) logs -f

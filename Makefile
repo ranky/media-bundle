@@ -31,14 +31,16 @@ endif
 ## Configuration ##
 HOST_UID ?= $(shell id -u)
 HOST_GID ?= $(shell id -g)
+HOST_IP= $(shell hostname -I | awk '{print $1}')
+
 # In DOCKER_COMPOSE variable `--env-file .env` is necessary if I'm not going to use Makefile
 ifeq ($(CI_ENABLED),true)
 	# CI, Github Actions, runs-on: ubuntu-latest
     HOST_UID = 1001
     HOST_GID = 1001
-    DOCKER_COMPOSE = DOCKER_ENV=$(DOCKER_ENV) HOST_UID=$(HOST_UID) HOST_GID=$(HOST_GID) BUILDKIT_PROGRESS=plain DOCKER_BUILDKIT=1 docker-compose -f docker-compose.yml -f docker-compose.ci.yml
+    DOCKER_COMPOSE = DOCKER_ENV=$(DOCKER_ENV) HOST_UID=$(HOST_UID) HOST_GID=$(HOST_GID) BUILDKIT_PROGRESS=plain DOCKER_BUILDKIT=1 docker compose -f docker-compose.yml -f docker-compose.ci.yml
 else
-	DOCKER_COMPOSE = DOCKER_ENV=$(DOCKER_ENV) HOST_UID=$(HOST_UID) HOST_GID=$(HOST_GID) BUILDKIT_PROGRESS=plain DOCKER_BUILDKIT=1 docker-compose -f docker-compose.yml
+	DOCKER_COMPOSE = DOCKER_ENV=$(DOCKER_ENV) HOST_UID=$(HOST_UID) HOST_GID=$(HOST_GID) BUILDKIT_PROGRESS=plain DOCKER_BUILDKIT=1 docker compose -f docker-compose.yml
 endif
 
 SHELL = /bin/bash
@@ -61,7 +63,7 @@ endif
 
 ## Help command
 DOCKER_VERSION=$(shell docker --version)
-DOCKER_COMPOSE_VERSION=$(shell docker-compose --version)
+DOCKER_COMPOSE_VERSION=$(shell docker compose version)
 help: ## Show this help
 	@echo "Environment $(DOCKER_ENV)"
 	@echo "$(DOCKER_VERSION)"
@@ -80,23 +82,13 @@ test-variables:  ## Show all variables
 	@echo "SYMFONY APP_ENV: $$APP_ENV"
 	@echo "SYMFONY APP_DEBUG: $$APP_DEBUG"
 	@echo "PHP_VERSION: $$PHP_VERSION"
+	@echo "HOST IP: $(HOST_IP)"
 	@echo $(MAKECMDGOALS)
 	make docker -- config
 
 
-
 ##@ General
 ci: lint test composer-validate ## All in one
-
-##@ Fix permissions
-fix-permissions: ## Fix local permissions
-	$(DOCKER_EXEC_ROOT_PHP) chown -R $(HOST_UID):$(HOST_GID) $(APP_DIRECTORY)
-	$(DOCKER_EXEC_ROOT_PHP) chmod -R 777 $(APP_DIRECTORY)/tools
-	$(DOCKER_EXEC_ROOT_PHP) chmod -R 777 $(APP_DIRECTORY)/tests/public/uploads/
-	$(DOCKER_EXEC_ROOT_PHP) chmod -R g+s $(APP_DIRECTORY)/tests/public/uploads/
-
-
-
 
 # remember add *.Makefile in Configuration -> Editor -> Files Types in PHPSTORM (GNU Makefile)
 -include tools/make/docker.Makefile

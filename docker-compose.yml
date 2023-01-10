@@ -14,6 +14,7 @@ x-logging: &logging
 services:
   mariadb:
     container_name: ${PROJECT_NAME}-mariadb
+    hostname: mariadb
     build:
       context: ./
       dockerfile: tools/docker/mariadb/build.Dockerfile
@@ -35,12 +36,14 @@ services:
     networks:
       - db
     healthcheck:
-      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
-      timeout: 20s
-      retries: 10
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 20s
+      timeout: 10s
+      retries: 7
   php:
     container_name: ${PROJECT_NAME}-php
-    extra_hosts:
+    hostname: php
+    extra_hosts: # https://stackoverflow.com/a/43541681/2046442
       - "host.docker.internal:host-gateway"
     build:
       context: ./
@@ -58,6 +61,7 @@ services:
       - TZ=${TZ}
       - APP_DIRECTORY=${APP_DIRECTORY}
       - DOCKER_ENV=${DOCKER_ENV}
+      - CI=${CI:-false}
       - MARIA_VERSION=${MARIA_VERSION}
       - VIRTUAL_HOST=${VIRTUAL_HOST}
       - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
@@ -73,8 +77,9 @@ services:
       mariadb:
         condition: service_healthy
     healthcheck:
-      test: /usr/local/sbin/php-fpm -v
-      timeout: 20s
-      retries: 10
+      test: ["CMD", "php-fpm", "-t"]
+      interval: 20s
+      timeout: 10s
+      retries: 7
     networks:
       db:

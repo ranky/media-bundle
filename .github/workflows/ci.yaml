@@ -14,6 +14,10 @@ on:
         required: false
         default: false
 
+defaults:
+  run:
+    shell: bash
+
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -24,16 +28,14 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Fetch all history for all branches and tags
       - name: Install Docker Compose
         run: |
-          sudo apt-get -y install docker-compose
-      - name: Build and start containers
+          sudo apt-get update
+          sudo apt-get -y install docker-compose-plugin
+      - name: Build and start containers with --wait flag
         run: make docker-up
-      - name: Optimize composer
-        run: make composer-optimize
-      - name: Sleep for 40 seconds
-        run: sleep 40s
-        shell: bash
       - name: Check containers
         if: ${{ inputs.debug_enabled }}
         run: make docker -- ps -a
