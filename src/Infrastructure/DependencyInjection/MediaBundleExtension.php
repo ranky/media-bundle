@@ -79,7 +79,7 @@ class MediaBundleExtension extends Extension implements PrependExtensionInterfac
         // check valid configuration
         $this->checkConfiguration($config);
 
-        /** Other way the define services */
+        /** Another way to define services */
         // Doctrine Media repository
         $doctrineOrmMediaRepositoryDefinition = new Definition(DoctrineOrmMediaRepository::class);
         $doctrineOrmMediaRepositoryDefinition->setAutowired(true);
@@ -169,7 +169,7 @@ class MediaBundleExtension extends Extension implements PrependExtensionInterfac
         if ($config['image']['resize_driver'] === ImageResizeDriver::GD->value
             && !\extension_loaded('exif')) {
             throw new \RuntimeException(
-                'GD require exif extension for Intervention Image package, check it is installed correctly or use Imagick.'
+                'GD requires EXIF extension for Intervention Image package. Check it is installed correctly or use Imagick driver.'
             );
         }
 
