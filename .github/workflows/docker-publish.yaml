@@ -46,6 +46,8 @@ jobs:
         id: meta-php
         uses: docker/metadata-action@v4
         with:
+          labels: |
+            org.opencontainers.image.description=Docker image for PHP
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-php
       - name: Build and push image for PHP
         uses: docker/build-push-action@v3
@@ -64,6 +66,8 @@ jobs:
         id: meta-mariadb
         uses: docker/metadata-action@v4
         with:
+          labels: |
+            org.opencontainers.image.description=Docker image for MariaDB
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-mariadb
       - name: Build and push image for MariaDB
         uses: docker/build-push-action@v3
