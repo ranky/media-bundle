@@ -86,7 +86,7 @@ https://user-images.githubusercontent.com/2461400/208732093-44cf5a21-62f9-4402-b
 
 * PHP 8.1 or higher
 * Symfony 5.4 or higher
-* Doctrine ORM (MySQL, MariaDB, SQLite)
+* Doctrine ORM (MySQL, MariaDB, SQLite, PostgreSQL)
 * Imagick or GD extension: **Recommended Imagick** extension because it supports more formats than the GD extension
 * Optional compression tools:
   * Jpegoptim
@@ -176,29 +176,7 @@ return [
 ];
 ```
 
-#### Step 2: Create the following file and configure it for your application.
-
-The minimum required configuration is provided, in the [configuration](#configuration) you will see all the options. 
-
-YAML
-```yaml 
-# config/packages/ranky_media.yaml
-ranky_media:
-  user_entity: App\Entity\User
-  api_prefix: /admin
-```
-PHP
-```php
-# config/packages/ranky_media.php
-  return static function (RankyMediaConfig $rankyMediaConfig) {
-    $rankyMediaConfig
-        ->userEntity(User::class)
-        ->apiPrefix('/admin') // Optional: The same prefix you use when importing the routes must be the same here
-        ;
-};
-```
-
-#### Step 3: Import the routes
+#### Step 2: Import the routes
 
 YAML
 
@@ -219,6 +197,28 @@ return static function (RoutingConfigurator $routes) {
     $routes
         ->import('@RankyMediaBundle/config/routes.php', 'annotation')
         ->prefix('/admin')
+        ;
+};
+```
+
+#### Step 3: Create the following file and configure it for your application.
+
+The minimum required configuration is provided, in the [configuration](#configuration) you will see all the options.
+
+YAML
+```yaml 
+# config/packages/ranky_media.yaml
+ranky_media:
+  user_entity: App\Entity\User
+  api_prefix: /admin
+```
+PHP
+```php
+# config/packages/ranky_media.php
+  return static function (RankyMediaConfig $rankyMediaConfig) {
+    $rankyMediaConfig
+        ->userEntity(User::class)
+        ->apiPrefix('/admin') // Optional: The same prefix you use when importing the routes must be the same here
         ;
 };
 ```
@@ -733,7 +733,7 @@ class MyEventSubscriber implements EventSubscriberInterface
 * Currently, [Uppy](https://github.com/transloadit/uppy) is used to support file uploads through the Media File Manager, and it requires [SSL certificate](#install-local-certificates) or be available via localhost.
   See more https://github.com/transloadit/uppy/issues/4133
 * If you are using React, you will have a problem because this bundle adds React, and you can have two versions of React on one page. This will be fixed as soon as I registered a package in NPM.
-* MariaDB, MySQL and SQLite are supported. PostgreSQL is not supported yet. Only a few DQL functions need to be adapted.
+* PostgreSQL, MariaDB, MySQL and SQLite are supported by Doctrine ORM. Doctrine MongoDB ODM not supported yet.
 
 ## Extra
 
@@ -755,12 +755,12 @@ You can see how to install PHP extensions and compression tools through Docker i
 
 ## To Do
 - [x] GitHub Actions
-- [ ] Recipes
-- [ ] Fix some styles being overridden
-- [ ] `ORDER BY FIELD` in `WHERE IN` clause
-- [ ] PostgreSQL support
+- [x] Postgresql support
+- [ ] ~~Recipes~~
+- [x] Fix some styles being overridden
 - [ ] Image Editor
 - [ ] Create NPM package, so you can use/import and not have multiple versions of React 
+- [ ] `ORDER BY FIELD` in `WHERE IN` clause
 - [ ] Add more sorting filters
 - [ ] PDF compression with Ghostscript
 - [ ] Video compression and resizing with FFmpeg
