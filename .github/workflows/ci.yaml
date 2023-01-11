@@ -3,9 +3,7 @@ name: CI
 on:
   push:
     branches: [ main ]
-    pull_request:
-      branches: [ main ]
-      types: [ opened, synchronize ]
+    pull_request: ~
   workflow_dispatch:
     inputs:
       debug_enabled:
