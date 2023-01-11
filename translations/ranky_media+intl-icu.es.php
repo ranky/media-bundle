@@ -39,7 +39,7 @@ return [
     'form_title'                   => 'Titulo',
     'form_save'                    => 'Guardar',
     'delete'                       => 'Eliminar',
-    'modal_title'                  => 'Detalles del archivo {file_name} (<small>id: {id}</small>)',
+    'modal_title'                  => 'Detalles del archivo {file_name} <small>id: {id}</small>',
     'open_new_window'              => 'Abrir en una nueva ventana',
     'modal_close'                  => 'Cerrar',
     'modal_next'                   => 'Siguiente',
