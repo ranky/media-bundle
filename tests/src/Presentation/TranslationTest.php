@@ -23,7 +23,7 @@ class TranslationTest extends BaseIntegrationTestCase
             [
                 'en',
                 'modal_title',
-                'File details image.jpg (<small>id: 1</small>)',
+                'File details image.jpg <small>id: 1</small>',
                 [
                     '{file_name}' => 'image.jpg',
                     '{id}' => 1,
@@ -33,7 +33,7 @@ class TranslationTest extends BaseIntegrationTestCase
             [
                 'es',
                 'modal_title',
-                'Detalles del archivo image.jpg (<small>id: 1</small>)',
+                'Detalles del archivo image.jpg <small>id: 1</small>',
                 [
                     '{file_name}' => 'image.jpg',
                     '{id}' => 1,
