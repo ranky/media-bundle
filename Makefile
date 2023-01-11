@@ -31,16 +31,23 @@ endif
 ## Configuration ##
 HOST_UID ?= $(shell id -u)
 HOST_GID ?= $(shell id -g)
-HOST_IP= $(shell hostname -I | awk '{print $1}')
+HOST_IP = $(shell hostname -I | awk '{print $1}')
 
-# In DOCKER_COMPOSE variable `--env-file .env` is necessary if I'm not going to use Makefile
 ifeq ($(CI_ENABLED),true)
 	# CI, Github Actions, runs-on: ubuntu-latest
     HOST_UID = 1001
     HOST_GID = 1001
-    DOCKER_COMPOSE = DOCKER_ENV=$(DOCKER_ENV) HOST_UID=$(HOST_UID) HOST_GID=$(HOST_GID) BUILDKIT_PROGRESS=plain DOCKER_BUILDKIT=1 docker compose -f docker-compose.yml -f docker-compose.ci.yml
+    DOCKER_COMPOSE := DOCKER_ENV=$(DOCKER_ENV) HOST_UID=$(HOST_UID) HOST_GID=$(HOST_GID) BUILDKIT_PROGRESS=plain DOCKER_BUILDKIT=1 docker compose -f docker-compose.yml -f docker-compose.ci.yml --env-file .env
 else
-	DOCKER_COMPOSE = DOCKER_ENV=$(DOCKER_ENV) HOST_UID=$(HOST_UID) HOST_GID=$(HOST_GID) BUILDKIT_PROGRESS=plain DOCKER_BUILDKIT=1 docker compose -f docker-compose.yml
+	DOCKER_COMPOSE := DOCKER_ENV=$(DOCKER_ENV) HOST_UID=$(HOST_UID) HOST_GID=$(HOST_GID) BUILDKIT_PROGRESS=plain DOCKER_BUILDKIT=1 docker compose -f docker-compose.yml --env-file .env
+endif
+# if exists .env.test, include in DOCKER_COMPOSE variable
+ifneq (,$(wildcard .env.test))
+	DOCKER_COMPOSE += --env-file .env.test
+endif
+# if exists .env.$(DOCKER_ENV), include it and override .env
+ifneq (,$(wildcard .env.$(DOCKER_ENV)))
+	DOCKER_COMPOSE += --env-file .env.$(DOCKER_ENV)
 endif
 
 SHELL = /bin/bash
