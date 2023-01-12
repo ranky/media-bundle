@@ -10,12 +10,11 @@ namespace Ranky\MediaBundle\Infrastructure\Persistence\Dql;
  */
 class DqlFunctionsManager
 {
-    public const MYSQL   = 'mysql';
-    public const MARIADB = 'mariadb';
-    public const SQLITE  = 'sqlite';
-
-    public const POSTGRESQL  = 'postgresql';
-    public const DRIVERS = [
+    public const MYSQL      = 'mysql';
+    public const MARIADB    = 'mariadb';
+    public const SQLITE     = 'sqlite';
+    public const POSTGRESQL = 'postgresql';
+    public const DRIVERS    = [
         self::MARIADB,
         self::MYSQL,
         self::SQLITE,
