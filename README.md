@@ -51,7 +51,7 @@ https://user-images.githubusercontent.com/2461400/208732093-44cf5a21-62f9-4402-b
 * The Media File Manager is designed with SEO in mind, which means it can help improve your website's search engine rankings.
 * You can choose not to secure the routes, which means you have more flexibility in how you use the Media File Manager.
 * The Media File Manager is designed to be scalable and customizable, thanks to its use of interfaces and Dependency Inversion Principle (DIP). This allows for the creation of reusable and adaptable components that can be modified without changing the existing code.
-* By adhering to a Hexagonal Architecture and Domain-Driven Design (DDD), the Media File Manager is able to maintain a clear separation of concerns and prioritize the business logic.
+* By adhering to a Hexagonal/Layered Architecture and Domain-Driven Design (DDD), the Media File Manager is able to maintain a clear separation of concerns and prioritize the business logic.
 
 ## Features
 
@@ -609,7 +609,7 @@ Methods:
 ### Responsive images with Twig macro
 
 ```twig
-{% import '@RankyMedia/macros.html.twig' as ranky_media %}
+{% import '@RankyMedia/macros.html.twig' as rankyMedia %}
 {% set media = ranky_media.findById(page.mediaId) %}
 {{ rankyMedia.reponsive_image(media) }}
 ```
@@ -758,6 +758,7 @@ You can see how to install PHP extensions and compression tools through Docker i
 - [x] Postgresql support
 - [ ] ~~Recipes~~
 - [x] Fix some styles being overridden
+- [ ] Adapters for [file storage](https://github.com/thephpleague/flysystem-bundle): S3, Azure, Google Cloud, etc.
 - [ ] Image Editor
 - [ ] Create NPM package, so you can use/import and not have multiple versions of React 
 - [ ] `ORDER BY FIELD` in `WHERE IN` clause
@@ -767,7 +768,6 @@ You can see how to install PHP extensions and compression tools through Docker i
 - [ ] Audio compression
 - [ ] Create, view and edit EXIF data
 - [ ] Creation and organization of directories
-- [ ] Adapters for [file storage](https://github.com/thephpleague/flysystem-bundle): S3, Azure, Google Cloud, etc.
 - [ ] Add more tests
 
 ## License
