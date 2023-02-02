@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Tests\Presentation\Behat;
 
-trait ApiMediaContextTrait
+trait ApiContextTrait
 {
     public static function getTmpPathForUpload(string $dummyFileName): string
     {

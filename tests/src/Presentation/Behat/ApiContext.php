@@ -19,11 +19,12 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 
-class ApiMediaContext extends AbstractApiContext
+class ApiContext extends AbstractApiContext
 {
-    use ApiMediaContextTrait;
+    use ApiContextTrait;
 
     private static string $mediaId = '01GGM122J0DA8NKJ49FW56RH7E';
+
 
     /** @AfterFeature */
     public static function cleanFeature(): void
@@ -33,8 +34,7 @@ class ApiMediaContext extends AbstractApiContext
         $uploadDirectory   = $configMediaBundle['upload_directory'];
         FileHelper::removeRecursiveDirectoriesAndFiles($uploadDirectory);
 
-        // alternative
-        // https://symfonycasts.com/screencast/phpunit-legacy/control-database
+        // alternative https://symfonycasts.com/screencast/phpunit-legacy/control-database
         $application = new Application(self::$kernel);
         $application->setAutoExit(false);
         $application->run(
