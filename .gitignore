@@ -1,10 +1,19 @@
 /assets/
+/var/
 .idea/
 **/cache
 **/vendor
 **/node_modules
-/tests/.env.*
-.env.*
+/public/bundles/
+
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/tests/.env.local
+/tests/.env.local.php
+/tests/.env.*.local
+
 **/composer.lock
 tools/phpunit/.phpunit.result.cache
 tools/php-cs-fixer/php-cs-fixer.cache
@@ -14,3 +23,4 @@ ranky.media-bundle.1.0.json
 !.gitkeep
 !.gitignore
 test.sh
+.php-cs-fixer.cache
