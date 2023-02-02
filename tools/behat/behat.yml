@@ -14,6 +14,7 @@ default:
 
   suites:
     api:
-      paths: [ tests/src/Presentation/Behat/features/api.feature ]
+      paths:
+        - tests/src/Presentation/Behat/features/api.feature
       contexts:
-        - Ranky\MediaBundle\Tests\Presentation\Behat\ApiMediaContext
+        - Ranky\MediaBundle\Tests\Presentation\Behat\ApiContext
