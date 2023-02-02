@@ -13,11 +13,17 @@ php-cs-fixer-ci: ## php-cs-fixer as root for CI
 php-cs-fixer-fix: ## Lint and fix files with php-cs-fixer
 	PHP_CS_FIXER_FUTURE_MODE=1 $(DOCKER_EXEC_PHP) bash -c "$(PHPCS_BIN) fix --config=$(PHP_CS_FIXER_DIRECTORY)/.php-cs-fixer.dist.php --diff"
 
+php-cs-fixer-fix-arg: ## Lint and fix single file with php-cs-fixer for PHPSTORM
+	PHP_CS_FIXER_FUTURE_MODE=1 $(DOCKER_EXEC_PHP) bash -c "$(PHPCS_BIN) fix --config=$(PHP_CS_FIXER_DIRECTORY)/.php-cs-fixer.dist.php $(ARGUMENTS)"
+
 phpstan-clear: ## Run PHPStan clear cache
 	$(DOCKER_EXEC_PHP) bash -c "$(PHPSTAN_BIN) clear-result-cache -c $(PHPSTAN_DIRECTORY)/phpstan.neon"
 
 phpstan: ## Run PHPStan Example: -c phpstan.neon --memory-limit 1G --no-progress --no-interaction
 	$(DOCKER_EXEC_PHP) bash -c "$(PHPSTAN_BIN) analyse -c $(PHPSTAN_DIRECTORY)/phpstan.neon --error-format=table > $(PHPSTAN_DIRECTORY)/phpstan.md"
+
+phpstan-single: ## Run PHPStan Example: -c phpstan.neon --memory-limit 1G --no-progress --no-interaction
+	$(DOCKER_EXEC_PHP) bash -c "$(PHPSTAN_BIN) analyse -c $(PHPSTAN_DIRECTORY)/phpstan.neon --error-format=table $(APP_DIRECTORY)/src/Domain/Service/FileCompressHandler.php"
 
 phpstan-ci: ## Run PHPStan as root for CI
 	$(DOCKER_EXEC_ROOT_PHP) bash -c "$(PHPSTAN_BIN) analyse -c $(PHPSTAN_DIRECTORY)/phpstan.neon --no-progress --no-interaction"

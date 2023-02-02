@@ -77,6 +77,11 @@ git-gitignore: ## Git ignore rsync https://stackoverflow.com/a/7076075/2046442
 	git rm -r --cached . # remove all files from the index
 	git add . # add all files back
 
+git-gitignore-remove-file: ## remove ignored files
+	git rm -r --cached tests/.env.test
+	git commit -m "Remove unnecessary tests/.env.test"
+	make git-push
+
 git-patch: ## Generate patch from diff
 	git diff --patch > patch.patch
 

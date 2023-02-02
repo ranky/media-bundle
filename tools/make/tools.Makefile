@@ -20,6 +20,9 @@ tools-remove-packages: ## Remove all tools vendor/dependencies
 generate-ref-flex: ## Generate reference for flex
 	$(DOCKER_EXEC_PHP) php -r 'echo bin2hex(random_bytes(20));'
 
+clear-symfony-cache: ## Clear symfony cache
+	$(DOCKER_EXEC_ROOT_PHP) rm -rf /tmp/*
+
 fix-permissions: ## Fix local permissions
 	$(DOCKER_EXEC_ROOT_PHP) chown -R $(HOST_UID):$(HOST_GID) $(APP_DIRECTORY)
 	$(DOCKER_EXEC_ROOT_PHP) chmod -R 777 $(APP_DIRECTORY)/tools
