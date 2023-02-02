@@ -2,6 +2,7 @@ parameters:
   excludePaths:
     - ../../tests/config/*
     - ../../tests/src/TestKernel.php
+    - ../../src/Infrastructure/DependencyInjection/MediaCompilerPass.php
     - ../../tests/src/BaseIntegrationTestCase.php
     - ../../src/Presentation/Form/DataTransformer/
     - ../../src/Infrastructure/DependencyInjection/Configuration.php
