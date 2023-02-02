@@ -44,6 +44,7 @@ https://user-images.githubusercontent.com/2461400/208732093-44cf5a21-62f9-4402-b
 
 ## Advantages
 
+* One of the advantages of using this bundle is that it is compatible with any Symfony project, whether using EasyAdmin or any other content management system. This means it can easily be integrated into your existing project without having to worry about compatibility issues.
 * The interface is built with React, not jQuery, which means it is more modern and efficient.
 * File resizing and compression is handled on the server side (admin), not endorsed to the client, which saves resources and improves performance.
 * The interface is inspired by WordPress, a widely-used and well-respected platform, which means it is user-friendly and reliable.
@@ -65,7 +66,7 @@ https://user-images.githubusercontent.com/2461400/208732093-44cf5a21-62f9-4402-b
   * Search filters
   * Select single or multiple media with different form types
   * Sort by date. Soon I will add more sort options
-  * Prevention of duplicate names. If an image already exists in the database, it automatically adds a suffix with the built-in [time](https://www.php.net/manual/en/function.time.php) function, but you can rename the image later without any problem.
+  * Prevent media file name duplication
 * Resize images on upload, supported by:
   * Imagick extension 
   * GD extension
@@ -489,7 +490,7 @@ class MyFormType extends AbstractType
 
 ```php
 #[ORM\ManyToOne(targetEntity: Media::class)]
-#[ORM\JoinColumn(name: 'media', referencedColumnName: 'id', nullable: true)]
+#[ORM\JoinColumn(name: 'media', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
 private ?Media $media;
 ```
 
@@ -515,8 +516,8 @@ class MyFormType extends AbstractType
 
 ```php
 #[ORM\JoinTable(name: 'pages_medias')]
-#[ORM\JoinColumn(name: 'page_id', referencedColumnName: 'id')]
-#[ORM\InverseJoinColumn(name: 'media_id', referencedColumnName: 'id')]
+#[ORM\JoinColumn(name: 'page_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+#[ORM\InverseJoinColumn(name: 'media_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
 #[ORM\ManyToMany(targetEntity: Media::class)]
 #[ORM\OrderBy(["createdAt" => "DESC"])]
 private ?Collection $medias;
@@ -569,7 +570,7 @@ Methods:
            title="{{ media.description.title }}"
       />
   </p>
-  <p>{{ ranky_media_url(media.file.url,true) }}</p>
+  <p>{{ ranky_media_url(media.file.url) }}</p>
   <p>Thumbnails</p>
   {% for thumbnail in media.thumbnails %}
       {# @var thumbnail \Ranky\MediaBundle\Application\DataTransformer\Response\ThumbnailResponse #}
@@ -579,8 +580,8 @@ Methods:
            alt="{{ media.description.alt }}"
            title="{{ media.description.title }}"
       />
-      <p>{{ ranky_media_url(thumbnail.url,true) }}</p>
-      <p>{{ ranky_media_thumbnail_url(thumbnail.url,thumbnail.breakpoint, true) }}</p>
+      <p>{{ ranky_media_url(thumbnail.url) }}</p>
+      <p>{{ ranky_media_thumbnail_url(thumbnail.path, thumbnail.breakpoint) }}</p>
   {% endfor %}
 {% endif %}
 ```
