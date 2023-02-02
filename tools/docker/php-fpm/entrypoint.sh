@@ -8,10 +8,10 @@ DOCKER_IP=$(/sbin/ip route|awk '/default/ { print $3 }')
 export DOCKER_IP
 
 if [ "$DOCKER_ENV" == "dev" ]; then
-  XDEBUG_MODE=off composer install --no-ansi --no-progress --no-interaction --working-dir="${APP_DIRECTORY}"
-  XDEBUG_MODE=off composer install --no-ansi --no-progress --no-interaction --working-dir="${APP_DIRECTORY}/tools/behat"
-  XDEBUG_MODE=off composer install --no-ansi --no-progress --no-interaction --working-dir="${APP_DIRECTORY}/tools/phpstan"
-  XDEBUG_MODE=off composer install --no-ansi --no-progress --no-interaction --working-dir="${APP_DIRECTORY}/tools/php-cs-fixer"
+  XDEBUG_MODE=off composer install --no-ansi --no-scripts --no-progress --no-interaction --working-dir="${APP_DIRECTORY}"
+  XDEBUG_MODE=off composer install --no-ansi --no-scripts --no-progress --no-interaction --working-dir="${APP_DIRECTORY}/tools/behat"
+  XDEBUG_MODE=off composer install --no-ansi --no-scripts --no-progress --no-interaction --working-dir="${APP_DIRECTORY}/tools/phpstan"
+  XDEBUG_MODE=off composer install --no-ansi --no-scripts --no-progress --no-interaction --working-dir="${APP_DIRECTORY}/tools/php-cs-fixer"
 fi
 
 if [ "$CI" == "true" ]; then
