@@ -246,7 +246,7 @@ class MediaBundleExtension extends Extension implements PrependExtensionInterfac
                 'mappings' => [
                     'RankyMediaBundle' => [
                         'type' => 'attribute',
-                        'dir' => \dirname(__DIR__, 3).'/src/Domain',
+                        'dir' => \dirname(__DIR__).'/src/Domain',
                         'prefix' => 'Ranky\MediaBundle\Domain',
                     ],
                 ],
