@@ -9,6 +9,7 @@ Feature: Media Bundle API
   Background:
     Given I am logged in as "jcarlos"
 
+
   Scenario: Media Listing
     When I send a "GET" request to "/ranky/media"
     Then the response status code should be 200
@@ -46,7 +47,7 @@ Feature: Media Bundle API
     """
     {
         "pagination_limit": 30,
-        "upload_url": "/uploads",
+        "upload_url": "http://ranky-media-bundle.test/uploads",
         "max_file_size": 7340032,
         "locale": "es"
     }
