@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Domain\Enum;
 
+
 enum Breakpoint: string
 {
 
@@ -12,7 +13,7 @@ enum Breakpoint: string
     case XSMALL = 'xsmall';
 
     /**
-     * @return int[]
+     * @return array{int,int} | array{int}
      */
     public function dimensions(): array
     {
