@@ -27,7 +27,7 @@ class MediaTwigServiceTest extends BaseUnitTestCase
         parent::setUp();
         $this->media               = MediaFactory::random(MimeType::IMAGE, 'jpg');
         $this->userIdentifier      = UserIdentifier::fromString('jcarlos');
-        $this->responseTransformer = $this->getMediaTransformer($this->userIdentifier, '/uploads');
+        $this->responseTransformer = $this->getMediaTransformer($this->userIdentifier);
     }
 
     public function testItShouldGetMediaByIdAndConvertMediaToResponse(): void

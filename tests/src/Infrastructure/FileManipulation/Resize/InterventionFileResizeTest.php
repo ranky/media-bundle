@@ -7,7 +7,7 @@ use Psr\Log\NullLogger;
 use Ranky\MediaBundle\Domain\Enum\Breakpoint;
 use Ranky\MediaBundle\Domain\Enum\ImageResizeDriver;
 use Ranky\MediaBundle\Domain\Enum\MimeType;
-use Ranky\MediaBundle\Infrastructure\FileManipulation\Thumbnails\Resize\InterventionFileResize;
+use Ranky\MediaBundle\Infrastructure\FileManipulation\Resize\InterventionFileResize;
 use Ranky\MediaBundle\Tests\BaseIntegrationTestCase;
 use Ranky\MediaBundle\Tests\Domain\MediaFactory;
 
@@ -27,7 +27,7 @@ class InterventionFileResizeTest extends BaseIntegrationTestCase
 
     public function testItShouldResizeJpgImageWithGDDriver(): void
     {
-        if (!extension_loaded('gd') || !\extension_loaded('exif')) {
+        if (!\extension_loaded('gd') || !\extension_loaded('exif')) {
             $this->markTestSkipped('The gd or exif extension is not available.');
         }
 

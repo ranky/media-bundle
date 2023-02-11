@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Tests\Infrastructure\Persistence\Orm\Repository;
 
-use Ranky\MediaBundle\Domain\Contract\AvailableDatesMediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\AvailableDatesMediaRepository;
 use Ranky\MediaBundle\Domain\Enum\MimeType;
 use Ranky\MediaBundle\Domain\Model\Media;
 use Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository\DoctrineOrmAvailableDatesMediaRepository;
@@ -14,7 +14,7 @@ use Ranky\SharedBundle\Domain\ValueObject\UserIdentifier;
 
 final class DoctrineOrmAvailableDatesMediaRepositoryTest extends BaseIntegrationTestCase
 {
-    private AvailableDatesMediaRepositoryInterface $availableDatesMediaRepository;
+    private AvailableDatesMediaRepository $availableDatesMediaRepository;
 
     protected function setUp(): void
     {

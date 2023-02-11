@@ -7,14 +7,14 @@ namespace Ranky\MediaBundle\Tests\Application\ListFilter;
 
 use PHPUnit\Framework\TestCase;
 use Ranky\MediaBundle\Application\ListFilter\ListAvailableDatesFilter\ListAvailableDatesFilter;
-use Ranky\MediaBundle\Domain\Contract\AvailableDatesMediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\AvailableDatesMediaRepository;
 
 class ListAvailableDatesFilterTest extends TestCase
 {
 
     public function testItShouldListAvailableDatesFilter(): void
     {
-        $availableDatesMediaRepository = $this->createMock(AvailableDatesMediaRepositoryInterface::class);
+        $availableDatesMediaRepository = $this->createMock(AvailableDatesMediaRepository::class);
         $availableDatesMediaRepository
             ->expects($this->once())
             ->method('getAll')

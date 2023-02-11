@@ -6,7 +6,7 @@ namespace Ranky\MediaBundle\Tests\Application\ListMediaCriteria;
 
 use Ranky\MediaBundle\Application\DataTransformer\Response\MediaResponse;
 use Ranky\MediaBundle\Application\ListMediaCriteria\ListMediaCriteria;
-use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\MediaRepository;
 use Ranky\MediaBundle\Domain\Criteria\MediaCriteria;
 use Ranky\MediaBundle\Domain\Enum\MimeType;
 use Ranky\MediaBundle\Tests\BaseUnitTestCase;
@@ -23,12 +23,11 @@ class ListMediaCriteriaTest extends BaseUnitTestCase
     {
         $media            = MediaFactory::random(MimeType::IMAGE, 'jpg');
         $userIdentifier   = $media->createdBy();
-        $uploadUrl        = '/uploads';
         $offsetPagination = new OffsetPagination(1, 10);
         $orderBy          = new OrderBy('id', OrderBy::DESC);
         $criteria         = new MediaCriteria([], $offsetPagination, $orderBy);
 
-        $mediaRepository = $this->createMock(MediaRepositoryInterface::class);
+        $mediaRepository = $this->createMock(MediaRepository::class);
         $mediaRepository
             ->expects($this->once())
             ->method('filter')
@@ -41,7 +40,7 @@ class ListMediaCriteriaTest extends BaseUnitTestCase
             ->willReturn(1);
 
 
-        $responseTransformer = $this->getMediaTransformer($userIdentifier, $uploadUrl);
+        $responseTransformer = $this->getMediaTransformer($userIdentifier);
 
         $listMediaPagination = (new ListMediaCriteria(
             $mediaRepository,
@@ -53,7 +52,7 @@ class ListMediaCriteriaTest extends BaseUnitTestCase
         $this->assertContainsEquals(
             MediaResponse::fromMedia(
                 $media,
-                $uploadUrl,
+                $this->getUploadUrl(),
                 $media->createdBy()->value(),
                 $media->updatedBy()->value()
             ),

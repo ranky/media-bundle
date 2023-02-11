@@ -14,7 +14,7 @@ return static function (ContainerConfigurator $configurator): void {
 
     $configurator->parameters()->set('site_url', '%env(resolve:SITE_URL)%');
 
-  // For KernelInterface in AbstractApiContext
+  // For AbstractApiContext
   $services
         ->load('Ranky\\MediaBundle\\Tests\\Presentation\\Behat\\', '../src/Presentation/Behat/*');
 

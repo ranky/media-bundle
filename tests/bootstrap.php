@@ -12,7 +12,6 @@ require __DIR__.'/../vendor/autoload.php';
 
 DG\BypassFinals::enable();
 
-
 (new Dotenv())->bootEnv(__DIR__.'/.env');
 
 // Create and boot 'test' kernel

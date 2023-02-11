@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Tests\Infrastructure\Persistence\Orm\Repository;
 
-use Ranky\MediaBundle\Domain\Contract\MimeMediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\MimeMediaRepository;
 use Ranky\MediaBundle\Domain\Enum\MimeType;
 use Ranky\MediaBundle\Domain\Model\Media;
 use Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository\DoctrineOrmMediaRepository;
@@ -14,7 +14,7 @@ use Ranky\SharedBundle\Domain\ValueObject\UserIdentifier;
 
 final class DoctrineOrmMimeMediaRepositoryTest extends BaseIntegrationTestCase
 {
-    private MimeMediaRepositoryInterface $mimeMediaRepository;
+    private MimeMediaRepository $mimeMediaRepository;
     private const MIME_TYPE    = MimeType::IMAGE;
     private const MIME_SUBTYPE = 'gif';
 

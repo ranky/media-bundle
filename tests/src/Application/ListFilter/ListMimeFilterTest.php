@@ -7,14 +7,14 @@ namespace Ranky\MediaBundle\Tests\Application\ListFilter;
 
 use PHPUnit\Framework\TestCase;
 use Ranky\MediaBundle\Application\ListFilter\ListMimeFilter\ListMimeFilter;
-use Ranky\MediaBundle\Domain\Contract\MimeMediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\MimeMediaRepository;
 
 class ListMimeFilterTest extends TestCase
 {
 
     public function testItShouldListMimeFilter(): void
     {
-        $mimeMediaRepository = $this->createMock(MimeMediaRepositoryInterface::class);
+        $mimeMediaRepository = $this->createMock(MimeMediaRepository::class);
         $mimeMediaRepository
             ->expects($this->once())
             ->method('getAllByType')

@@ -6,8 +6,8 @@ declare(strict_types=1);
 namespace Ranky\MediaBundle\Tests\Application\FileManipulation;
 
 use PHPUnit\Framework\TestCase;
-use Ranky\MediaBundle\Application\FileManipulation\Thumbnails\DeleteThumbnails\DeleteThumbnails;
-use Ranky\MediaBundle\Domain\Contract\FileRepositoryInterface;
+use Ranky\MediaBundle\Application\FileManipulation\DeleteFile\DeleteThumbnails;
+use Ranky\MediaBundle\Domain\Contract\FileRepository;
 use Ranky\MediaBundle\Domain\Enum\MimeType;
 use Ranky\MediaBundle\Tests\Domain\MediaFactory;
 use Ranky\MediaBundle\Tests\Domain\ThumbnailsFactory;
@@ -33,7 +33,7 @@ class DeleteThumbnailsTest extends TestCase
             []
         );
 
-        $fileRepository = $this->createMock(FileRepositoryInterface::class);
+        $fileRepository = $this->createMock(FileRepository::class);
         $fileRepository
             ->expects($this->exactly(count($thumbnailsArray)))
             ->method('delete')

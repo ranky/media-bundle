@@ -5,85 +5,47 @@ declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Tests\Application\FileManipulation;
 
-use PHPUnit\Framework\TestCase;
-use Ranky\MediaBundle\Application\FileManipulation\Thumbnails\GenerateThumbnails\GenerateImageThumbnails;
-use Ranky\MediaBundle\Domain\Contract\FilePathResolverInterface;
-use Ranky\MediaBundle\Domain\Contract\FileUrlResolverInterface;
-use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
-use Ranky\MediaBundle\Domain\Enum\Breakpoint;
+use Ranky\MediaBundle\Application\FileManipulation\GenerateThumbnails\GenerateImageThumbnails;
+use Ranky\MediaBundle\Domain\Contract\MediaRepository;
+use Ranky\MediaBundle\Domain\Contract\TemporaryFileRepository;
 use Ranky\MediaBundle\Domain\Enum\MimeType;
 use Ranky\MediaBundle\Domain\Model\Media;
 use Ranky\MediaBundle\Domain\Service\FileResizeHandler;
 use Ranky\MediaBundle\Domain\ValueObject\Dimension;
-use Ranky\MediaBundle\Infrastructure\Filesystem\Local\LocalFileRepository;
+use Ranky\MediaBundle\Tests\BaseUnitTestCase;
 use Ranky\MediaBundle\Tests\Domain\MediaFactory;
 use Ranky\MediaBundle\Tests\Domain\ThumbnailsFactory;
 
-class GenerateImageThumbnailsTest extends TestCase
+class GenerateImageThumbnailsTest extends BaseUnitTestCase
 {
     public function testItShouldGenerateImageThumbnails(): void
     {
-        $media           = MediaFactory::random(MimeType::IMAGE, 'jpg');
-        $file            = $media->file();
-        $thumbnails      = ThumbnailsFactory::make($media);
-        $thumbnailArray = $thumbnails->toArray();
+        $media            = MediaFactory::random(MimeType::IMAGE, 'jpg');
+        $file             = $media->file();
+        $thumbnails       = ThumbnailsFactory::make($media);
+        $thumbnailArray   = $thumbnails->toArray();
+        $originalMaxWidth = Media::ORIGINAL_IMAGE_MAX_WIDTH;
 
-        $originalMaxWidth     = Media::ORIGINAL_IMAGE_MAX_WIDTH;
-        $breakpoints          = array_reduce(Breakpoint::cases(), static function ($breakpoints, $breakpoint) {
-            $breakpoints[$breakpoint->value] = $breakpoint->dimensions();
+        /* MediaRepository */
+        $mediaRepository = $this->createMock(MediaRepository::class);
 
-            return $breakpoints;
-        }, []);
-
-        $mediaRepository = $this->createMock(MediaRepositoryInterface::class);
-        $mediaRepository
-            ->expects($this->once())
-            ->method('getById')
-            ->with($media->id())
-            ->willReturn($media);
-        $mediaRepository
-            ->expects($this->once())
-            ->method('save')
-            ->with($media);
-
-        $filePathResolver = $this->createMock(FilePathResolverInterface::class);
-        $filePathResolver
-            ->method('resolve')
-            ->with($file->name())
-            ->willReturn(sys_get_temp_dir().'/ranky_media_bundle_test/uploads/'.$file->name());
+        /* FileResizeHandler */
+        $temporaryOriginalUrl          = $this->getTemporaryDirectory($file->path());
+        $temporaryThumbnailUrlCallback = fn (string $breakpoint, string $fileName) => $this->getTemporaryDirectory(
+            '/'.$breakpoint.'/'.$fileName
+        );
 
         $consecutiveParameters = array_reduce(
             $thumbnailArray,
-            static function ($thumbnails, $thumbnail) {
-                $thumbnails[] = [$thumbnail['breakpoint'], $thumbnail['name']];
-
-                return $thumbnails;
-            },
-            []
-        );
-        $consecutiveReturn     = array_reduce(
-            $thumbnailArray,
-            static function ($thumbnails, $thumbnail) {
-                $thumbnails[] = sys_get_temp_dir(
-                    ).'/ranky_media_bundle_test/uploads/'.$thumbnail['breakpoint'].'/'.$thumbnail['name'];
-
-                return $thumbnails;
-            },
-            []
-        );
-        $filePathResolver
-            ->expects($this->exactly(count($thumbnailArray)))
-            ->method('resolveFromBreakpoint')
-            ->withConsecutive(...$consecutiveParameters)
-            ->willReturnOnConsecutiveCalls(...$consecutiveReturn);
-
-        $consecutiveParameters = array_reduce(
-            $thumbnailArray,
-            static function ($thumbnails, $thumbnail) use ($file) {
+            static function ($thumbnails, $thumbnail) use (
+                $file,
+                $temporaryOriginalUrl,
+                $temporaryThumbnailUrlCallback
+            ) {
                 $thumbnails[] = [
                     $file,
-                    sys_get_temp_dir().'/ranky_media_bundle_test/uploads/'.$file->name(),
-                    sys_get_temp_dir().'/ranky_media_bundle_test/uploads/'.$thumbnail['breakpoint'].'/'.$file->name(),
+                    $temporaryOriginalUrl,
+                    $temporaryThumbnailUrlCallback($thumbnail['breakpoint'], $file->path()),
                     new Dimension($thumbnail['width'], $thumbnail['height']),
                 ];
 
@@ -92,17 +54,16 @@ class GenerateImageThumbnailsTest extends TestCase
             []
         );
 
-        $countResize = \count($thumbnailArray);
-        if ($media->dimension()->width() > $originalMaxWidth){
+        $countCallResizeHandler = \count($thumbnailArray);
+        if ($media->dimension()->width() > $originalMaxWidth) {
             array_unshift($consecutiveParameters, [
                 $file,
-                sys_get_temp_dir().'/ranky_media_bundle_test/uploads/'.$file->name(),
-                sys_get_temp_dir().'/ranky_media_bundle_test/uploads/'.$file->name(),
+                $this->getTemporaryDirectory($file->name()),
+                $this->getTemporaryDirectory($file->name()),
                 new Dimension($originalMaxWidth),
             ]);
-            $countResize++;
+            $countCallResizeHandler++;
         }
-
 
         $fileResizeHandler = $this->createMock(FileResizeHandler::class);
         $fileResizeHandler
@@ -110,56 +71,72 @@ class GenerateImageThumbnailsTest extends TestCase
             ->willReturn(true);
 
         $fileResizeHandler
-            ->expects($this->exactly($countResize))
+            ->expects($this->exactly($countCallResizeHandler))
             ->method('resize')
             ->withConsecutive(...$consecutiveParameters)
             ->willReturn(true);
 
-        $consecutiveParameters = array_reduce(
+
+        /* TemporaryFileRepository */
+        $countCallTemporaryRepository                = \count($thumbnailArray);
+        $consecutiveParametersForTemporaryRepository = array_reduce(
             $thumbnailArray,
             static function ($thumbnails, $thumbnail) {
-                $thumbnails[] = [$thumbnail['breakpoint'], $thumbnail['name']];
+                $thumbnails[] = ['/'.$thumbnail['breakpoint'].'/'.$thumbnail['name']];
 
                 return $thumbnails;
             },
             []
         );
 
-        $consecutiveReturn = array_reduce(
+        $consecutiveReturnForTemporaryRepository = \array_reduce(
             $thumbnailArray,
-            static function ($thumbnails, $thumbnail) {
-                $thumbnails[] = '/'.$thumbnail['breakpoint'].'/'.$thumbnail['name'];
+            static function ($thumbnails, $thumbnail) use ($temporaryThumbnailUrlCallback) {
+                $thumbnails[] = $temporaryThumbnailUrlCallback(
+                    $thumbnail['breakpoint'],
+                    $thumbnail['name']
+                );
 
                 return $thumbnails;
             },
             []
         );
+        /* For first call in generateThumbnails */
+        array_unshift(
+            $consecutiveParametersForTemporaryRepository,
+            [$file->path()]
+        );
+        array_unshift(
+            $consecutiveReturnForTemporaryRepository,
+            $this->getTemporaryDirectory($file->path())
+        );
 
-        $fileUrlResolver = $this->createMock(FileUrlResolverInterface::class);
-        $fileUrlResolver
-            ->expects($this->exactly(\count($thumbnailArray)))
-            ->method('resolvePathFromBreakpoint')
-            ->withConsecutive(...$consecutiveParameters)
-            ->willReturnOnConsecutiveCalls(...$consecutiveReturn);
+        if ($media->dimension()->width() > $originalMaxWidth) {
+            array_unshift($consecutiveParametersForTemporaryRepository, [$file->path()]);
+            array_unshift($consecutiveReturnForTemporaryRepository, [$this->getTemporaryDirectory($file->path())]);
+            $countCallTemporaryRepository++;
+        }
 
-        $fileRepository = $this->createMock(LocalFileRepository::class);
-
-        $fileRepository
-            ->method('filesizeFromPath')
-            ->willReturn($media->file()->size());
-        $fileRepository
-            ->method('dimensionsFromPath')
-            ->willReturn($media->dimension());
+        $temporaryFileRepository = $this->createMock(TemporaryFileRepository::class);
+        $temporaryFileRepository
+            ->expects($this->exactly($countCallTemporaryRepository + 1))
+            ->method('temporaryFile')
+            ->withConsecutive(...$consecutiveParametersForTemporaryRepository)
+            ->willReturnOnConsecutiveCalls(...$consecutiveReturnForTemporaryRepository);
 
         $generateImageThumbnails = new GenerateImageThumbnails(
             $originalMaxWidth,
-            $breakpoints,
+            $this->getBreakpoints(),
             $fileResizeHandler,
             $mediaRepository,
-            $fileRepository,
-            $filePathResolver,
-            $fileUrlResolver
+            $temporaryFileRepository,
         );
-        $generateImageThumbnails->generate($media->id()->asString());
+
+
+        $generateImageThumbnails->generate(
+            $media->id()->asString(),
+            $file,
+            $media->dimension()
+        );
     }
 }

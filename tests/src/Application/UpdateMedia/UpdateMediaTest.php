@@ -8,7 +8,7 @@ use Ranky\MediaBundle\Application\DataTransformer\Response\MediaResponse;
 use Ranky\MediaBundle\Application\FileManipulation\RenameFile\RenameFile;
 use Ranky\MediaBundle\Application\UpdateMedia\UpdateMedia;
 use Ranky\MediaBundle\Application\UpdateMedia\UpdateMediaRequest;
-use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\MediaRepository;
 use Ranky\MediaBundle\Domain\Enum\MimeType;
 use Ranky\MediaBundle\Tests\BaseUnitTestCase;
 use Ranky\MediaBundle\Tests\Domain\MediaFactory;
@@ -21,7 +21,6 @@ class UpdateMediaTest extends BaseUnitTestCase
     public function testItShouldUpdateMedia(): void
     {
         $media              = MediaFactory::random(MimeType::IMAGE, 'jpg');
-        $uploadUrl          = '/upload';
         $newFileName        = 'rename.'.$media->file()->extension();
         $updateMediaRequest = new UpdateMediaRequest(
             $media->id()->asString(),
@@ -30,9 +29,9 @@ class UpdateMediaTest extends BaseUnitTestCase
             $media->description()->title(),
         );
 
-        $file = $media->file()->update($newFileName, $newFileName);
-        $media->updateFile($file, $media->updatedBy());
-        $mediaRepository = $this->createMock(MediaRepositoryInterface::class);
+        $file = $media->file()->changeName($newFileName, $newFileName);
+        $media->changeFile($file, $media->updatedBy());
+        $mediaRepository = $this->createMock(MediaRepository::class);
         $mediaRepository
             ->expects($this->once())
             ->method('getById')
@@ -54,7 +53,7 @@ class UpdateMediaTest extends BaseUnitTestCase
             new \ArrayIterator([])
         );
 
-        $responseTransformer = $this->getMediaTransformer($media->updatedBy(), $uploadUrl);
+        $responseTransformer = $this->getMediaTransformer($media->updatedBy());
 
         $updateMediaResponse = (new UpdateMedia(
             $mediaRepository,
@@ -66,7 +65,7 @@ class UpdateMediaTest extends BaseUnitTestCase
         $this->assertEquals(
             MediaResponse::fromMedia(
                 $media,
-                $uploadUrl,
+                $this->getUploadUrl(),
                 $media->createdBy()->value(),
                 $media->updatedBy()->value()
             ),

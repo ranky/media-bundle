@@ -32,7 +32,7 @@ class Page
 
 
     #[ORM\ManyToOne(targetEntity: Media::class)]
-    #[ORM\JoinColumn(name: 'media', referencedColumnName: 'id', nullable: true)]
+    #[ORM\JoinColumn(name: 'media', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     private ?Media $media;
 
     /**
@@ -40,8 +40,8 @@ class Page
      * @var ?Collection<int, Media>
      */
     #[ORM\JoinTable(name: 'pages_medias')]
-    #[ORM\JoinColumn(name: 'page_id', referencedColumnName: 'id')]
-    #[ORM\InverseJoinColumn(name: 'media_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'page_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'media_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\ManyToMany(targetEntity: Media::class)]
     //#[ORM\OrderBy(['createdAt' => 'DESC'])]
     private ?Collection $medias;

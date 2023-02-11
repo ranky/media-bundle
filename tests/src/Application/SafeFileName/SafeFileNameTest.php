@@ -6,7 +6,7 @@ namespace Ranky\MediaBundle\Tests\Application\SafeFileName;
 
 use PHPUnit\Framework\TestCase;
 use Ranky\MediaBundle\Application\SafeFileName\SafeFileName;
-use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\MediaRepository;
 use Ranky\MediaBundle\Domain\Enum\MimeType;
 use Ranky\MediaBundle\Domain\Exception\NotFoundMediaException;
 use Ranky\MediaBundle\Domain\Model\Media;
@@ -21,7 +21,7 @@ class SafeFileNameTest extends TestCase
      */
     public function testItShouldSafeFileName(string $name, string $extension, mixed $result): void
     {
-        $mediaRepository = $this->createMock(MediaRepositoryInterface::class);
+        $mediaRepository = $this->createMock(MediaRepository::class);
         $mediaMethod = $mediaRepository
             ->expects($this->once())
             ->method('getByFileName')

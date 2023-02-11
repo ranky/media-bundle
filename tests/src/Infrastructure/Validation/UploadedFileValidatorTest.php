@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Ranky\MediaBundle\Tests\Infrastructure\Validation;
 
 use Ranky\MediaBundle\Application\CreateMedia\UploadedFileRequest;
-use Ranky\MediaBundle\Domain\Exception\UploadFileException;
 use Ranky\MediaBundle\Infrastructure\Validation\UploadedFileValidator;
+use Ranky\MediaBundle\Infrastructure\Validation\UploadFileException;
 use Ranky\MediaBundle\Tests\BaseIntegrationTestCase;
 
 class UploadedFileValidatorTest extends BaseIntegrationTestCase

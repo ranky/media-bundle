@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Tests\Infrastructure\Persistence\Orm\Repository;
 
-use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\MediaRepository;
 use Ranky\MediaBundle\Domain\Criteria\MediaCriteria;
 use Ranky\MediaBundle\Domain\Enum\MimeType;
 use Ranky\MediaBundle\Domain\Exception\NotFoundMediaException;
@@ -20,7 +20,7 @@ use Ranky\SharedBundle\Filter\ConditionFilter;
 
 final class DoctrineOrmMediaRepositoryTest extends BaseIntegrationTestCase
 {
-    private MediaRepositoryInterface $mediaRepository;
+    private MediaRepository $mediaRepository;
 
     protected function setUp(): void
     {
@@ -44,7 +44,7 @@ final class DoctrineOrmMediaRepositoryTest extends BaseIntegrationTestCase
     {
         $description = new Description('This is an alt', 'This is a title');
         $media       = $this->mediaRepository->getById($mediaId);
-        $media->updateDescription($description, UserIdentifier::fromString('pedro'));
+        $media->changeDescription($description, UserIdentifier::fromString('pedro'));
         $this->mediaRepository->save($media);
         $this->assertSame($media, $this->mediaRepository->getById($media->id()));
 

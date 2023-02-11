@@ -4,13 +4,12 @@ declare(strict_types=1);
 namespace Ranky\MediaBundle\Tests\Application\CreateMedia;
 
 use Ranky\MediaBundle\Application\CreateMedia\CreateMedia;
-use Ranky\MediaBundle\Application\CreateMedia\FileCompressOnMediaCreated;
+use Ranky\MediaBundle\Application\CreateMedia\CompressFileOnMediaCreated;
 use Ranky\MediaBundle\Application\CreateMedia\GenerateThumbnailsOnMediaCreated;
 use Ranky\MediaBundle\Application\CreateMedia\UploadedFileRequest;
 use Ranky\MediaBundle\Application\DataTransformer\Response\MediaResponse;
-use Ranky\MediaBundle\Domain\Contract\FilePathResolverInterface;
-use Ranky\MediaBundle\Domain\Contract\FileRepositoryInterface;
-use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
+use Ranky\MediaBundle\Application\SafeFileName\SafeFileName;
+use Ranky\MediaBundle\Domain\Contract\MediaRepository;
 use Ranky\MediaBundle\Domain\Enum\MimeType;
 use Ranky\MediaBundle\Tests\BaseUnitTestCase;
 use Ranky\MediaBundle\Tests\Domain\MediaFactory;
@@ -24,17 +23,25 @@ class CreateMediaTest extends BaseUnitTestCase
     {
         /** Dummy data */
         $media               = MediaFactory::random(MimeType::IMAGE, 'png');
+        $file = $media->file();
         $uploadedFileRequest = new UploadedFileRequest(
-            $media->file()->path(),
-            $media->file()->name(),
-            $media->file()->mime(),
-            $media->file()->extension(),
-            $media->file()->size()
+            $file->path(),
+            $file->name(),
+            $file->mime(),
+            $file->extension(),
+            $file->size()
         );
         $userIdentifier      = UserIdentifier::fromString('jcarlos');
 
+        $safeFileName = $this->createMock(SafeFileName::class);
+        $safeFileName
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($file->name(), $file->extension())
+            ->willReturn($file->name());
+
         /* Mock repositories */
-        $mediaRepository = $this->createMock(MediaRepositoryInterface::class);
+        $mediaRepository = $this->createMock(MediaRepository::class);
         $mediaRepository
             ->expects($this->once())
             ->method('save');
@@ -44,21 +51,17 @@ class CreateMediaTest extends BaseUnitTestCase
             ->method('nextIdentity')
             ->willReturn($media->id());
 
-        $fileRepository = $this->createMock(FileRepositoryInterface::class);
-        $fileRepository
-            ->expects($this->once())
-            ->method('upload')
-            ->with($uploadedFileRequest)
-            ->willReturn($media->file());
 
-        $filePathResolver = $this->createMock(FilePathResolverInterface::class);
-        $filePathResolver
+        $temporaryFileRepository = $this->getTemporaryFileRepository($file->path());
+        $temporaryFileRepository
             ->expects($this->once())
-            ->method('resolve')
-            ->willReturn(sys_get_temp_dir().'/ranky_media_bundle_test/upload');
+            ->method('dimension')
+            ->with($uploadedFileRequest->path(), $file->mime())
+            ->willReturn($media->dimension());
+
 
         /* Mock domain event subscribers */
-        $fileCompressOnMediaCreated = $this->getMockBuilder(FileCompressOnMediaCreated::class)
+        $fileCompressOnMediaCreated = $this->getMockBuilder(CompressFileOnMediaCreated::class)
             ->onlyMethods(['__invoke'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -75,15 +78,17 @@ class CreateMediaTest extends BaseUnitTestCase
             ->method('__invoke');
 
         $domainEventPublisher = new InMemoryDomainEventPublisher(
-            new \ArrayIterator([$fileCompressOnMediaCreated, $generateThumbnailsOnMediaCreated])
+            new \ArrayIterator(
+                [$fileCompressOnMediaCreated, $generateThumbnailsOnMediaCreated]
+            )
         );
 
         $responseTransformer = $this->getMediaTransformer($userIdentifier);
 
         $createMedia = new CreateMedia(
+            $safeFileName,
             $mediaRepository,
-            $fileRepository,
-            $filePathResolver,
+            $temporaryFileRepository,
             $domainEventPublisher,
             $responseTransformer
         );

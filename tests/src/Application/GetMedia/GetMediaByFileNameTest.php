@@ -6,7 +6,7 @@ namespace Ranky\MediaBundle\Tests\Application\GetMedia;
 
 use Ranky\MediaBundle\Application\DataTransformer\Response\MediaResponse;
 use Ranky\MediaBundle\Application\GetMedia\GetMediaByFileName;
-use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\MediaRepository;
 use Ranky\MediaBundle\Domain\Enum\MimeType;
 use Ranky\MediaBundle\Tests\BaseUnitTestCase;
 use Ranky\MediaBundle\Tests\Domain\MediaFactory;
@@ -18,16 +18,15 @@ class GetMediaByFileNameTest extends BaseUnitTestCase
     public function testItShouldGetMediaByFileName(): void
     {
         $media     = MediaFactory::random(MimeType::IMAGE, 'jpg');
-        $uploadUrl = '/upload';
 
-        $mediaRepository = $this->createMock(MediaRepositoryInterface::class);
+        $mediaRepository = $this->createMock(MediaRepository::class);
         $mediaRepository
             ->expects($this->once())
             ->method('getByFileName')
             ->with($media->file()->name())
             ->willReturn($media);
 
-        $responseTransformer = $this->getMediaTransformer($media->createdBy(), $uploadUrl);
+        $responseTransformer = $this->getMediaTransformer($media->createdBy());
 
         $showMediaResponse = (new GetMediaByFileName(
             $mediaRepository,
@@ -37,7 +36,7 @@ class GetMediaByFileNameTest extends BaseUnitTestCase
         $this->assertEquals(
             MediaResponse::fromMedia(
                 $media,
-                $uploadUrl,
+                $this->getUploadUrl(),
                 $media->createdBy()->value(),
                 $media->createdBy()->value()
             ),

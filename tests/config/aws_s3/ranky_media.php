@@ -9,7 +9,7 @@ return static function (RankyMediaConfig $rankyMediaConfig): void {
 
     $rankyMediaConfig
         ->userEntity(User::class)
-        ->uploadUrl('%env(SITE_URL)%/uploads')
+        ->uploadUrl('%env(AWS_S3_UPLOAD_URL)%')
         ->userIdentifierProperty('username')
         ->paginationLimit(30)
     ;

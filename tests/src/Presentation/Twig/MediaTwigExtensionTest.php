@@ -27,7 +27,7 @@ class MediaTwigExtensionTest extends BaseIntegrationTestCase
     public function testItShouldGetMediaUrl(): void
     {
         $this->assertSame(
-            $this->getConfigOption('upload_url').'/image.jpg',
+            $this->getUploadUrl().'/image.jpg',
             $this->extension->mediaUrl('image.jpg')
         );
     }
@@ -35,7 +35,7 @@ class MediaTwigExtensionTest extends BaseIntegrationTestCase
     public function testItShouldGetMediaThumbnailUrl(): void
     {
         $this->assertSame(
-            $this->getConfigOption('upload_url').'/'.Breakpoint::LARGE->value.'/image.jpg',
+            $this->getUploadUrl().'/'.Breakpoint::LARGE->value.'/image.jpg',
             $this->extension->mediaThumbnailUrl('image.jpg', Breakpoint::LARGE->value)
         );
     }

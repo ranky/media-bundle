@@ -7,7 +7,7 @@ use Psr\Log\NullLogger;
 use Ranky\MediaBundle\Domain\Enum\Breakpoint;
 use Ranky\MediaBundle\Domain\Enum\GifResizeDriver;
 use Ranky\MediaBundle\Domain\Enum\MimeType;
-use Ranky\MediaBundle\Infrastructure\FileManipulation\Thumbnails\Resize\ImagickGifFileResize;
+use Ranky\MediaBundle\Infrastructure\FileManipulation\Resize\ImagickGifFileResize;
 use Ranky\MediaBundle\Tests\BaseIntegrationTestCase;
 use Ranky\MediaBundle\Tests\Domain\MediaFactory;
 

@@ -1,10 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Tests;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use FriendsOfBehat\SymfonyExtension\Bundle\FriendsOfBehatSymfonyExtensionBundle;
+use League\FlysystemBundle\FlysystemBundle;
 use Ranky\MediaBundle\RankyMediaBundle;
 use Ranky\SharedBundle\RankySharedBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
@@ -21,12 +23,18 @@ class TestKernel extends Kernel
 {
     use MicroKernelTrait;
 
+    public function __construct(string $environment, bool $debug, private readonly array $extraConfigResources = [])
+    {
+        parent::__construct($environment, $debug);
+    }
+
     public function registerBundles(): array
     {
         return [
             new FrameworkBundle(),
             new DoctrineBundle(),
             new SecurityBundle(),
+            new FlysystemBundle(),
             new TwigBundle(),
             new RankySharedBundle(),
             new RankyMediaBundle(),
@@ -35,18 +43,32 @@ class TestKernel extends Kernel
     }
 
     private function configureContainer(
-        ContainerConfigurator $container,
+        ContainerConfigurator $containerConfigurator,
         LoaderInterface $loader,
         ContainerBuilder $builder
     ): void {
-        $container->import('../config/*.php');
-        $container->import('../config/services.php');
+        $containerConfigurator->import('../config/services.php');
+        //packages
+        $containerConfigurator->import('../config/doctrine.php');
+        $containerConfigurator->import('../config/framework.php');
+        $containerConfigurator->import('../config/security.php');
+        $containerConfigurator->import('../config/twig.php');
         // $builder->register('logger', NullLogger::class);
+
+        foreach ($this->extraConfigResources as $resource) {
+            $containerConfigurator->import($resource);
+        }
+
+        if ($this->extraConfigResources === []) {
+            $containerConfigurator->import('../config/flysystem.php');
+            $containerConfigurator->import('../config/ranky_media.php');
+        }
     }
 
-    protected function configureRoutes(RoutingConfigurator $routes): void
+
+    protected function configureRoutes(RoutingConfigurator $routingConfigurator): void
     {
-        $routes->import('@RankyMediaBundle/config/routes.php');
+        $routingConfigurator->import('@RankyMediaBundle/config/routes.php');
     }
 
     public function getCacheDir(): string

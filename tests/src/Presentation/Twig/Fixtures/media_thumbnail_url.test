@@ -5,4 +5,4 @@
 --DATA--
 return [];
 --EXPECT--
-/uploads/large/image.jpg
+http://ranky-media-bundle.test/uploads/large/image.jpg

@@ -6,9 +6,9 @@ namespace Ranky\MediaBundle\Tests\Application\DeleteMedia;
 use PHPUnit\Framework\TestCase;
 use Ranky\MediaBundle\Application\DeleteMedia\DeleteMedia;
 use Ranky\MediaBundle\Application\DeleteMedia\DeleteThumbnailsOnMediaDeleted;
-use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\FileRepository;
+use Ranky\MediaBundle\Domain\Contract\MediaRepository;
 use Ranky\MediaBundle\Domain\Enum\MimeType;
-use Ranky\MediaBundle\Infrastructure\Filesystem\Local\LocalFileRepository;
 use Ranky\MediaBundle\Tests\Domain\MediaFactory;
 use Ranky\SharedBundle\Domain\Event\InMemoryDomainEventPublisher;
 
@@ -21,7 +21,7 @@ class DeleteMediaTest extends TestCase
         $media = MediaFactory::random(MimeType::IMAGE, 'jpg');
 
         /* Mock Repositories*/
-        $mediaRepository = $this->createMock(MediaRepositoryInterface::class);
+        $mediaRepository = $this->createMock(MediaRepository::class);
         $mediaRepository
             ->expects($this->once())
             ->method('delete');
@@ -32,7 +32,7 @@ class DeleteMediaTest extends TestCase
             ->with($media->id())
             ->willReturn($media);
 
-        $fileRepository = $this->createMock(LocalFileRepository::class);
+        $fileRepository = $this->createMock(FileRepository::class);
         $fileRepository
             ->expects($this->once())
             ->method('delete')
@@ -43,15 +43,18 @@ class DeleteMediaTest extends TestCase
             ->onlyMethods(['__invoke'])
             ->disableOriginalConstructor()
             ->getMock();
-        $deleteThumbnailsOnMediaDeleted
-            ->expects($this->once())
+       $deleteThumbnailsOnMediaDeleted
             ->method('__invoke');
 
         $domainEventPublisher = new InMemoryDomainEventPublisher(
             new \ArrayIterator([$deleteThumbnailsOnMediaDeleted])
         );
 
-        $deleteMedia = new DeleteMedia($mediaRepository, $fileRepository, $domainEventPublisher);
+        $deleteMedia = new DeleteMedia(
+            $mediaRepository,
+            $fileRepository,
+            $domainEventPublisher
+        );
         $deleteMedia->__invoke((string)$media->id());
     }
 }

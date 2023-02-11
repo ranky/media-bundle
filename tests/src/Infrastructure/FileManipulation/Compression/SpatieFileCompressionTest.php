@@ -82,8 +82,8 @@ class SpatieFileCompressionTest extends BaseIntegrationTestCase
     {
         $this->assertTrue($this->fileCompress->support($file));
 
-        $currentFilePath = $this->getDummyDir().'/'.$file->name();
-        $newFilePath     = $this->getTempFileDir().'/'.$file->baseName().'_compress.'.$file->extension();
+        $currentFilePath = $this->getDummyDirectory().'/'.$file->name();
+        $newFilePath     = $this->getTempFileDirectory().'/'.$file->baseName().'_compress.'.$file->extension();
 
         copy($currentFilePath, $newFilePath);
         $this->assertFileExists($newFilePath);

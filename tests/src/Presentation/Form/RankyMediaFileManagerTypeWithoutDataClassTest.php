@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ranky\MediaBundle\Tests\Presentation\Form;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\MediaRepository;
 use Ranky\MediaBundle\Domain\Enum\MimeType;
 use Ranky\MediaBundle\Domain\Model\Media;
 use Ranky\MediaBundle\Presentation\Form\RankyMediaFileManagerType;
@@ -15,14 +15,14 @@ use Symfony\Component\Form\Test\TypeTestCase;
 
 class RankyMediaFileManagerTypeWithoutDataClassTest extends TypeTestCase
 {
-    private MediaRepositoryInterface $mediaRepository;
+    private MediaRepository $mediaRepository;
     private Media $media;
 
     protected function setUp(): void
     {
         $media                 = MediaFactory::random(MimeType::IMAGE, 'png');
         $this->media           = $media;
-        $this->mediaRepository = $this->createMock(MediaRepositoryInterface::class);
+        $this->mediaRepository = $this->createMock(MediaRepository::class);
         $this->mediaRepository
             ->method('getById')
             ->with($this->media->id())

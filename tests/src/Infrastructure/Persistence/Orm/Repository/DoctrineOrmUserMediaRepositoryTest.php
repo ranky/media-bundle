@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Ranky\MediaBundle\Tests\Infrastructure\Persistence\Orm\Repository;
 
 
-use Ranky\MediaBundle\Domain\Contract\UserMediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\UserMediaRepository;
 use Ranky\MediaBundle\Domain\Enum\MimeType;
 use Ranky\MediaBundle\Domain\Model\Media;
 use Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository\DoctrineOrmMediaRepository;
@@ -17,7 +17,7 @@ use Ranky\SharedBundle\Domain\ValueObject\UserIdentifier;
 final class DoctrineOrmUserMediaRepositoryTest extends BaseIntegrationTestCase
 {
 
-    private UserMediaRepositoryInterface $userMediaRepository;
+    private UserMediaRepository $userMediaRepository;
     private static UserIdentifier $userIdentifier;
 
     protected function setUp(): void

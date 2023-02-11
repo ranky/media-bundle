@@ -7,12 +7,11 @@ namespace Ranky\MediaBundle\Tests\Application\FileManipulation;
 
 use PHPUnit\Framework\TestCase;
 use Ranky\MediaBundle\Application\FileManipulation\RenameFile\RenameFile;
-use Ranky\MediaBundle\Application\FileManipulation\Thumbnails\RenameThumbnails\RenameThumbnails;
+use Ranky\MediaBundle\Application\FileManipulation\RenameFile\RenameThumbnails;
 use Ranky\MediaBundle\Application\SafeFileName\SafeFileName;
 use Ranky\MediaBundle\Application\UpdateMedia\UpdateMediaRequest;
-use Ranky\MediaBundle\Domain\Contract\FilePathResolverInterface;
-use Ranky\MediaBundle\Domain\Contract\FileRepositoryInterface;
-use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\FileRepository;
+use Ranky\MediaBundle\Domain\Contract\MediaRepository;
 use Ranky\MediaBundle\Domain\Enum\MimeType;
 use Ranky\MediaBundle\Tests\Domain\MediaFactory;
 use Ranky\MediaBundle\Tests\Domain\ThumbnailsFactory;
@@ -46,7 +45,7 @@ class RenameFileTest extends TestCase
             ->with($oldThumbnails, $newFileName)
             ->willReturn($newThumbnails);
 
-        $mediaRepository = $this->createMock(MediaRepositoryInterface::class);
+        $mediaRepository = $this->createMock(MediaRepository::class);
         $mediaRepository
             ->expects($this->once())
             ->method('getById')
@@ -60,23 +59,14 @@ class RenameFileTest extends TestCase
             ->with($updateMediaRequest->name(), $media->file()->extension())
             ->willReturn($newFileName);
 
-        $filePathResolver = $this->createMock(FilePathResolverInterface::class);
-        $filePathResolver
-            ->expects($this->exactly(2))
-            ->method('resolve')
-            ->withConsecutive([$oldFileName], [$newFileName])
-            ->willReturnOnConsecutiveCalls(
-                sys_get_temp_dir().'/ranky_media_bundle_test/upload/'.$oldFileName,
-                sys_get_temp_dir().'/ranky_media_bundle_test/upload/'.$newFileName
-            );
 
-        $fileRepository = $this->createMock(FileRepositoryInterface::class);
+        $fileRepository = $this->createMock(FileRepository::class);
         $fileRepository
             ->expects($this->once())
             ->method('rename')
             ->with(
-                sys_get_temp_dir().'/ranky_media_bundle_test/upload/'.$oldFileName,
-                sys_get_temp_dir().'/ranky_media_bundle_test/upload/'.$newFileName
+                $oldFileName,
+                $newFileName
             );
 
         $domainEventPublisher = new InMemoryDomainEventPublisher(
@@ -88,7 +78,6 @@ class RenameFileTest extends TestCase
             $mediaRepository,
             $fileRepository,
             $safeFileName,
-            $filePathResolver,
             $domainEventPublisher
         );
 
