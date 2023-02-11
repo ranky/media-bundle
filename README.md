@@ -760,6 +760,7 @@ You can see how to install PHP extensions and compression tools through Docker i
 - [ ] ~~Recipes~~
 - [x] Fix some styles being overridden
 - [ ] Adapters for [file storage](https://github.com/thephpleague/flysystem-bundle): S3, Azure, Google Cloud, etc.
+- [ ] Support for php-vips (libvips) https://github.com/libvips/php-vips
 - [ ] Image Editor
 - [ ] Create NPM package, so you can use/import and not have multiple versions of React 
 - [ ] `ORDER BY FIELD` in `WHERE IN` clause
