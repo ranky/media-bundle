@@ -6,7 +6,7 @@ namespace Ranky\MediaBundle\Domain\Contract;
 
 use Ranky\MediaBundle\Domain\Model\Media;
 
-interface AvailableDatesMediaRepositoryInterface
+interface AvailableDatesMediaRepository
 {
 
     /**

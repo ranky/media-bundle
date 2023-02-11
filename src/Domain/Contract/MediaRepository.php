@@ -10,7 +10,7 @@ use Ranky\SharedBundle\Filter\Criteria;
 use Ranky\SharedBundle\Filter\Order\OrderBy;
 use Ranky\SharedBundle\Filter\Pagination\OffsetPagination;
 
-interface MediaRepositoryInterface
+interface MediaRepository
 {
 
 

@@ -6,9 +6,9 @@ namespace Ranky\MediaBundle\Domain\Contract;
 use Ranky\MediaBundle\Domain\ValueObject\Dimension;
 use Ranky\MediaBundle\Domain\ValueObject\File;
 
-interface FileResizeInterface
+interface GenerateThumbnails
 {
-    public function resize(string $inputPath, string $outputPath, Dimension $dimension): bool;
+    public function generate(string $mediaId, File $file, Dimension $dimension): void;
 
     public function support(File $file): bool;
 }

@@ -6,7 +6,7 @@ namespace Ranky\MediaBundle\Domain\Contract;
 
 use Ranky\SharedBundle\Domain\ValueObject\UserIdentifier;
 
-interface UserMediaRepositoryInterface
+interface UserMediaRepository
 {
 
     /**

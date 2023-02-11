@@ -5,9 +5,9 @@ namespace Ranky\MediaBundle\Domain\Contract;
 
 use Ranky\MediaBundle\Domain\ValueObject\File;
 
-interface FileCompressInterface
+interface FileCompress
 {
-    public function compress(string $absolutePath): void;
+    public function compress(string $path): void;
 
     public function support(File $file): bool;
 }
