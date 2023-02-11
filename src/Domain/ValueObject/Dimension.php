@@ -6,7 +6,9 @@ namespace Ranky\MediaBundle\Domain\ValueObject;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-
+/**
+ * @phpstan-type DimensionArray array{width: int|null, height: int|null}
+ */
 #[ORM\Embeddable]
 final class Dimension implements \JsonSerializable
 {
@@ -23,6 +25,11 @@ final class Dimension implements \JsonSerializable
         $this->height = $height;
     }
 
+    public function __toString(): string
+    {
+        return (string)($this->width ?? ''). 'x' .(string)($this->height ?? '');
+    }
+
     public function width(): ?int
     {
         return $this->width;
@@ -34,16 +41,16 @@ final class Dimension implements \JsonSerializable
     }
 
     /**
-     * @param array<int,mixed> $data
+     * @param array<int> $data
      * @return self
      */
     public static function fromArray(array $data): self
     {
-        return new self($data[0], $data[1] ?? null);
+        return new self($data[0] ?? null, $data[1] ?? null);
     }
 
     /**
-     * @return array<string,int|null>
+     * @return DimensionArray
      */
     public function toArray(): array
     {
@@ -54,7 +61,7 @@ final class Dimension implements \JsonSerializable
     }
 
     /**
-     * @return array<string,int|null>
+     * @return DimensionArray
      */
     public function jsonSerialize(): array
     {

@@ -7,6 +7,9 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 
+/**
+ * @phpstan-type DescriptionArray array{alt: string, title: string}
+ */
 #[ORM\Embeddable]
 final class Description
 {
@@ -33,6 +36,15 @@ final class Description
         return $this->title;
     }
 
-
+    /**
+     * @return DescriptionArray
+     */
+    public function toArray(): array
+    {
+        return [
+            'alt' => $this->alt,
+            'title' => $this->title,
+        ];
+    }
 
 }

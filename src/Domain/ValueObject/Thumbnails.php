@@ -5,7 +5,10 @@ namespace Ranky\MediaBundle\Domain\ValueObject;
 
 use Ranky\SharedBundle\Domain\ValueObject\Collection;
 
-/** @extends Collection<Thumbnail> */
+/**
+ * @extends Collection<Thumbnail>
+ * @phpstan-import-type ThumbnailArray from \Ranky\MediaBundle\Domain\ValueObject\Thumbnail
+ */
 final class Thumbnails extends Collection
 {
 
@@ -16,21 +19,15 @@ final class Thumbnails extends Collection
 
 
     /**
-     * @return array<int|string, array<string, mixed>>
+     * @return array<ThumbnailArray>
      */
     public function toArray(): array
     {
         $array = [];
         foreach ($this->getIterator() as $key => $item) {
             /* @var $item Thumbnail */
-            $array[$key] = [
-                'breakpoint' => $item->breakpoint(),
-                'name'       => $item->name(),
-                'path'       => $item->path(),
-                'size'       => $item->size(),
-                'width'      => $item->dimension()->width(),
-                'height'     => $item->dimension()->height(),
-            ];
+            /* @var $key int */
+            $array[$key] = $item->toArray();
         }
         return $array;
     }

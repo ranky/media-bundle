@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Domain\ValueObject;
 
+/**
+ * @phpstan-type ThumbnailArray array{breakpoint: string, name: string, path: string, size: int, width: int|null, height: int|null }
+ */
 final class Thumbnail
 {
-
 
     public function __construct(
         private readonly string $breakpoint,
@@ -42,7 +44,7 @@ final class Thumbnail
     }
 
 
-    public function updateSize(int $size): self
+    public function changeSize(int $size): self
     {
         return new self(
             $this->breakpoint,
@@ -82,6 +84,21 @@ final class Thumbnail
             $data['size'],
             $data['dimension'] ?? $dimension
         );
+    }
+
+    /**
+     * @return ThumbnailArray
+     */
+    public function toArray(): array
+    {
+        return [
+            'breakpoint' => $this->breakpoint,
+            'name'       => $this->name,
+            'path'       => $this->path,
+            'size'       => $this->size,
+            'width'      => $this->dimension->width(),
+            'height'     => $this->dimension->height(),
+        ];
     }
 
 

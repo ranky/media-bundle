@@ -7,6 +7,9 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Ranky\SharedBundle\Domain\ValueObject\MappingTrait;
 
+/**
+ * @phpstan-type FileArray array{name: string, path: string, mime: string, extension: string, size: int}
+ */
 #[ORM\Embeddable]
 final class File
 {
@@ -47,7 +50,7 @@ final class File
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param FileArray $data
      * @return self
      */
     public static function fromRequest(array $data): self
@@ -100,7 +103,7 @@ final class File
         return $this->baseName;
     }
 
-    public function update(string $name, string $path): self
+    public function changeName(string $name, string $path): self
     {
         return new self(
             $name,
@@ -111,7 +114,7 @@ final class File
         );
     }
 
-    public function updateSize(int $size): self
+    public function changeSize(int $size): self
     {
         return new self(
             $this->name,
