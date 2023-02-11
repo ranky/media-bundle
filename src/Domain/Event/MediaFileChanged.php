@@ -9,7 +9,11 @@ use Ranky\SharedBundle\Domain\Event\AbstractDomainEvent;
  * @property array{ name: string } $payload
  * @method array{ name: string } payload()
  */
-final class MediaFileUpdated extends AbstractDomainEvent
+final class MediaFileChanged extends AbstractDomainEvent
 {
+    public function name(): string
+    {
+        return $this->payload()['name'];
+    }
 
 }

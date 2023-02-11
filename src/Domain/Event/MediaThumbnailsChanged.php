@@ -10,7 +10,7 @@ use Ranky\SharedBundle\Domain\Event\AbstractDomainEvent;
  * @property array{ name: string, thumbnails: array<ThumbnailArray> } $payload
  * @method array{ name: string, thumbnails: array<ThumbnailArray> } payload()
  */
-final class MediaDeleted extends AbstractDomainEvent
+final class MediaThumbnailsChanged extends AbstractDomainEvent
 {
     public function name(): string
     {
@@ -24,4 +24,5 @@ final class MediaDeleted extends AbstractDomainEvent
     {
         return $this->payload()['thumbnails'];
     }
+
 }
