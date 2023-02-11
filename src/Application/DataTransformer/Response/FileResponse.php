@@ -23,9 +23,13 @@ final class FileResponse implements ResponseDtoInterface
         $this->baseName = \pathinfo($name, \PATHINFO_FILENAME);
     }
 
-    public static function fromFile(File $file, string $uploadUrl): self
+    public static function fromFile(File $file, string|callable $uploadUrl): self
     {
-        $url = sprintf('%s/%s', $uploadUrl, ltrim($file->path(), '/'));
+        if (!\is_callable($uploadUrl)) {
+            $url = \sprintf('%s/%s', $uploadUrl, \ltrim($file->path(), '/'));
+        }else{
+            $url = $uploadUrl($file->path());
+        }
 
         return new self(
             $file->name(),

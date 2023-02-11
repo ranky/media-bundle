@@ -18,9 +18,14 @@ final class ThumbnailResponse
     ) {
     }
 
-    public static function fromThumbnail(Thumbnail $thumbnail, string $uploadUrl): self
+    public static function fromThumbnail(Thumbnail $thumbnail, string|callable $uploadUrl): self
     {
-        $url = sprintf('%s/%s', $uploadUrl, ltrim($thumbnail->path(), '/'));
+        if (!\is_callable($uploadUrl)) {
+            $url =  \sprintf('%s/%s', $uploadUrl, \ltrim($thumbnail->path(), '/'));
+        }else{
+            $url = $uploadUrl($thumbnail->path());
+        }
+
 
         return new self(
             $thumbnail->breakpoint(),

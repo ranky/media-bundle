@@ -31,7 +31,7 @@ final class MediaResponse implements ResponseDtoInterface
 
     private string $dateTimeFormat = self::DATETIME_FORMAT;
 
-    private function __construct(Media $media, string $uploadUrl, string $createdBy, string $updatedBy)
+    private function __construct(Media $media, string|callable $uploadUrl, string $createdBy, string $updatedBy)
     {
         $this->id          = (string)$media->id();
         $this->file        = FileResponse::fromFile($media->file(), $uploadUrl);
@@ -44,7 +44,7 @@ final class MediaResponse implements ResponseDtoInterface
         $this->updatedAt   = $media->updatedAt();
     }
 
-    public static function fromMedia(Media $media, string $uploadUrl, string $createdBy, string $updatedBy): self
+    public static function fromMedia(Media $media, string|callable $uploadUrl, string $createdBy, string $updatedBy): self
     {
         return new self($media, $uploadUrl, $createdBy, $updatedBy);
     }

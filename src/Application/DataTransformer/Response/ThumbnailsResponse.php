@@ -13,14 +13,12 @@ use Ranky\SharedBundle\Domain\ValueObject\Collection;
  */
 final class ThumbnailsResponse extends Collection
 {
-
-
     protected function type(): string
     {
         return ThumbnailResponse::class;
     }
 
-    public static function fromThumbnails(Thumbnails $thumbnails, string $uploadUrl): self
+    public static function fromThumbnails(Thumbnails $thumbnails, string|callable $uploadUrl): self
     {
         $array = [];
 

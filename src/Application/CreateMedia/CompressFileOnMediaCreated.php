@@ -7,7 +7,7 @@ use Ranky\MediaBundle\Application\FileManipulation\CompressFile\CompressFile;
 use Ranky\MediaBundle\Domain\Event\MediaCreated;
 use Ranky\SharedBundle\Domain\Event\DomainEventSubscriber;
 
-class FileCompressOnMediaCreated implements DomainEventSubscriber
+class CompressFileOnMediaCreated implements DomainEventSubscriber
 {
 
     public function __construct(
@@ -28,6 +28,6 @@ class FileCompressOnMediaCreated implements DomainEventSubscriber
 
     public static function priority(): int
     {
-        return 0;
+        return 1;
     }
 }

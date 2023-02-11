@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Application\DeleteMedia;
 
-use Ranky\MediaBundle\Application\FileManipulation\Thumbnails\DeleteThumbnails\DeleteThumbnails;
+use Ranky\MediaBundle\Application\FileManipulation\DeleteFile\DeleteThumbnails;
 use Ranky\MediaBundle\Domain\Event\MediaDeleted;
-use Ranky\SharedBundle\Domain\Event\DomainEvent;
 use Ranky\SharedBundle\Domain\Event\DomainEventSubscriber;
 
 class DeleteThumbnailsOnMediaDeleted implements DomainEventSubscriber
@@ -21,9 +20,9 @@ class DeleteThumbnailsOnMediaDeleted implements DomainEventSubscriber
         return MediaDeleted::class;
     }
 
-    public function __invoke(DomainEvent $domainEvent): void
+    public function __invoke(MediaDeleted $mediaDeleted): void
     {
-        $this->deleteThumbnails->delete($domainEvent->payload()['thumbnails']);
+        $this->deleteThumbnails->delete($mediaDeleted->thumbnails());
     }
 
     public static function priority(): int

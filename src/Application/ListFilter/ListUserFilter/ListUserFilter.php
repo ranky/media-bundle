@@ -4,12 +4,12 @@ declare(strict_types=1);
 namespace Ranky\MediaBundle\Application\ListFilter\ListUserFilter;
 
 
-use Ranky\MediaBundle\Domain\Contract\UserMediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\UserMediaRepository;
 
 class ListUserFilter
 {
 
-    public function __construct(private readonly UserMediaRepositoryInterface $userMediaRepository)
+    public function __construct(private readonly UserMediaRepository $userMediaRepository)
     {
     }
 

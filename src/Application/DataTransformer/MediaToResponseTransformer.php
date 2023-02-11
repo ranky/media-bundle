@@ -7,15 +7,16 @@ namespace Ranky\MediaBundle\Application\DataTransformer;
 
 
 use Ranky\MediaBundle\Application\DataTransformer\Response\MediaResponse;
-use Ranky\MediaBundle\Domain\Contract\UserMediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\FileUrlResolver;
+use Ranky\MediaBundle\Domain\Contract\UserMediaRepository;
 use Ranky\MediaBundle\Domain\Model\Media;
 
 class MediaToResponseTransformer
 {
 
     public function __construct(
-        private readonly UserMediaRepositoryInterface $userMediaRepository,
-        private readonly string $uploadUrl,
+        private readonly UserMediaRepository $userMediaRepository,
+        private readonly FileUrlResolver $fileUrlResolver,
         private readonly string $dateTimeFormat = MediaResponse::DATETIME_FORMAT,
     ) {
     }
@@ -30,7 +31,7 @@ class MediaToResponseTransformer
 
         $mediaResponse = MediaResponse::fromMedia(
             $media,
-            $this->uploadUrl,
+            fn (string $path) => $this->fileUrlResolver->resolve($path),
             $createdBy,
             $updateBy
         );

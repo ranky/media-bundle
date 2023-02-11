@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Application\ListFilter\ListMimeFilter;
 
-use Ranky\MediaBundle\Domain\Contract\MimeMediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\MimeMediaRepository;
 
 class ListMimeFilter
 {
 
-    public function __construct(private readonly MimeMediaRepositoryInterface $mimeMediaRepository)
+    public function __construct(private readonly MimeMediaRepository $mimeMediaRepository)
     {
     }
 

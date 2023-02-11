@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace Ranky\MediaBundle\Application\ListFilter\ListAvailableDatesFilter;
 
 
-use Ranky\MediaBundle\Domain\Contract\AvailableDatesMediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\AvailableDatesMediaRepository;
 
 class ListAvailableDatesFilter
 {
-    public function __construct(private readonly AvailableDatesMediaRepositoryInterface $availableDatesMediaRepository)
+    public function __construct(private readonly AvailableDatesMediaRepository $availableDatesMediaRepository)
     {
     }
 

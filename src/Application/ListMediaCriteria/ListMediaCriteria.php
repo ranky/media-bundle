@@ -6,7 +6,7 @@ namespace Ranky\MediaBundle\Application\ListMediaCriteria;
 
 
 use Ranky\MediaBundle\Application\DataTransformer\MediaToResponseTransformer;
-use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\MediaRepository;
 use Ranky\SharedBundle\Filter\Criteria;
 use Ranky\SharedBundle\Filter\Pagination\Pagination;
 
@@ -14,7 +14,7 @@ class ListMediaCriteria
 {
 
     public function __construct(
-        private readonly MediaRepositoryInterface $mediaRepository,
+        private readonly MediaRepository $mediaRepository,
         private readonly MediaToResponseTransformer $responseTransformer
     ) {
     }

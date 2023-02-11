@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace Ranky\MediaBundle\Application\FileManipulation\Thumbnails\DeleteThumbnails;
+namespace Ranky\MediaBundle\Application\FileManipulation\DeleteFile;
 
-use Ranky\MediaBundle\Domain\Contract\FileRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\FileRepository;
 
 final class DeleteThumbnails
 {
 
     public function __construct(
-        private readonly FileRepositoryInterface $fileRepository
+        private readonly FileRepository $fileRepository
     ) {
     }
 

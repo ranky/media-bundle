@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Application\SafeFileName;
 
-use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\MediaRepository;
 use Ranky\MediaBundle\Domain\Exception\NotFoundMediaException;
 use Ranky\SharedBundle\Common\FileHelper;
 
 class SafeFileName
 {
 
-    public function __construct(private readonly MediaRepositoryInterface $mediaRepository)
+    public function __construct(private readonly MediaRepository $mediaRepository)
     {
     }
 
