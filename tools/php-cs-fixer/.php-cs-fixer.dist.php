@@ -11,7 +11,7 @@ use PhpCsFixer\Finder;
  */
 $fileHeaderComment = <<<COMMENT
     This file is part of the Ranky Media Bundle package.
-    (c) Jose Carlos Campos <josecarlos@clicksolution.es>
+    (c) Jose Carlos Campos <nerjacarloscampos@gmail.com>
     For the full copyright and license information, please view the LICENSE
     file that was distributed with this source code.
     COMMENT;
@@ -28,7 +28,7 @@ $rules = [
     'declare_strict_types'                        => true,
     'single_quote'                                => true,
     'declare_parentheses'                         => true,
-    'mb_str_functions'                            => true,
+    'mb_str_functions'                            => false,
     'modernize_strpos'                            => true,
     'no_php4_constructor'                         => true,
     'no_unused_imports'                           => true,
