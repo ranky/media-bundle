@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Presentation\Twig;
 
-use Ranky\MediaBundle\Domain\Contract\FileUrlResolverInterface;
+use Ranky\MediaBundle\Domain\Contract\FileUrlResolver;
 use Ranky\SharedBundle\Common\FileHelper;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -14,7 +14,7 @@ class MediaTwigExtension extends AbstractExtension
 {
 
     public function __construct(
-        private readonly FileUrlResolverInterface $fileUrlResolver
+        private readonly FileUrlResolver $fileUrlResolver
     ) {
     }
 
@@ -33,13 +33,13 @@ class MediaTwigExtension extends AbstractExtension
         ];
     }
 
-    public function mediaUrl(string $fileName, bool $absolute = false): string
+    public function mediaUrl(string $fileName, bool $absolute = true): string
     {
-        return $this->fileUrlResolver->resolve($fileName, $absolute);
+        return $this->fileUrlResolver->resolve($fileName, null, $absolute);
     }
 
-    public function mediaThumbnailUrl(string $fileName, string $breakpoint, bool $absolute = false): string
+    public function mediaThumbnailUrl(string $fileName, string $breakpoint, bool $absolute = true): string
     {
-        return $this->fileUrlResolver->resolveFromBreakpoint($breakpoint, $fileName, $absolute);
+        return $this->fileUrlResolver->resolve($fileName, $breakpoint, $absolute);
     }
 }

@@ -1,10 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Ranky\MediaBundle\Domain\Exception;
+namespace Ranky\MediaBundle\Infrastructure\Validation;
 
 use Ranky\SharedBundle\Domain\Exception\HttpDomainException;
-use Throwable;
 
 final class UploadFileException extends HttpDomainException
 {
@@ -14,7 +13,7 @@ final class UploadFileException extends HttpDomainException
      * @param int $code
      * @param \Throwable|null $previous
      */
-    public function __construct(string $message, private readonly array $errors = [], int $code = 0, ?Throwable $previous = null)
+    public function __construct(string $message, private readonly array $errors = [], int $code = 0, ?\Throwable $previous = null)
     {
         parent::__construct($message, self::DEFAULT_STATUS_CODE, $code, $previous);
     }

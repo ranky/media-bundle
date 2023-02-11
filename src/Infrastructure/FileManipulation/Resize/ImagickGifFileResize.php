@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace Ranky\MediaBundle\Infrastructure\FileManipulation\Thumbnails\Resize;
+namespace Ranky\MediaBundle\Infrastructure\FileManipulation\Resize;
 
 use Psr\Log\LoggerInterface;
-use Ranky\MediaBundle\Domain\Contract\FileResizeInterface;
+use Ranky\MediaBundle\Domain\Contract\FileResize;
 use Ranky\MediaBundle\Domain\Enum\GifResizeDriver;
 use Ranky\MediaBundle\Domain\ValueObject\Dimension;
 use Ranky\MediaBundle\Domain\ValueObject\File;
 
-final class ImagickGifFileResize implements FileResizeInterface
+final class ImagickGifFileResize implements FileResize
 {
 
     public function __construct(

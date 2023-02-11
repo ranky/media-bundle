@@ -5,13 +5,13 @@ namespace Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Ranky\MediaBundle\Domain\Contract\MimeMediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\MimeMediaRepository;
 use Ranky\MediaBundle\Domain\Model\Media;
 
 /**
  * @extends ServiceEntityRepository<Media>
  */
-final class DoctrineOrmMimeMediaRepository extends ServiceEntityRepository implements MimeMediaRepositoryInterface
+final class DoctrineOrmMimeMediaRepository extends ServiceEntityRepository implements MimeMediaRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

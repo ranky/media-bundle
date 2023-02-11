@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Ranky\MediaBundle\Infrastructure\FileManipulation\Thumbnails\Resize;
+namespace Ranky\MediaBundle\Infrastructure\FileManipulation\Resize;
 
 use Intervention\Image\Constraint;
 use Intervention\Image\ImageManager;
 use Psr\Log\LoggerInterface;
-use Ranky\MediaBundle\Domain\Contract\FileResizeInterface;
+use Ranky\MediaBundle\Domain\Contract\FileResize;
 use Ranky\MediaBundle\Domain\Enum\ImageResizeDriver;
 use Ranky\MediaBundle\Domain\ValueObject\Dimension;
 use Ranky\MediaBundle\Domain\ValueObject\File;
 
-final class InterventionFileResize implements FileResizeInterface
+final class InterventionFileResize implements FileResize
 {
 
     public function __construct(private readonly string $resizeImageDriver, private readonly LoggerInterface $logger)

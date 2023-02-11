@@ -1,18 +1,18 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Domain\Model;
 
-
 use Doctrine\ORM\Mapping as ORM;
 use Ranky\MediaBundle\Domain\Event\MediaCreated;
 use Ranky\MediaBundle\Domain\Event\MediaDeleted;
-use Ranky\MediaBundle\Domain\Event\MediaDescriptionUpdated;
-use Ranky\MediaBundle\Domain\Event\MediaDimensionUpdated;
-use Ranky\MediaBundle\Domain\Event\MediaFileSizeUpdated;
-use Ranky\MediaBundle\Domain\Event\MediaFileUpdated;
+use Ranky\MediaBundle\Domain\Event\MediaDescriptionChanged;
+use Ranky\MediaBundle\Domain\Event\MediaDimensionChanged;
+use Ranky\MediaBundle\Domain\Event\MediaFileSizeChanged;
+use Ranky\MediaBundle\Domain\Event\MediaFileChanged;
 use Ranky\MediaBundle\Domain\Event\MediaThumbnailsAdded;
-use Ranky\MediaBundle\Domain\Event\MediaThumbnailsUpdated;
+use Ranky\MediaBundle\Domain\Event\MediaThumbnailsChanged;
 use Ranky\MediaBundle\Domain\ValueObject\Description;
 use Ranky\MediaBundle\Domain\ValueObject\Dimension;
 use Ranky\MediaBundle\Domain\ValueObject\File;
@@ -21,7 +21,6 @@ use Ranky\MediaBundle\Domain\ValueObject\Thumbnails;
 use Ranky\SharedBundle\Domain\AggregateRoot;
 use Ranky\SharedBundle\Domain\Traits\DateAtTrait;
 use Ranky\SharedBundle\Domain\ValueObject\UserIdentifier;
-
 
 #[ORM\Entity]
 #[ORM\Table(name: 'ranky_media')]
@@ -89,7 +88,7 @@ class Media extends AggregateRoot
         $now              = new \DateTimeImmutable();
         $media->createdAt = $now;
         $media->updatedAt = $now;
-        $media->record(new MediaCreated((string)$id, ['name' => $file->name()]));
+        $media->record(new MediaCreated((string)$id));
 
         return $media;
     }
@@ -98,45 +97,70 @@ class Media extends AggregateRoot
     {
         $this->record(
             new MediaDeleted(
-                (string)$this->id,
-                ['name' => $this->file->name(), 'thumbnails' => $this->thumbnails->toArray()]
+                $this->id->asString(),
+                [
+                    'name' => $this->file->name(),
+                    'thumbnails' => $this->thumbnails->toArray(),
+                ]
             )
         );
     }
 
-    public function updateDescription(Description $description, UserIdentifier $userIdentifier): void
+    public function changeDescription(Description $description, UserIdentifier $userIdentifier): void
     {
         $this->description = $description;
         $this->updatedAt   = new \DateTimeImmutable();
         $this->updatedBy   = $userIdentifier;
 
-        $this->record(new MediaDescriptionUpdated((string)$this->id));
+        $this->record(
+            new MediaDescriptionChanged(
+                $this->id->asString(),
+                ['description' => $description->toArray()]
+            )
+        );
     }
 
-    public function updateFile(File $file, UserIdentifier $userIdentifier): void
+    public function changeFile(File $file, UserIdentifier $userIdentifier): void
     {
         $this->file      = $file;
         $this->updatedAt = new \DateTimeImmutable();
         $this->updatedBy = $userIdentifier;
 
-        $this->record(new MediaFileUpdated((string)$this->id(), ['name' => $file->name()]));
+        $this->record(
+            new MediaFileChanged(
+                $this->id()->asString(),
+                [
+                    'name' => $file->name(),
+                ]
+            )
+        );
     }
 
-    public function updateFileDimension(File $file, Dimension $dimension): void
+    public function changeDimension(Dimension $dimension): void
     {
-        $this->file      = $file;
         $this->dimension = $dimension;
-
-        $this->record(new MediaFileUpdated((string)$this->id, ['name' => $file->name()]));
-        $this->record(new MediaDimensionUpdated((string)$this->id, ['dimension' => $dimension->toArray()]));
+        $this->record(
+            new MediaDimensionChanged(
+                $this->id->asString(),
+                [
+                    'dimension' => $dimension->toArray(),
+                ]
+            )
+        );
     }
 
-    public function updateFileSize(int $size): void
+    public function changeFileSize(int $size): void
     {
-        $oldSize    = $this->file->size();
-        $this->file = $this->file->updateSize($size);
+        $this->file = $this->file->changeSize($size);
 
-        $this->record(new MediaFileSizeUpdated((string)$this->id, ['oldSize' => $oldSize, 'newSize' => $size]));
+        $this->record(
+            new MediaFileSizeChanged(
+                $this->id->asString(),
+                [
+                    'size' => $size,
+                ]
+            )
+        );
     }
 
     public function addThumbnails(Thumbnails $thumbnails): void
@@ -145,20 +169,26 @@ class Media extends AggregateRoot
 
         $this->record(
             new MediaThumbnailsAdded(
-                (string)$this->id,
-                ['name' => $this->file->name(), 'thumbnails' => $this->thumbnails->toArray()]
+                $this->id->asString(),
+                [
+                    'name' => $this->file->name(),
+                    'thumbnails' => $this->thumbnails->toArray(),
+                ]
             )
         );
     }
 
-    public function updateThumbnails(Thumbnails $thumbnails): void
+    public function changeThumbnails(Thumbnails $thumbnails): void
     {
         $this->thumbnails = $thumbnails;
 
         $this->record(
-            new MediaThumbnailsUpdated(
-                (string)$this->id,
-                ['name' => $this->file->name(), 'thumbnails' => $this->thumbnails->toArray()]
+            new MediaThumbnailsChanged(
+                $this->id->asString(),
+                [
+                    'name' => $this->file->name(),
+                    'thumbnails' => $this->thumbnails->toArray(),
+                ]
             )
         );
     }
@@ -197,5 +227,4 @@ class Media extends AggregateRoot
     {
         return $this->updatedBy;
     }
-
 }

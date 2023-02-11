@@ -4,26 +4,20 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Ranky\MediaBundle\Application\FileManipulation\Thumbnails\GenerateThumbnails\AbstractGenerateImageThumbnails;
-use Ranky\MediaBundle\Application\FileManipulation\Thumbnails\GenerateThumbnails\GenerateGifImageThumbnails;
-use Ranky\MediaBundle\Application\FileManipulation\Thumbnails\GenerateThumbnails\GenerateImageThumbnails;
-use Ranky\MediaBundle\Domain\Contract\AvailableDatesMediaRepositoryInterface;
-use Ranky\MediaBundle\Domain\Contract\FilePathResolverInterface;
-use Ranky\MediaBundle\Domain\Contract\FileRepositoryInterface;
-use Ranky\MediaBundle\Domain\Contract\FileUrlResolverInterface;
-use Ranky\MediaBundle\Domain\Contract\MimeMediaRepositoryInterface;
+use Ranky\MediaBundle\Application\FileManipulation\GenerateThumbnails\AbstractGenerateImageThumbnails;
+use Ranky\MediaBundle\Application\FileManipulation\GenerateThumbnails\GenerateGifImageThumbnails;
+use Ranky\MediaBundle\Application\FileManipulation\GenerateThumbnails\GenerateImageThumbnails;
+use Ranky\MediaBundle\Domain\Contract\AvailableDatesMediaRepository;
+use Ranky\MediaBundle\Domain\Contract\MimeMediaRepository;
 use Ranky\MediaBundle\Domain\Service\FileCompressHandler;
 use Ranky\MediaBundle\Domain\Service\FileResizeHandler;
 use Ranky\MediaBundle\Domain\Service\GenerateThumbnailsHandler;
 use Ranky\MediaBundle\Infrastructure\DependencyInjection\MediaBundleExtension;
 use Ranky\MediaBundle\Infrastructure\FileManipulation\Compression\SpatieFileCompression;
-use Ranky\MediaBundle\Infrastructure\FileManipulation\Thumbnails\Resize\FfmpegGifFileResize;
-use Ranky\MediaBundle\Infrastructure\FileManipulation\Thumbnails\Resize\GifsicleGifFileResize;
-use Ranky\MediaBundle\Infrastructure\FileManipulation\Thumbnails\Resize\ImagickGifFileResize;
-use Ranky\MediaBundle\Infrastructure\FileManipulation\Thumbnails\Resize\InterventionFileResize;
-use Ranky\MediaBundle\Infrastructure\Filesystem\Local\LocalFilePathResolver;
-use Ranky\MediaBundle\Infrastructure\Filesystem\Local\LocalFileRepository;
-use Ranky\MediaBundle\Infrastructure\Filesystem\Local\LocalFileUrlResolver;
+use Ranky\MediaBundle\Infrastructure\FileManipulation\Resize\FfmpegGifFileResize;
+use Ranky\MediaBundle\Infrastructure\FileManipulation\Resize\GifsicleGifFileResize;
+use Ranky\MediaBundle\Infrastructure\FileManipulation\Resize\ImagickGifFileResize;
+use Ranky\MediaBundle\Infrastructure\FileManipulation\Resize\InterventionFileResize;
 use Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository\DoctrineOrmAvailableDatesMediaRepository;
 use Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository\DoctrineOrmMimeMediaRepository;
 use Ranky\MediaBundle\Infrastructure\Validation\UploadedFileValidator;
@@ -56,25 +50,19 @@ return static function (ContainerConfigurator $configurator) {
 
     // Repositories
     $services->set(DoctrineOrmAvailableDatesMediaRepository::class);
-    $services->alias(AvailableDatesMediaRepositoryInterface::class, DoctrineOrmAvailableDatesMediaRepository::class);
+    $services->alias(AvailableDatesMediaRepository::class, DoctrineOrmAvailableDatesMediaRepository::class);
 
     $services->set(DoctrineOrmMimeMediaRepository::class);
-    $services->alias(MimeMediaRepositoryInterface::class, DoctrineOrmMimeMediaRepository::class);
+    $services->alias(MimeMediaRepository::class, DoctrineOrmMimeMediaRepository::class);
 
     // Local File Repository
-    $services->set(LocalFileRepository::class);
-    $services->alias(FileRepositoryInterface::class, LocalFileRepository::class);
+    /*
+        $services->set(LocalFileRepository::class);
+        $services->alias(FileRepository::class, LocalFileRepository::class);
+    */
 
     // Upload Validator
     $services->set(UploadedFileValidator::class);
-
-    // Path Resolver
-    $services->set(LocalFilePathResolver::class);
-    $services->alias(FilePathResolverInterface::class, LocalFilePathResolver::class);
-
-    // Url Resolver
-    $services->set(LocalFileUrlResolver::class);
-    $services->alias(FileUrlResolverInterface::class, LocalFileUrlResolver::class);
 
     // Resize
     $services

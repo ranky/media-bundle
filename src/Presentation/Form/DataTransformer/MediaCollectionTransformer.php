@@ -7,7 +7,7 @@ namespace Ranky\MediaBundle\Presentation\Form\DataTransformer;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\MediaRepository;
 use Ranky\MediaBundle\Domain\Model\Media;
 use Ranky\MediaBundle\Domain\ValueObject\MediaId;
 use Symfony\Component\Form\DataTransformerInterface;
@@ -16,7 +16,7 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 
 class MediaCollectionTransformer implements DataTransformerInterface
 {
-    public function __construct(private readonly MediaRepositoryInterface $mediaRepository)
+    public function __construct(private readonly MediaRepository $mediaRepository)
     {
     }
 

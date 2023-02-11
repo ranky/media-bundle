@@ -5,14 +5,14 @@ namespace Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Ranky\MediaBundle\Domain\Contract\UserMediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\UserMediaRepository;
 use Ranky\MediaBundle\Domain\Model\Media;
 use Ranky\SharedBundle\Domain\ValueObject\UserIdentifier;
 
 /**
  * @extends ServiceEntityRepository<\Symfony\Component\Security\Core\User\UserInterface>
  */
-final class DoctrineOrmUserMediaRepository extends ServiceEntityRepository implements UserMediaRepositoryInterface
+final class DoctrineOrmUserMediaRepository extends ServiceEntityRepository implements UserMediaRepository
 {
 
     public function __construct(

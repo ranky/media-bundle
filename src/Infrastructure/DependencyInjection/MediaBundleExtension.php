@@ -6,21 +6,28 @@ namespace Ranky\MediaBundle\Infrastructure\DependencyInjection;
 
 use Ranky\MediaBundle\Application\DataTransformer\MediaToResponseTransformer;
 use Ranky\MediaBundle\Application\FileManipulation\CompressFile\CompressFile;
-use Ranky\MediaBundle\Application\FileManipulation\Thumbnails\GenerateThumbnails\AbstractGenerateImageThumbnails;
-use Ranky\MediaBundle\Domain\Contract\FileCompressInterface;
-use Ranky\MediaBundle\Domain\Contract\FileResizeInterface;
-use Ranky\MediaBundle\Domain\Contract\GenerateThumbnailsInterface;
-use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
-use Ranky\MediaBundle\Domain\Contract\UserMediaRepositoryInterface;
+use Ranky\MediaBundle\Application\FileManipulation\GenerateThumbnails\AbstractGenerateImageThumbnails;
+use Ranky\MediaBundle\Application\FileManipulation\WriteFile\WriteTemporaryFileToOrigin;
+use Ranky\MediaBundle\Domain\Contract\FileCompress;
+use Ranky\MediaBundle\Domain\Contract\FilePathResolver;
+use Ranky\MediaBundle\Domain\Contract\FileRepository;
+use Ranky\MediaBundle\Domain\Contract\FileResize;
+use Ranky\MediaBundle\Domain\Contract\FileUrlResolver;
+use Ranky\MediaBundle\Domain\Contract\GenerateThumbnails;
+use Ranky\MediaBundle\Domain\Contract\MediaRepository;
+use Ranky\MediaBundle\Domain\Contract\TemporaryFileRepository;
+use Ranky\MediaBundle\Domain\Contract\UserMediaRepository;
 use Ranky\MediaBundle\Domain\Enum\GifResizeDriver;
 use Ranky\MediaBundle\Domain\Enum\ImageResizeDriver;
 use Ranky\MediaBundle\Infrastructure\FileManipulation\Compression\SpatieFileCompression;
-use Ranky\MediaBundle\Infrastructure\FileManipulation\Thumbnails\Resize\FfmpegGifFileResize;
-use Ranky\MediaBundle\Infrastructure\FileManipulation\Thumbnails\Resize\GifsicleGifFileResize;
-use Ranky\MediaBundle\Infrastructure\FileManipulation\Thumbnails\Resize\ImagickGifFileResize;
-use Ranky\MediaBundle\Infrastructure\FileManipulation\Thumbnails\Resize\InterventionFileResize;
-use Ranky\MediaBundle\Infrastructure\Filesystem\Local\LocalFilePathResolver;
-use Ranky\MediaBundle\Infrastructure\Filesystem\Local\LocalFileUrlResolver;
+use Ranky\MediaBundle\Infrastructure\FileManipulation\Resize\FfmpegGifFileResize;
+use Ranky\MediaBundle\Infrastructure\FileManipulation\Resize\GifsicleGifFileResize;
+use Ranky\MediaBundle\Infrastructure\FileManipulation\Resize\ImagickGifFileResize;
+use Ranky\MediaBundle\Infrastructure\FileManipulation\Resize\InterventionFileResize;
+use Ranky\MediaBundle\Infrastructure\Filesystem\Flysystem\FlysystemFileRepository;
+use Ranky\MediaBundle\Infrastructure\Filesystem\Flysystem\FlysystemFileUrlResolver;
+use Ranky\MediaBundle\Infrastructure\Filesystem\Local\LocalTemporaryFilePathResolver;
+use Ranky\MediaBundle\Infrastructure\Filesystem\Local\LocalTemporaryFileRepository;
 use Ranky\MediaBundle\Infrastructure\Persistence\Dbal\Types\MediaIdType;
 use Ranky\MediaBundle\Infrastructure\Persistence\Dbal\Types\ThumbnailCollectionType;
 use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\MimeSubType;
@@ -31,6 +38,7 @@ use Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository\DoctrineOrmMedia
 use Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository\DoctrineOrmUserMediaRepository;
 use Ranky\MediaBundle\Infrastructure\Validation\UploadedFileValidator;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Argument\AbstractArgument;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
@@ -39,8 +47,8 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class MediaBundleExtension extends Extension implements PrependExtensionInterface
 {
-
     public const CONFIG_DOMAIN_NAME   = 'ranky_media';
+    public const CONFIG_FILESYSTEM_STORAGE_NAME = 'ranky_media.storage';
     public const TAG_MEDIA_THUMBNAILS = 'ranky.media_thumbnails';
     public const TAG_MEDIA_COMPRESS   = 'ranky.media_compress';
     public const TAG_MEDIA_RESIZE     = 'ranky.media_resize';
@@ -64,57 +72,90 @@ class MediaBundleExtension extends Extension implements PrependExtensionInterfac
         $container->setParameter('ranky_media_api_prefix', $config['api_prefix']);
 
         // Media
-        $container->registerForAutoconfiguration(GenerateThumbnailsInterface::class)
+        $container->registerForAutoconfiguration(GenerateThumbnails::class)
             ->addTag(self::TAG_MEDIA_THUMBNAILS);
 
-        $container->registerForAutoconfiguration(FileCompressInterface::class)
+        $container->registerForAutoconfiguration(FileCompress::class)
             ->addTag(self::TAG_MEDIA_COMPRESS);
 
-        $container->registerForAutoconfiguration(FileResizeInterface::class)
+        $container->registerForAutoconfiguration(FileResize::class)
             ->addTag(self::TAG_MEDIA_RESIZE);
 
         $phpLoader = new PhpFileLoader($container, new FileLocator(__DIR__.'/../../../config'));
         $phpLoader->load('services.php');
 
-        // check valid configuration
+        /* check valid configuration */
         $this->checkConfiguration($config);
 
-        /** Another way to define services */
-        // Doctrine Media repository
+        /* set parameters */
+        $temporaryDirectory = $config['temporary_directory'];
+        $uploadUrl          = \rtrim($config['upload_url'], '/');
+
+        // Flysystem Repository
+        $flysystemFileRepositoryDefinition = new Definition(FlysystemFileRepository::class);
+        $flysystemFileRepositoryDefinition->setAutowired(true);
+        $container->setDefinition(FlysystemFileRepository::class, $flysystemFileRepositoryDefinition);
+        $container->setAlias(FileRepository::class, FlysystemFileRepository::class);
+
+        // Flysystem Url Resolver
+        $urlResolverDefinition = new Definition(FlysystemFileUrlResolver::class);
+        $urlResolverDefinition->setAutowired(true);
+        $urlResolverDefinition->setArgument('$uploadUrl', $uploadUrl);
+        $urlResolverDefinition->setArgument(
+            '$rankyMediaStorageAdapter',
+            new AbstractArgument('Defined in MediaCompilerPass')
+        );
+        $container->setDefinition(FlysystemFileUrlResolver::class, $urlResolverDefinition);
+        $container->setAlias(FileUrlResolver::class, FlysystemFileUrlResolver::class);
+
+        // Temporary Repository
+        $localTemporaryFileRepository = new Definition(LocalTemporaryFileRepository::class);
+        $localTemporaryFileRepository->setAutowired(true);
+        $localTemporaryFileRepository->setArgument('$temporaryDirectory', $temporaryDirectory);
+        $container->setDefinition(LocalTemporaryFileRepository::class, $localTemporaryFileRepository);
+        $container->setAlias(TemporaryFileRepository::class, LocalTemporaryFileRepository::class);
+
+        // Temporary Path Resolver
+        $localTemporaryFilePathResolverDefinition = new Definition(LocalTemporaryFilePathResolver::class);
+        $localTemporaryFilePathResolverDefinition->setArgument('$temporaryDirectory', $temporaryDirectory);
+        $container->setDefinition(LocalTemporaryFilePathResolver::class, $localTemporaryFilePathResolverDefinition);
+        $container->setAlias(FilePathResolver::class, LocalTemporaryFilePathResolver::class);
+
+        /* Write File */
+        $container->getDefinition(WriteTemporaryFileToOrigin::class)
+            ->setArgument('$breakpoints', $config['image']['breakpoints']);
+
+        /* Doctrine Media repository */
         $doctrineOrmMediaRepositoryDefinition = new Definition(DoctrineOrmMediaRepository::class);
         $doctrineOrmMediaRepositoryDefinition->setAutowired(true);
-        $container->setAlias(MediaRepositoryInterface::class, DoctrineOrmMediaRepository::class);
+        $container->setAlias(MediaRepository::class, DoctrineOrmMediaRepository::class);
         $container->setDefinition(DoctrineOrmMediaRepository::class, $doctrineOrmMediaRepositoryDefinition);
 
 
-        // Doctrine User Media repository
+        /* Doctrine User Media repository */
         $doctrineOrmUserMediaRepositoryDefinition = new Definition(DoctrineOrmUserMediaRepository::class);
         $doctrineOrmUserMediaRepositoryDefinition
             ->setAutowired(true)
             ->setArgument('$userEntity', $config['user_entity'])
             ->setArgument('$userIdentifierProperty', $config['user_identifier_property']);
-        $container->setAlias(UserMediaRepositoryInterface::class, DoctrineOrmUserMediaRepository::class);
+        $container->setAlias(UserMediaRepository::class, DoctrineOrmUserMediaRepository::class);
         $container->setDefinition(DoctrineOrmUserMediaRepository::class, $doctrineOrmUserMediaRepositoryDefinition);
 
-        /** Add config parameters to services */
-        $uploadUrl = rtrim($config['upload_url'], '/');
+        /* Add config parameters to services */
+
+
         $container->getDefinition(MediaToResponseTransformer::class)
-            ->setArgument('$uploadUrl', $uploadUrl)
             ->setArgument('$dateTimeFormat', $config['date_time_format']);
+
 
         $container->getDefinition(UploadedFileValidator::class)
             ->setArgument('$mimeTypes', $config['mime_types'])
             ->setArgument('$maxFileSize', $config['max_file_size']);
 
-        $container->getDefinition(LocalFilePathResolver::class)
-            ->setArgument('$uploadDirectory', $config['upload_directory']);
-
-        $container->getDefinition(LocalFileUrlResolver::class)
-            ->setArgument('$uploadUrl', $uploadUrl);
-
         $container->getDefinition(CompressFile::class)
             ->setArgument('$disableCompression', $config['disable_compression'])
-            ->setArgument('$compressOnlyOriginal', $config['compress_only_original']);
+            ->setArgument('$compressOnlyOriginal', $config['compress_only_original'])
+            ->setArgument('$breakpoints', $config['image']['breakpoints']);
 
         $container->getDefinition(ImagickGifFileResize::class)
             ->setArgument('$imageResizeGifDriver', $config['image']['resize_gif_driver']);
@@ -128,17 +169,17 @@ class MediaBundleExtension extends Extension implements PrependExtensionInterfac
         $container->getDefinition(InterventionFileResize::class)
             ->setArgument('$resizeImageDriver', $config['image']['resize_driver']);
 
+        $container->getDefinition(SpatieFileCompression::class)
+            ->setArgument('$imageQuality', $config['image']['quality']);
+
         /**
          * We just inject the arguments into the parent
          * @see ../../../config/services.php
-         * for the implementations of the GenerateThumbnailsInterface
+         * for the implementations of the GenerateThumbnails
          */
         $container->getDefinition(AbstractGenerateImageThumbnails::class)
             ->setArgument('$originalMaxWidth', $config['image']['original_max_width'])
             ->setArgument('$breakpoints', $config['image']['breakpoints']);
-
-        $container->getDefinition(SpatieFileCompression::class)
-            ->setArgument('$imageQuality', $config['image']['quality']);
     }
 
     /**
@@ -201,12 +242,22 @@ class MediaBundleExtension extends Extension implements PrependExtensionInterfac
 
     public function prepend(ContainerBuilder $container): void
     {
+        $container->prependExtensionConfig('flysystem', [
+            'storages' => [
+                'ranky_media.storage' => [
+                    'adapter'    => 'local',
+                    'options'    => [
+                        'directory' => Configuration::DEFAULT_UPLOAD_DIRECTORY,
+                    ],
+                ],
+            ],
+        ]);
 
         $container->prependExtensionConfig('twig', [
             'form_themes' => [
                 '@RankyMedia/form.html.twig',
             ],
-            'globals' => [
+            'globals'     => [
                 'ranky_media' => '@Ranky\MediaBundle\Presentation\Twig\MediaTwigService',
             ],
         ]);
@@ -214,7 +265,7 @@ class MediaBundleExtension extends Extension implements PrependExtensionInterfac
             'assets' => [
                 'packages' => [
                     'ranky_media' => [
-                        'base_path' => 'bundles/rankymedia/',
+                        'base_path'          => 'bundles/rankymedia/',
                         'json_manifest_path' => '%kernel.project_dir%/public/bundles/rankymedia/manifest.json',
                     ],
                 ],
@@ -228,25 +279,25 @@ class MediaBundleExtension extends Extension implements PrependExtensionInterfac
         $container->prependExtensionConfig('doctrine', [
             'dbal' => [
                 'types' => [
-                    'media_id' => MediaIdType::class,
+                    'media_id'             => MediaIdType::class,
                     'thumbnail_collection' => ThumbnailCollectionType::class,
                 ],
             ],
-            'orm' => [
-                'dql' => [
-                    'string_functions' => [
-                        'MIME_TYPE' => MimeType::class,
+            'orm'  => [
+                'dql'      => [
+                    'string_functions'   => [
+                        'MIME_TYPE'    => MimeType::class,
                         'MIME_SUBTYPE' => MimeSubType::class,
                     ],
                     'datetime_functions' => [
-                        'YEAR' => Year::class,
+                        'YEAR'  => Year::class,
                         'MONTH' => Month::class,
                     ],
                 ],
                 'mappings' => [
                     'RankyMediaBundle' => [
-                        'type' => 'attribute',
-                        'dir' => \dirname(__DIR__, 3).'/src/Domain',
+                        'type'   => 'attribute',
+                        'dir'    => \dirname(__DIR__, 2).'/Domain',
                         'prefix' => 'Ranky\MediaBundle\Domain',
                     ],
                 ],

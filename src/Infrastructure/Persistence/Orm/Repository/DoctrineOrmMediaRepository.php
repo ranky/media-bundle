@@ -7,7 +7,7 @@ namespace Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\MediaRepository;
 use Ranky\MediaBundle\Domain\Criteria\MediaCriteria;
 use Ranky\MediaBundle\Domain\Exception\NotFoundMediaException;
 use Ranky\MediaBundle\Domain\Model\Media;
@@ -20,7 +20,7 @@ use Ranky\SharedBundle\Filter\Pagination\OffsetPagination;
 /**
  * @extends ServiceEntityRepository<Media>
  */
-final class DoctrineOrmMediaRepository extends ServiceEntityRepository implements MediaRepositoryInterface
+final class DoctrineOrmMediaRepository extends ServiceEntityRepository implements MediaRepository
 {
     public function __construct(
         ManagerRegistry $registry,
@@ -147,5 +147,7 @@ final class DoctrineOrmMediaRepository extends ServiceEntityRepository implement
     {
         $this->getEntityManager()->remove($media);
         $this->getEntityManager()->flush();
+        /** raised events */
+        $media->delete();
     }
 }

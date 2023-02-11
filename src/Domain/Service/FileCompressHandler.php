@@ -3,30 +3,31 @@ declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Domain\Service;
 
-use Ranky\MediaBundle\Domain\Contract\FileCompressInterface;
+use Ranky\MediaBundle\Domain\Contract\FileCompress;
 use Ranky\MediaBundle\Domain\ValueObject\File;
+use Ranky\SharedBundle\Domain\Service\ValidateHandlersTrait;
 
 class FileCompressHandler
 {
-    /**
-     * @var array<FileCompressInterface>
-     */
+    use ValidateHandlersTrait;
+
+     /** @var array<FileCompress> */
     private readonly array $handlers;
 
     /**
-     * @param iterable<FileCompressInterface> $handlers
+     * @param iterable<FileCompress> $handlers
+     * @throws \Exception
      */
     public function __construct(iterable $handlers)
     {
-        $this->handlers = $handlers instanceof \Traversable ? \iterator_to_array($handlers) : $handlers;
+        $this->handlers = $this->validateHandlers($handlers, FileCompress::class);
     }
 
-    public function compress(string $absolutePath, File $file): bool
+    public function compress(File $file, string $path): bool
     {
-
         foreach ($this->handlers as $handler) {
-            if ($handler instanceof FileCompressInterface && $handler->support($file)) {
-                $handler->compress($absolutePath);
+            if ($handler->support($file)) {
+                $handler->compress($path);
                 return true;
             }
         }
@@ -37,7 +38,7 @@ class FileCompressHandler
     public function support(File $file): bool
     {
         foreach ($this->handlers as $handler) {
-            if ($handler instanceof FileCompressInterface && $handler->support($file)) {
+            if ($handler->support($file)) {
                 return true;
             }
         }

@@ -5,14 +5,14 @@ namespace Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Ranky\MediaBundle\Domain\Contract\AvailableDatesMediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\AvailableDatesMediaRepository;
 use Ranky\MediaBundle\Domain\Model\Media;
 
 /**
  * @extends ServiceEntityRepository<Media>
  */
 final class DoctrineOrmAvailableDatesMediaRepository extends ServiceEntityRepository implements
-    AvailableDatesMediaRepositoryInterface
+    AvailableDatesMediaRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

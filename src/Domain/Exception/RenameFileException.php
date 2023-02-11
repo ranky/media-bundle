@@ -9,12 +9,11 @@ final class RenameFileException extends HttpDomainException
 {
     /**
      * @param string $message
-     * @param int $code
      * @param \Throwable|null $previous
      */
-    public function __construct(string $message, int $code = 0, ?\Throwable $previous = null)
+    public function __construct(string $message, ?\Throwable $previous = null)
     {
-        parent::__construct($message, self::DEFAULT_STATUS_CODE, $code, $previous);
+        parent::__construct($message, self::DEFAULT_STATUS_CODE, 0, $previous);
     }
 
 }

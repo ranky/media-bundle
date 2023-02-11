@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Ranky\MediaBundle\Infrastructure\Validation;
 
 use Ranky\MediaBundle\Application\CreateMedia\UploadedFileRequest;
-use Ranky\MediaBundle\Domain\Exception\UploadFileException;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 

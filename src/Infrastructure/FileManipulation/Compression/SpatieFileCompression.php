@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Infrastructure\FileManipulation\Compression;
 
 use Psr\Log\LoggerInterface;
-use Ranky\MediaBundle\Domain\Contract\FileCompressInterface;
-use Ranky\MediaBundle\Domain\Contract\FileRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\FileCompress;
+use Ranky\MediaBundle\Domain\Contract\TemporaryFileRepository;
 use Ranky\MediaBundle\Domain\ValueObject\File;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
 use Spatie\ImageOptimizer\Optimizers\Cwebp;
@@ -15,13 +16,12 @@ use Spatie\ImageOptimizer\Optimizers\Optipng;
 use Spatie\ImageOptimizer\Optimizers\Pngquant;
 use Spatie\ImageOptimizer\Optimizers\Svgo;
 
-final class SpatieFileCompression implements FileCompressInterface
+final class SpatieFileCompression implements FileCompress
 {
-
     public function __construct(
         private readonly int $imageQuality,
         private readonly LoggerInterface $logger,
-        private readonly FileRepositoryInterface $fileRepository
+        private readonly TemporaryFileRepository $temporaryFileRepository
     ) {
     }
 
@@ -31,13 +31,14 @@ final class SpatieFileCompression implements FileCompressInterface
         return \str_contains($file->mime(), 'image/');
     }
 
-    public function compress(string $absolutePath): void
+    public function compress(string $path): void
     {
         // For each megabyte I reduce the percentage of image quality by 5%
         $reduceQuality = 5;
-        $filesize      = $this->fileRepository->filesizeFromPath($absolutePath);
-        $mb            = (int)round($filesize / 1048576 /* Bytes to Mb */);
-        $quality       = $mb >= 1 ? ($this->imageQuality - ($mb * $reduceQuality)) : $this->imageQuality;
+        $filesize      = $this->temporaryFileRepository->filesize($path);
+
+        $mb      = (int)round($filesize / 1048576 /* Bytes to Mb */);
+        $quality = $mb >= 1 ? ($this->imageQuality - ($mb * $reduceQuality)) : $this->imageQuality;
 
         $jpegoptim = new Jpegoptim(
             [
@@ -46,7 +47,7 @@ final class SpatieFileCompression implements FileCompressInterface
                 '--all-progressive',
             ]
         );
-        $pngquant = new Pngquant(
+        $pngquant  = new Pngquant(
             [
                 '--quality='.$quality, // Fails when it does not reach the required minimum
                 '--force',
@@ -54,7 +55,7 @@ final class SpatieFileCompression implements FileCompressInterface
                 '--verbose',
             ]
         );
-        $optipng  = new Optipng(
+        $optipng   = new Optipng(
             [
                 '-i0',
                 '-o2',
@@ -89,6 +90,6 @@ final class SpatieFileCompression implements FileCompressInterface
             ->addOptimizer($gifsicle)
             ->addOptimizer($webp);
 
-        $optimizerChain->optimize($absolutePath);
+        $optimizerChain->optimize($path);
     }
 }
