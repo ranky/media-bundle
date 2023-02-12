@@ -158,11 +158,6 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                ->scalarNode('upload_directory')
-                    /*->setDeprecated(
-                        'ranky/media-bundle',
-                        '^2.0',
-                        'The "%node%" configuration key has been deprecated. Use "options.directory" in the flysystem bundle config instead.'
-                    )*/
                     ->cannotBeEmpty()
                     ->example(self::DEFAULT_UPLOAD_DIRECTORY)
                     ->defaultValue(self::DEFAULT_UPLOAD_DIRECTORY)
