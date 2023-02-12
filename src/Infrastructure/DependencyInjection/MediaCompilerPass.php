@@ -29,6 +29,20 @@ class MediaCompilerPass implements CompilerPassInterface
             $mediaConfig['upload_directory'] = $uploadDirectory;
             $container->setParameter(MediaBundleExtension::CONFIG_DOMAIN_NAME, $mediaConfig);
         }
+
+        if ($flysystemConfig['adapter'] !== 'local' && !\str_contains($mediaConfig['upload_url'], 'http'))
+        {
+            throw new \RuntimeException(
+                \sprintf(
+                    'Invalid upload url "%s" for adapter "%s". The url must be absolute and start with "http"',
+                    $mediaConfig['upload_url'],
+                    $flysystemConfig['adapter']
+                )
+            );
+        }
+
+
+
         $container->setParameter('ranky_media_upload_directory', $uploadDirectory);
 
         $container->setParameter('ranky_media_adapter', $flysystemConfig['adapter']);
