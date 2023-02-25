@@ -41,10 +41,7 @@ class MediaCompilerPass implements CompilerPassInterface
             );
         }
 
-
-
         $container->setParameter('ranky_media_upload_directory', $uploadDirectory);
-
         $container->setParameter('ranky_media_adapter', $flysystemConfig['adapter']);
         $container
             ->getDefinition(FlysystemFileUrlResolver::class)
