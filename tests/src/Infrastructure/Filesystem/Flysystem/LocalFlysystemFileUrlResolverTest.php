@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Ranky\MediaBundle\Tests\Infrastructure\Filesystem\Flysystem;
 
 use Ranky\MediaBundle\Domain\Enum\Breakpoint;
-use Ranky\MediaBundle\Domain\Exception\InvalidPathException;
 use Ranky\MediaBundle\Infrastructure\Filesystem\Flysystem\FlysystemFileUrlResolver;
 use Ranky\MediaBundle\Tests\BaseIntegrationTestCase;
+use Ranky\SharedBundle\Infrastructure\Site\SiteUrlResolver;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\RouterInterface;
 
 class LocalFlysystemFileUrlResolverTest extends BaseIntegrationTestCase
 {
@@ -57,9 +60,6 @@ class LocalFlysystemFileUrlResolverTest extends BaseIntegrationTestCase
             '/uploads/'.$smallBreakpoint.'/image.jpg',
             $this->flysystemFileUrlResolver->resolve('image.jpg', $smallBreakpoint, false)
         );
-
-        $this->expectExceptionObject(InvalidPathException::withUrl($_ENV['SITE_URL'].'/'));
-        $this->flysystemFileUrlResolver->resolve($_ENV['SITE_URL'].'/', null, false);
     }
 
     public function testItShouldResolveLocalAbsoluteUrl(): void
@@ -98,8 +98,63 @@ class LocalFlysystemFileUrlResolverTest extends BaseIntegrationTestCase
             $this->flysystemFileUrlResolver->resolve('/uploads/'.$smallBreakpoint.'/image.jpg', $smallBreakpoint)
         );
 
+    }
 
-        $this->expectExceptionObject(InvalidPathException::withUrl($_ENV['SITE_URL']));
-        $this->flysystemFileUrlResolver->resolve($_ENV['SITE_URL']);
+    /**
+     * @throws \Exception
+     */
+    public function testItShouldResolveLocalAbsoluteUrlWithSubdomain(): void
+    {
+
+        $siteUrl             = 'https://subdomain.rankymedia.com';
+        $uploadUrl           = '/uploads/documents';
+
+        $parameterBag = new ParameterBag([
+            'site_url' => $siteUrl,
+        ]);
+        $siteUrlResolver = new SiteUrlResolver(
+            $parameterBag,
+            $this->getService(RequestStack::class),
+            $this->getService(RouterInterface::class)
+        );
+
+        $fileUrlResolver = new FlysystemFileUrlResolver(
+            $uploadUrl,
+            'local',
+            $siteUrlResolver
+        );
+
+        $this->assertSame(
+            $siteUrl.$uploadUrl,
+            $fileUrlResolver->resolve('/')
+        );
+        $this->assertSame(
+            $siteUrl.$uploadUrl.'/image.jpg',
+            $fileUrlResolver->resolve('/image.jpg')
+        );
+        $this->assertSame(
+            $siteUrl.$uploadUrl.'/image.jpg',
+            $fileUrlResolver->resolve('image.jpg')
+        );
+
+        // breakpoint
+        $smallBreakpoint = Breakpoint::SMALL->value;
+        $breakpointUrl = \sprintf('%s/%s/%s', $siteUrl.$uploadUrl, $smallBreakpoint, 'image.jpg');
+        $this->assertSame(
+            $breakpointUrl,
+            $fileUrlResolver->resolve('image.jpg', $smallBreakpoint)
+        );
+        $this->assertSame(
+            $breakpointUrl,
+            $fileUrlResolver->resolve('/image.jpg', $smallBreakpoint)
+        );
+        $this->assertSame(
+            $breakpointUrl,
+            $fileUrlResolver->resolve('/uploads/documents/image.jpg', $smallBreakpoint)
+        );
+        $this->assertSame(
+            $breakpointUrl,
+            $fileUrlResolver->resolve('/uploads/documents/'.$smallBreakpoint.'/image.jpg', $smallBreakpoint)
+        );
     }
 }

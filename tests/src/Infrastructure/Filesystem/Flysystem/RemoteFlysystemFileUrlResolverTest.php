@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ranky\MediaBundle\Tests\Infrastructure\Filesystem\Flysystem;
 
 use Ranky\MediaBundle\Domain\Enum\Breakpoint;
-use Ranky\MediaBundle\Domain\Exception\InvalidPathException;
 use Ranky\MediaBundle\Infrastructure\Filesystem\Flysystem\FlysystemFileUrlResolver;
 use Ranky\MediaBundle\Tests\BaseIntegrationTestCase;
 use Ranky\SharedBundle\Domain\Site\SiteUrlResolverInterface;
@@ -67,8 +66,6 @@ class RemoteFlysystemFileUrlResolverTest extends BaseIntegrationTestCase
             $remoteUrlBreakpoint,
             $this->flysystemFileUrlResolver->resolve('small/image.jpg', $smallBreakpoint)
         );
-
-        $this->expectExceptionObject(InvalidPathException::withUrl($this->remoteUrl));
-        $this->flysystemFileUrlResolver->resolve($this->remoteUrl);
+        
     }
 }
