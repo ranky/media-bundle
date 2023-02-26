@@ -38,7 +38,6 @@ use Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository\DoctrineOrmMedia
 use Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository\DoctrineOrmUserMediaRepository;
 use Ranky\MediaBundle\Infrastructure\Validation\UploadedFileValidator;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\Argument\AbstractArgument;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
@@ -101,10 +100,6 @@ class MediaBundleExtension extends Extension implements PrependExtensionInterfac
         $urlResolverDefinition = new Definition(FlysystemFileUrlResolver::class);
         $urlResolverDefinition->setAutowired(true);
         $urlResolverDefinition->setArgument('$uploadUrl', $uploadUrl);
-        $urlResolverDefinition->setArgument(
-            '$rankyMediaStorageAdapter',
-            new AbstractArgument('Defined in MediaCompilerPass')
-        );
         $container->setDefinition(FlysystemFileUrlResolver::class, $urlResolverDefinition);
         $container->setAlias(FileUrlResolver::class, FlysystemFileUrlResolver::class);
 

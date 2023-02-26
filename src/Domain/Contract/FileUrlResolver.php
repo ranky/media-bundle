@@ -5,6 +5,6 @@ namespace Ranky\MediaBundle\Domain\Contract;
 
 interface FileUrlResolver
 {
-    public function resolve(string $path, ?string $breakpoint = null, bool $absolute = true): string;
+    public function resolve(string $path, ?string $breakpoint = null): string;
 
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Infrastructure\DependencyInjection;
 
-use Ranky\MediaBundle\Infrastructure\Filesystem\Flysystem\FlysystemFileUrlResolver;
 use Ranky\SharedBundle\Filter\Attributes\CriteriaValueResolver;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -43,9 +42,6 @@ class MediaCompilerPass implements CompilerPassInterface
 
         $container->setParameter('ranky_media_upload_directory', $uploadDirectory);
         $container->setParameter('ranky_media_adapter', $flysystemConfig['adapter']);
-        $container
-            ->getDefinition(FlysystemFileUrlResolver::class)
-            ->setArgument('$rankyMediaStorageAdapter', $flysystemConfig['adapter']);
 
         /**
          * TODO: Criteria Value Resolver
