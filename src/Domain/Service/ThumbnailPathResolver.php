@@ -29,8 +29,8 @@ class ThumbnailPathResolver
             throw InvalidBreakpointException::withName($breakpoint);
         }
 
-        if (\str_contains($path, $directorySeparator.$breakpoint)) {
-            return \str_replace($directorySeparator.$breakpoint, '', $path);
+        if (\str_contains($path, $directorySeparator.$breakpoint.$directorySeparator)) {
+            return \str_replace($directorySeparator.$breakpoint.$directorySeparator, '', $path);
         }
 
         return $path;

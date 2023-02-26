@@ -50,6 +50,10 @@ class FlysystemFileUrlResolverTest extends BaseIntegrationTestCase
             $breakpointUrl.'/image.jpg',
             $flysystemFileUrlResolver->resolve('image.jpg', $smallBreakpoint)
         );
+        $this->assertSame(
+            $breakpointUrl.'/small.image.jpg',
+            $flysystemFileUrlResolver->resolve('/small.image.jpg', $smallBreakpoint)
+        );
         // with upload url in path
         $this->assertSame(
             $breakpointUrl.'/image.jpg',

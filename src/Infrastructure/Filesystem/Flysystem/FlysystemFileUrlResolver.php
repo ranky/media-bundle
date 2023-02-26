@@ -17,13 +17,8 @@ final class FlysystemFileUrlResolver implements FileUrlResolver
     {
         $uploadUrl = $this->uploadUrl;
 
-        if ($path !== '/' && $uploadUrl !== '/') {
-            if ( \str_contains($path, $uploadUrl)){
-                $path = \str_replace($uploadUrl, '', $path);
-            }
-            if ($breakpoint && \str_contains($path, $breakpoint)){
-                $path = \str_replace($breakpoint, '', $path);
-            }
+        if ($path !== '/' && $uploadUrl !== '/' && \str_contains($path, $uploadUrl)) {
+            $path = \str_replace($uploadUrl, '', $path);
         }
 
         $publicPath = $this->pathJoin(
