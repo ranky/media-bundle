@@ -1,9 +1,15 @@
 # Migration Guide from Version 1 to Version 2 - Ranky Media Bundle
 
+## Breaking Changes
 
-This migration guide will walk you through the steps of upgrading to Version 2 of the Ranky Media Bundle. The bundle now integrates with the [Flysystem library](https://github.com/thephpleague/flysystem) and the [Flysystem Bundle](https://github.com/thephpleague/flysystem-bundle), which is maintained by one of the Symfony developers.
+* The bundle now integrates the [Flysystem Bundle](https://github.com/thephpleague/flysystem-bundle), which is maintained by one of the Symfony developers.
+* The twig function `ranky_media_thumbnail_url` has been deleted
+* The twig function `ranky_media_url` now accepts a second argument `$breakpoint` and the `$absolute` argument has been removed
+* Although the `ranky_media_url` function is maintained, it is not necessary to use it since MediaResponse object already resolve the media URL. 
 
-## Configuration for Version 1
+This migration guide will walk you through the steps of upgrading to Version 2 of the Ranky Media Bundle.
+
+## An overview of version 1
 
 In Version 1, the local storage came preconfigured, and you only had to change the URL (uploadUrl) and directory (uploadDirectory) for file storage if desired. For example:
 
@@ -21,9 +27,9 @@ return static function (RankyMediaConfig $rankyMediaConfig) {
 }
 ```
 
-## Configurations for Version 2
+## Version 2
 
-In Version 2, the local storage is still preconfigured and you do not have to make any changes if you want to use the default configurations. However, if you need to change either the local or remote storage, you will need to make changes in the Flysystem Bundle.
+In Version 2, the local storage is still preconfigured, and you do not have to make any changes if you want to use the default configurations. However, if you need to change either the local or remote storage, you will need to make changes in the Flysystem Bundle.
 
 Here is an example for **the local storage**:
 

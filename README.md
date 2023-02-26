@@ -2,14 +2,17 @@
 
 [![CI](https://github.com/ranky/media-bundle/actions/workflows/ci.yaml/badge.svg)](https://github.com/ranky/media-bundle/actions/workflows/ci.yaml)
 
-MediaBundle is a media file manager bundle for Symfony with a REST API and an admin interface (React). It provides a clean and user-friendly way to upload, edit and delete files. It supports multiple formats. You can upload images, videos, audios, documents, zip files, etc.
+Ranky Media Bundle (RankyMediaBundle) is a media file manager bundle for Symfony with a REST API and an admin interface (React). It provides a clean and user-friendly way to upload, edit and delete files. It supports multiple formats. You can upload images, videos, audios, documents, zip files, etc.
 
-MediaBundle automatically compress your media files to reduce their size without sacrificing quality. Additionally, it offers the ability to resize your media files to fit specific dimensions (breakpoints), making it easy to ensure that your images are the correct size for your website.
+Since version 2, the bundle has integrated with the Flysystem Bundle, providing support for both local and remote storage. This means that users can utilize the bundle with a variety of storage options, including AWS S3, Google Cloud Storage, Azure Blob Storage, Dropbox, FTP, and more.
 
-MediaBundle also integrates with your database to store and manage your media files efficiently. This means you can keep track of all your media assets in one place, similar to how WordPress manages media files. This way, you can have all your media files organized and accessible in one place.
+Automatically compress your media files to reduce their size without sacrificing quality. Additionally, it offers the ability to resize your media files to fit specific dimensions (breakpoints), making it easy to ensure that your images are the correct size for your website.
 
-Table of Contents 
-==================
+Also, integrate with your database to store and manage your media files efficiently. This means you can keep track of all your media assets in one place, similar to how WordPress manages media files.
+
+Table of Contents Version 2
+============================
+* [Migration Guide from Version 1 to Version 2](doc/version-1-to-version-2-migration-guide.md)
 * [Video](#video)
 * [Advantages](#advantages)
 * [Features](#features)
@@ -19,6 +22,7 @@ Table of Contents
 * [Installation](#installation)
 * [Configuration](#configuration)
   * [Full configuration](#full-configuration-with-default-values)
+  * [Flysystem Configuration](#flysystem-configuration)
   * [Configuration Explanation](#configuration-explanation)
 * [Usage](#usage)
   * [Security](#security) 
@@ -45,6 +49,7 @@ https://user-images.githubusercontent.com/2461400/208732093-44cf5a21-62f9-4402-b
 ## Advantages
 
 * One of the advantages of using this bundle is that it is compatible with any Symfony project, whether using EasyAdmin or any other content management system. This means it can easily be integrated into your existing project without having to worry about compatibility issues.
+* One notable feature is its support for different storage options such as Local, AWS S3, Google Cloud, Azure, and more, all made possible by integrating the Flysystem library.
 * The interface is built with React, not jQuery, which means it is more modern and efficient.
 * File resizing and compression is handled on the server side (admin), not endorsed to the client, which saves resources and improves performance.
 * The interface is inspired by WordPress, a widely-used and well-respected platform, which means it is user-friendly and reliable.
@@ -58,6 +63,7 @@ https://user-images.githubusercontent.com/2461400/208732093-44cf5a21-62f9-4402-b
 
 * User-friendly interface:
   * Offers a wide range of configurable options, allowing you to customize its behavior to fit your needs
+  * Supports different storage types (local, AWS S3, Google Cloud Storage, etc.). Thanks to the **Flysystem** library.
   * Single or multiple upload
   * Drag & drop
   * List or grid view
@@ -244,7 +250,6 @@ return static function (RankyMediaConfig $rankyMediaConfig) {
         ->userEntity(User::class)
         ->userIdentifierProperty('username')
         ->apiPrefix(null)
-        ->uploadDirectory('%kernel.project_dir%/public/uploads')
         ->uploadUrl('/uploads')
         ->paginationLimit(30)
         ->dateTimeFormat('Y-m-d H:i')
@@ -268,7 +273,85 @@ return static function (RankyMediaConfig $rankyMediaConfig) {
 };
 ```
 
+### Flysystem Configuration
+
+This is the default configuration for FlysystemBundle. The storage name `ranky_media.storage` is **mandatory** in case you want to change the configuration.
+
+
+```php
+// config/packages/flysystem.php
+
+use Symfony\Config\FlysystemConfig;
+
+return static function (FlysystemConfig $flysystemConfig): void {
+    $flysystemConfig
+        ->storage('ranky_media.storage')
+        ->adapter('local')
+        ->options([
+            'directory' => '%kernel.project_dir%/public/uploads',
+        ]);
+};
+```
+
+### Configuration with remote storage (AWS S3 for example)
+
+>As you can see, the `uploadUrl` configuration is maintained in this manner to prevent Flysystem from making a request to the local or remote file system for each file. This is important because in the case of AWS S3, for example, it would result in a waste of time and potentially incur additional costs if Flysystem were to make a separate request for each file.
+
+```php
+// config/packages/ranky_media.php
+
+use Symfony\Config\RankyMediaConfig;
+
+return static function (RankyMediaConfig $rankyMediaConfig) {
+ $rankyMediaConfig
+          // ...
+        ->uploadUrl('%env(AWS_S3_UPLOAD_URL)%')
+        // or
+        ->uploadUrl('https://mybucket.s3.amazonaws.com')
+    ;
+}
+```
+
+```php
+// config/packages/flysystem.php
+
+namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+
+use Aws\S3\S3Client;
+use Symfony\Config\FlysystemConfig;
+
+return static function (FlysystemConfig $flysystemConfig, ContainerConfigurator $container): void {
+    $flysystemConfig
+        ->storage('ranky_media.storage') // Mandatory
+        ->adapter('aws')
+        ->options([
+            'client' => 'aws_client_service',
+            'bucket' => '%env(AWS_S3_BUCKET)%',
+            'streamReads' => true,
+        ]);
+
+
+    $services = $container->services();
+    $services
+        ->set('aws_client_service', S3Client::class)
+        ->args([
+            [
+                'region'      => env('AWS_S3_REGION'),
+                'version'     => 'latest',
+                'credentials' => [
+                    'key'    => env('AWS_S3_ACCESS_KEY_ID'),
+                    'secret' => env('AWS_S3_SECRET_ACCESS_KEY'),
+                ],
+            ],
+        ]);
+};
+```
+
+
 ### Configuration Explanation
+
+To configure FlysystemBundle, please refer to its documentation [here](https://github.com/thephpleague/flysystem-bundle)
+
 
 **user_entity** (string, default: `null`)
 
@@ -294,17 +377,13 @@ This configuration will also create a global twig variable (`ranky_media_api_pre
 
 **Example:** `/admin`
 
-**upload_directory** (string, default: `%kernel.project_dir%/public/uploads`)
-
-This is the directory where uploaded files will be stored.
-
 **Example:** %kernel.project_dir%/public/uploads
 
 **upload_url** (string, default: `/uploads`)
 
 This is the URL where uploaded files will be accessible.
 
-**Example:** `/uploads` or `https://mydomain.test/uploads`
+**Example:** `/uploads` or `https://mydomain.test/uploads` or `https://bucket.s3.amazonaws.com/uploads`
 
 **mime_types** (array, default: `[]`)
 
@@ -570,18 +649,16 @@ Methods:
            title="{{ media.description.title }}"
       />
   </p>
-  <p>{{ ranky_media_url(media.file.url) }}</p>
+  <p>{{ ranky_media_url(media.file.name) }}</p>
   <p>Thumbnails</p>
   {% for thumbnail in media.thumbnails %}
       {# @var thumbnail \Ranky\MediaBundle\Application\DataTransformer\Response\ThumbnailResponse #}
-      <p>Thumbnail
-          breakpoint: {{ thumbnail.breakpoint }} {{ thumbnail.dimension.asString }}</p>
+      <p>Thumbnail breakpoint: {{ thumbnail.breakpoint }} {{ thumbnail.dimension.asString }}</p>
       <img src="{{ thumbnail.url }}"
            alt="{{ media.description.alt }}"
            title="{{ media.description.title }}"
       />
-      <p>{{ ranky_media_url(thumbnail.url) }}</p>
-      <p>{{ ranky_media_thumbnail_url(thumbnail.path, thumbnail.breakpoint) }}</p>
+      <p>{{ ranky_media_url(thumbnail.name, thumbnail.breakpoint) }}</p>
   {% endfor %}
 {% endif %}
 ```
@@ -757,11 +834,11 @@ You can see how to install PHP extensions and compression tools through Docker i
 ## To Do
 - [x] GitHub Actions
 - [x] Postgresql support
-- [ ] ~~Recipes~~
 - [x] Fix some styles being overridden
-- [ ] Adapters for [file storage](https://github.com/thephpleague/flysystem-bundle): S3, Azure, Google Cloud, etc.
+- [x] Adapters for [file storage](https://github.com/thephpleague/flysystem-bundle): S3, Azure, Google Cloud, etc.
 - [ ] Image Editor
 - [ ] Create NPM package, so you can use/import and not have multiple versions of React 
+- [ ] ~~Recipes~~
 - [ ] `ORDER BY FIELD` in `WHERE IN` clause
 - [ ] Add more sorting filters
 - [ ] PDF compression with Ghostscript
@@ -776,4 +853,8 @@ You can see how to install PHP extensions and compression tools through Docker i
 MediaBundle is licensed under the MIT License – see the [LICENSE](LICENSE) file for details
 
 ## Donate
+
+If you like this bundle, you donate me with GitHub Sponsors
+
+[![GitHub Sponsors](https://img.shields.io/badge/GitHub-Sponsors-181717?logo=github-sponsors&style=flat-square)](https://github.com/sponsors/chiqui3d)
 
