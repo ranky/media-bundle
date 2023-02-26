@@ -1,7 +1,7 @@
 --TEST--
-"ranky_media_thumbnail_url" function
+"ranky_media_url" function
 --TEMPLATE--
-{{ ranky_media_thumbnail_url('image.jpg','large') }}
+{{ ranky_media_url('image.jpg','large') }}
 --DATA--
 return [];
 --EXPECT--

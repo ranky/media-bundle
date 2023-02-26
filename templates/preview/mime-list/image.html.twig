@@ -4,7 +4,7 @@
 {% set mimeTypesWithPlaceholder = mimeType.imagesTypesWithPlaceholder() %}
 
 {% if media.file.mimeSubType in mimeTypesWithPlaceholder|keys %}
-    <a target="_blank" href="{{ ranky_media_url(media.file.url) }}"
+    <a target="_blank" href="{{ media.file.url }}"
        aria-label="{{ media.description.alt }} (opens in a new window)">
         <img loading="lazy"
              aria-hidden="true"
@@ -13,7 +13,7 @@
              title="{{ media.description.title }}"/>
     </a>
 {% elseif media.file.mimeSubType not in mimeType.supportedImageTypes() %}
-    <a target="_blank" href="{{ ranky_media_url(media.file.url) }}"
+    <a target="_blank" href="{{ media.file.url }}"
        aria-label="{{ media.description.alt }} (opens in a new window)">
         <img loading="lazy"
              aria-hidden="true"
@@ -22,11 +22,11 @@
              title="{{ media.description.title }}"/>
     </a>
 {% else %}
-    <a target="_blank" href="{{ ranky_media_url(media.file.url) }}"
+    <a target="_blank" href="{{ media.file.url }}"
        aria-label="{{ media.description.alt }} (opens in a new window)">
         <img loading="lazy"
              aria-hidden="true"
-             src="{{ ranky_media_url(media.file.url) }}"
+             src="{{ media.file.url }}"
              alt="{{ media.description.alt }}"
              title="{{ media.description.title }}"/>
     </a>

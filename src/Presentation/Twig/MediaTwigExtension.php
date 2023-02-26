@@ -29,17 +29,11 @@ class MediaTwigExtension extends AbstractExtension
     {
         return [
             new TwigFunction('ranky_media_url', [$this, 'mediaUrl']),
-            new TwigFunction('ranky_media_thumbnail_url', [$this, 'mediaThumbnailUrl']),
         ];
     }
 
-    public function mediaUrl(string $fileName, bool $absolute = true): string
+    public function mediaUrl(string $fileName, ?string $breakpoint = null): string
     {
-        return $this->fileUrlResolver->resolve($fileName, null, $absolute);
-    }
-
-    public function mediaThumbnailUrl(string $fileName, string $breakpoint, bool $absolute = true): string
-    {
-        return $this->fileUrlResolver->resolve($fileName, $breakpoint, $absolute);
+        return $this->fileUrlResolver->resolve($fileName, $breakpoint);
     }
 }

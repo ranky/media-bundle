@@ -23,9 +23,7 @@ class MediaTwigExtensionIntegrationTest extends IntegrationTestCase
             ->willReturn($_ENV['SITE_URL']);
 
         $fileUrlResolver = new FlysystemFileUrlResolver(
-            $uploadUrl,
-            'local',
-            $mockSiteUrlResolver
+            $uploadUrl
         );
 
         return [
