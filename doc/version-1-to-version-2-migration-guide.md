@@ -3,6 +3,7 @@
 ## Breaking Changes
 
 * The bundle now integrates the [Flysystem Bundle](https://github.com/thephpleague/flysystem-bundle), which is maintained by one of the Symfony developers.
+* The `uploadDirectory` option is no longer needed, it is now configured in the FlysystemBundle, in case you want a different configuration than the default. 
 * The twig function `ranky_media_thumbnail_url` has been deleted
 * The twig function `ranky_media_url` now accepts a second argument `$breakpoint` and the `$absolute` argument has been removed
 * Although the `ranky_media_url` function is maintained, it is not necessary to use it since MediaResponse object already resolve the media URL. 
