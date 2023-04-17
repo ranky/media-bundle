@@ -5,6 +5,8 @@
 **/vendor
 **/node_modules
 /public/bundles/
+/tools/artifacts/
+
 
 /.env.local
 /.env.local.php
