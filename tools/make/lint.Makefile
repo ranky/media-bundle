@@ -13,6 +13,9 @@ php-cs-fixer-ci: ## php-cs-fixer as root for CI
 php-cs-fixer-fix: ## Lint and fix files with php-cs-fixer
 	PHP_CS_FIXER_FUTURE_MODE=1 $(DOCKER_EXEC_PHP) bash -c "$(PHPCS_BIN) fix --config=$(PHP_CS_FIXER_DIRECTORY)/.php-cs-fixer.dist.php --diff"
 
+php-cs-fixer-fix-no-tty: ## Lint and fix files with php-cs-fixer
+	PHP_CS_FIXER_FUTURE_MODE=1 $(DOCKER_COMPOSE) exec --no-TTY php bash -c "$(PHPCS_BIN) fix --config=$(PHP_CS_FIXER_DIRECTORY)/.php-cs-fixer.dist.php --diff"
+
 php-cs-fixer-fix-arg: ## Lint and fix single file with php-cs-fixer for PHPSTORM
 	PHP_CS_FIXER_FUTURE_MODE=1 $(DOCKER_EXEC_PHP) bash -c "$(PHPCS_BIN) fix --config=$(PHP_CS_FIXER_DIRECTORY)/.php-cs-fixer.dist.php $(ARGUMENTS)"
 

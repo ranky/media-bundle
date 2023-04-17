@@ -17,6 +17,9 @@ tools-update-packages-local: ## Install all tools vendor/dependencies in local
 tools-remove-packages: ## Remove all tools vendor/dependencies
 	@find -type d -name vendor | grep tools | xargs rm -rf
 
+tools-generate-change-log: ## Generate change log
+	auto-changelog --hide-credit --output ./CHANGELOG.md --commit-limit false --template keepachangelog
+
 generate-ref-flex: ## Generate reference for flex
 	$(DOCKER_EXEC_PHP) php -r 'echo bin2hex(random_bytes(20));'
 

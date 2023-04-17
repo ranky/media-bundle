@@ -88,6 +88,21 @@ git-patch: ## Generate patch from diff
 git-patch-apply: ## Apply patch
 	git apply patch.patch
 
+git-php-cs-fixer: ## fix with php-cs-fixer and make commit
+	make php-cs-fixer-fix-no-tty
+	git add .
+	git commit -m "style: apply php-cs-fixer"
+
+git-change-log: ## generate change log and make commit
+	make tools-generate-change-log
+	git add .
+	git commit -m "style: apply php-cs-fixer"
+
+git-publish: ## fix with php-cs-fixer, create tag version && push
+	make tools-generate-change-log
+	make git-php-cs-fixer
+	make git-tag
+
 git-tag: ## create new tag version && push
 	@echo "Updating tags from remote..."
 	git fetch --all --tags --force
