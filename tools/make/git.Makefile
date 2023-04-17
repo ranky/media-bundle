@@ -96,7 +96,7 @@ git-php-cs-fixer: ## fix with php-cs-fixer and make commit
 git-change-log: ## generate change log and make commit
 	make tools-generate-change-log
 	git add .
-	git commit -m "style: apply php-cs-fixer"
+	git commit -m "docs: update change log"
 
 git-publish: ## fix with php-cs-fixer, create tag version && push
 	make tools-generate-change-log
