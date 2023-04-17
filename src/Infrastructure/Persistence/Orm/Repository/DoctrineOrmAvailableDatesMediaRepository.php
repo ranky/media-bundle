@@ -29,7 +29,8 @@ final class DoctrineOrmAvailableDatesMediaRepository extends ServiceEntityReposi
             ->createQueryBuilder('m')
             ->select('YEAR(m.createdAt) as year', 'MONTH(m.createdAt) as month', 'count(m) as count')
             ->groupBy('year', 'month')
-            ->orderBy('m.createdAt', 'ASC')
+            ->orderBy('year', 'ASC')
+            ->addOrderBy('month', 'ASC')
             ->getQuery()
             ->getResult();
     }
