@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - refactor: Reduced the number of Twig functions. [`0d1d7dd`](https://github.com/ranky/media-bundle/commit/0d1d7dd38fc287bfb4132c1cf9ff5aa3b955ab4d)
 - style: remove extra lines [`26bb06c`](https://github.com/ranky/media-bundle/commit/26bb06cd39213d0b1ea57519671ad829722be4e1)
 
-## [v2.0.0-beta.1](https://github.com/ranky/media-bundle/compare/v1.2.2...v2.0.0-beta.1) - 2023-02-12
+## [v2.0.0-beta.1](https://github.com/ranky/media-bundle/compare/v1.2.3...v2.0.0-beta.1) - 2023-02-12
 
 ### Commits
 
@@ -42,6 +42,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - style: update PHP CS Fixer configuration to avoid mbstring extension requeriment [`b7cf54d`](https://github.com/ranky/media-bundle/commit/b7cf54d8c28b9c5d00ac89bc94e059d5c3ba2228)
 - fix: correct function return in PHPDoc to comply with PHPStan [`078344d`](https://github.com/ranky/media-bundle/commit/078344dfba9998410d71ccdcd2cf5ead2c7a8f85)
 - test: Update behat feature to meet new requirements for supporting multiple storage options [`05dc1cc`](https://github.com/ranky/media-bundle/commit/05dc1cc0147b7caa4a7f746f00ddff87b9be90c2)
+
+## [v1.2.3](https://github.com/ranky/media-bundle/compare/v1.2.2...v1.2.3) - 2023-04-17
+
+### Commits
+
+- style: apply php-cs-fixer [`47d4337`](https://github.com/ranky/media-bundle/commit/47d4337e640ba959d3085d0c493d8be2466bf7ab)
+- chore: update Makefile [`93ec4ca`](https://github.com/ranky/media-bundle/commit/93ec4ca9de450b3b8944255f18e361fe2b23a531)
+- fix: correct ORDER BY clause for date filtering query [#5] [`a663670`](https://github.com/ranky/media-bundle/commit/a6636708c25223c1db27ed6094a78c9885f39297)
+- chore: update .gitignore [`520e186`](https://github.com/ranky/media-bundle/commit/520e186fe143618bd7a1f89a1f75d414adf7c087)
+- docs: Clarify information in the README.md file [`a1e819e`](https://github.com/ranky/media-bundle/commit/a1e819e8d7b72906af0a0ed2e61f7e1ea96d29bf)
 
 ## [v1.2.2](https://github.com/ranky/media-bundle/compare/v1.2.1...v1.2.2) - 2023-02-02
 
