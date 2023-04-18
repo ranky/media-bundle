@@ -34,7 +34,7 @@ class MimeType extends FunctionNode
     public function getSql(SqlWalker $sqlWalker): string
     {
         return sprintf(
-            'SUBSTRING(%1$s, 1, POSITION("/" in %1$s)-1)',
+            'SUBSTRING(%1$s, 1, POSITION(\'/\' in %1$s)-1)',
             $this->field->dispatch($sqlWalker)
         );
     }
