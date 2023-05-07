@@ -224,13 +224,20 @@ PHP
 };
 ```
 
-#### Step 4 (optional): Add custom Dbal types
+#### Step 4 (Optional): Add custom Dbal types
 
-Originally this should not be needed, since an event has been added to add the types automatically. But if you have problems, you can add them manually.
+Currently, the `LoadClassMetadata` event is responsible for loading custom DBAL types. If this event does not work, you can add custom functions manually using the following examples:
+
+Note: This Event Subscriber may be removed in the future.
 
 PHP
 ```php
 // config/packages/doctrine.php
+// Sqlite
+use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Sqlite\MimeSubType;
+use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Sqlite\MimeType;
+use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Sqlite\Month;
+use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Sqlite\Year;
 // MySQL
 use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\MimeSubType;
 use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\MimeType;
@@ -261,11 +268,11 @@ doctrine:
   orm:
       dql:
         string_functions:
-          MIME_TYPE: Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\MimeType
-          MIME_SUBTYPE: Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\MimeSubType
+          MIME_TYPE: Ranky\MediaBundle\Infrastructure\Persistence\Dql\Postgresql\MimeType
+          MIME_SUBTYPE: Ranky\MediaBundle\Infrastructure\Persistence\Dql\Postgresql\MimeSubType
         datetime_functions:
-          YEAR: Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\Year
-          MONTH: Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\Month
+          YEAR: Ranky\MediaBundle\Infrastructure\Persistence\Dql\Postgresql\Year
+          MONTH: Ranky\MediaBundle\Infrastructure\Persistence\Dql\Postgresql\Month
 ```
 
 #### Step 5: Schema update and assets install
