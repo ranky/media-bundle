@@ -4,27 +4,24 @@ declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Tests\Presentation\Behat;
 
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Assert;
 use Ranky\MediaBundle\Application\CreateMedia\CreateMedia;
 use Ranky\MediaBundle\Application\CreateMedia\UploadedFileRequest;
 use Ranky\MediaBundle\Domain\Enum\MimeType;
 use Ranky\MediaBundle\Domain\ValueObject\MediaId;
 use Ranky\MediaBundle\Tests\Domain\MediaFactory;
-use Ranky\MediaBundle\Tests\Dummy\User\Domain\UserRepositoryInterface;
+use Ranky\MediaBundle\Tests\Dummy\User\Domain\UserRepository;
 use Ranky\SharedBundle\Common\FileHelper;
 use Ranky\SharedBundle\Domain\ValueObject\UserIdentifier;
-use Ranky\SharedBundle\Presentation\Behat\AbstractApiContext;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Ranky\SharedBundle\Presentation\Behat\BaseApiContext;
 
 
-class ApiContext extends AbstractApiContext
+class MediaApiContext extends BaseApiContext
 {
-    use ApiContextTrait;
 
     private static string $mediaId = '01GGM122J0DA8NKJ49FW56RH7E';
-
 
     /** @AfterFeature */
     public static function cleanFeature(): void
@@ -33,17 +30,11 @@ class ApiContext extends AbstractApiContext
         $configMediaBundle = self::$container->getParameter('ranky_media');
         $uploadDirectory   = $configMediaBundle['upload_directory'];
         FileHelper::removeRecursiveDirectoriesAndFiles($uploadDirectory);
-
-        // alternative https://symfonycasts.com/screencast/phpunit-legacy/control-database
-        $application = new Application(self::$kernel);
-        $application->setAutoExit(false);
-        $application->run(
-            new ArrayInput([
-                'command' => 'doctrine:database:drop',
-                '--if-exists' => true,
-                '--force' => true,
-            ])
-        );
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::$container->get(EntityManagerInterface::class);
+        $purger        = new ORMPurger($entityManager);
+        $purger->purge();
+        $entityManager->close();
     }
 
     /** @BeforeFeature
@@ -79,28 +70,14 @@ class ApiContext extends AbstractApiContext
      */
     public function iAmLoggedInAs(string $username): void
     {
-        /** @var UserRepositoryInterface $userRepository */
-        $userRepository = self::$container->get(UserRepositoryInterface::class);
+        /** @var UserRepository $userRepository */
+        $userRepository = self::$container->get(UserRepository::class);
         $user           = $userRepository->getByUsername($username);
         if ($user) {
             $this->loginUser($user);
         }
 
         Assert::assertTrue($this->isGranted());
-    }
-
-    /**
-     * @Given I attach the file :fileName to request with key :key
-     */
-    public function iAttachFileToRequest(string $fileName, string $key): void
-    {
-        $tmpFilePath       = self::getTmpPathForUpload($fileName);
-        $uploadedFile      = new UploadedFile(
-            $tmpFilePath,
-            $fileName,
-            \mime_content_type($tmpFilePath) ?: null
-        );
-        $this->files[$key] = $uploadedFile;
     }
 
 }

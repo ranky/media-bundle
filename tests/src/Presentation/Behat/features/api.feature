@@ -27,6 +27,12 @@ Feature: Media Bundle API
     And the response JSON expression match "result[*].id" contains "01GGM122J0DA8NKJ49FW56RH7E"
     And the JSON response key "pagination" should exist
 
+  Scenario: Filters media listing by Ulid
+    When I send a "GET" request to "/ranky/media?filters[id][eq]=01GGM122J0DA8NKJ49FW56RH7E"
+    Then the response status code should be 200
+    And the response JSON expression match "result[*].id" contains "01GGM122J0DA8NKJ49FW56RH7E"
+    And the JSON response key "pagination" should exist
+
   Scenario: Filters media listing by the video mime
     When I send a "GET" request to "/ranky/media?filters[mime][starts]=video"
     Then the response status code should be 200

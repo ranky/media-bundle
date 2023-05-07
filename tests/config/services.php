@@ -3,12 +3,14 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+
 use Ranky\MediaBundle\Tests\Dummy\User\Infrastructure\DoctrineOrmUserRepository;
-use Ranky\MediaBundle\Tests\Dummy\User\Domain\UserRepositoryInterface;
+use Ranky\MediaBundle\Tests\Dummy\User\Domain\UserRepository;
 
 return static function (ContainerConfigurator $configurator): void {
     $services = $configurator->services()
         ->defaults()
+        ->public()
         ->autoconfigure() // Automatically registers your services as commands, event subscribers, etc
         ->autowire(); // Automatically injects dependencies in your services
 
@@ -16,12 +18,15 @@ return static function (ContainerConfigurator $configurator): void {
 
   // For KernelInterface in AbstractApiContext
   $services
-        ->load('Ranky\\MediaBundle\\Tests\\Presentation\\Behat\\', '../src/Presentation/Behat/*');
+        ->load('Ranky\\MediaBundle\\Tests\\Presentation\\Behat\\', '../src/Presentation/Behat/*')
+        ->exclude([
+            '../src/Presentation/Behat/MediaApiContextTrait.php'
+        ]);
 
+    $services->load('Ranky\\MediaBundle\\Tests\\DataFixtures\\', '../src/DataFixtures');
 
-    // User
     $services
         ->set(DoctrineOrmUserRepository::class)
         ->public();
-    $services->alias(UserRepositoryInterface::class, DoctrineOrmUserRepository::class);
+    $services->alias(UserRepository::class, DoctrineOrmUserRepository::class);
 };

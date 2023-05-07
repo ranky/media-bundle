@@ -5,6 +5,7 @@ default:
     FriendsOfBehat\SymfonyExtension:
       kernel:
         class: Ranky\MediaBundle\Tests\TestKernel
+        environment: test
       bootstrap: tests/bootstrap.php
     Behat\MinkExtension:
       sessions:
@@ -17,4 +18,5 @@ default:
       paths:
         - tests/src/Presentation/Behat/features/api.feature
       contexts:
-        - Ranky\MediaBundle\Tests\Presentation\Behat\ApiContext
+        - Ranky\SharedBundle\Presentation\Behat\ApiContext
+        - Ranky\MediaBundle\Tests\Presentation\Behat\MediaApiContext

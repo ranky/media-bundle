@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ranky\MediaBundle\Tests;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Ranky\MediaBundle\Infrastructure\DependencyInjection\MediaBundleExtension;
 use Ranky\SharedBundle\Common\FileHelper;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -61,9 +62,9 @@ abstract class BaseIntegrationTestCase extends KernelTestCase
         return $this->container()->getParameter('kernel.project_dir').'/dummy';
     }
 
-    protected static function getDoctrineManager(): EntityManager
+    protected static function getDoctrineManager(): EntityManagerInterface
     {
-        return self::service('doctrine')->getManager();
+        return self::service(EntityManagerInterface::class);
     }
 
     protected static function resetTableByClassName(string $className): void
@@ -80,6 +81,12 @@ abstract class BaseIntegrationTestCase extends KernelTestCase
     protected static function clearUnitOfWork(): void
     {
         self::getDoctrineManager()->clear();
+    }
+
+    public function tearDown():void
+    {
+        parent::tearDown();
+        self::clearUnitOfWork();
     }
 
 }
