@@ -28,5 +28,3 @@ behat-s3: ## behat test in aws s3 storage
 
 behat-ci: ## behat as root for CI
 	$(DOCKER_EXEC_ROOT_PHP) bash -c "$(BEHAT_BIN) --config $(BEHAT_DIRECTORY)/behat.yml --stop-on-failure -vv"
-
-test: phpunit behat ## All in one for test tools

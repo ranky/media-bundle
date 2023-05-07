@@ -1,4 +1,5 @@
 ARG PHP_VERSION=8.1
+# -fpm-alpine3.16
 FROM php:${PHP_VERSION}-fpm-alpine as build
 ARG DOCKER_ENV=dev
 ARG APP_DIRECTORY=/var/www/ranky-media-bundle
@@ -13,6 +14,8 @@ RUN apk add --no-cache --update-cache $PHPIZE_DEPS \
     git \
     ### usermod change uid & gid
     shadow \
+    ### pdo_pgsql
+    libpq libpq-dev \
     ### Intl
     icu icu-dev icu-libs icu-data-full \
     ### Not remember. Encryption maybe
@@ -29,13 +32,14 @@ RUN apk add --no-cache --update-cache $PHPIZE_DEPS \
     jpegoptim optipng pngquant gifsicle libwebp libwebp-tools \
     ### Xml
     libxml2-dev && \
-    ### php extensions
+    ### php extensions \
     #docker-php-ext-install -j$(nproc) iconv && \
+    docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql && \
     docker-php-ext-configure gd --with-jpeg=/usr/include/ --with-freetype=/usr/include/ && \
     docker-php-ext-install -j$(nproc) gd && \
     docker-php-ext-configure intl && \
     docker-php-ext-configure zip && \
-    docker-php-ext-install zip intl xml opcache pdo pdo_mysql && \
+    docker-php-ext-install zip intl xml opcache pdo pdo_mysql pgsql pdo_pgsql && \
     ### enable imagick
     pecl install imagick && \
     docker-php-ext-enable imagick && \
@@ -50,7 +54,7 @@ fi
 
 ### Clean ###
 RUN apk del $PHPIZE_DEPS && \
-    apk del --no-cache icu-dev libxml2-dev freetype-dev libpng-dev libjpeg-turbo-dev imagemagick-dev && \
+    apk del --no-cache icu-dev libxml2-dev libpq-dev freetype-dev libpng-dev libjpeg-turbo-dev imagemagick-dev && \
     rm -rf /var/cache/apk/* /tmp/* /var/tmp/* /usr/share/doc/*
 
 ### composer ###

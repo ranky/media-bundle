@@ -12,6 +12,33 @@ x-logging: &logging
     driver: json-file
 
 services:
+  postgres:
+    image: postgres:${POSTGRES_VERSION}-alpine
+    container_name: ${PROJECT_NAME}-postgres
+    hostname: postgres
+    mem_limit: 300m
+    memswap_limit: 100m
+    restart: always
+    <<: *logging
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: '--encoding=UTF-8'
+      LC_COLLATE: C
+      LC_CTYPE: C
+      LANG: C.UTF-8
+      TZ: ${TZ}
+      PGTZ: ${TZ}
+    expose:
+      - 5432
+    networks:
+      - db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      interval: 20s
+      timeout: 10s
+      retries: 7
   mariadb:
     container_name: ${PROJECT_NAME}-mariadb
     hostname: mariadb
@@ -62,7 +89,9 @@ services:
       - APP_DIRECTORY=${APP_DIRECTORY}
       - DOCKER_ENV=${DOCKER_ENV}
       - CI=${CI:-false}
-      - MARIA_VERSION=${MARIA_VERSION}
+      - DB_CONNECTION=${DB_CONNECTION}
+      - MYSQL_DATABASE_URL=${MYSQL_DATABASE_URL}
+      - POSTGRES_DATABASE_URL=${POSTGRES_DATABASE_URL}
       - VIRTUAL_HOST=${VIRTUAL_HOST}
       - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
       - XDEBUG_CONFIG=${XDEBUG_CONFIG}
@@ -70,11 +99,14 @@ services:
       - COMPOSER_ALLOW_SUPERUSER=${COMPOSER_ALLOW_SUPERUSER}
     volumes:
       - ${PWD}:${MOUNT_APP_DIRECTORY}
+      - ../:/var/www/bundles
     expose:
       - "9000" # php-fpm
       - "9003" # xdebug
     depends_on:
       mariadb:
+        condition: service_healthy
+      postgres:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "php-fpm", "-t"]

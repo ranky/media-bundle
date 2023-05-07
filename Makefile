@@ -27,6 +27,10 @@ ifneq ($(TMP_ENV),)
 	override DOCKER_ENV = $(TMP_ENV)
 endif
 
+ifneq ($(DB_CONNECTION_OVERRIDE),)
+	override DB_CONNECTION = $(DB_CONNECTION_OVERRIDE)
+endif
+
 .EXPORT_ALL_VARIABLES:
 
 ## Configuration ##
@@ -40,13 +44,13 @@ ifeq ($(CI_ENABLED),true)
     HOST_UID = 1001
     HOST_GID = 1001
     DOCKER_COMPOSE := DOCKER_ENV=$(DOCKER_ENV) HOST_UID=$(HOST_UID) HOST_GID=$(HOST_GID) BUILDKIT_PROGRESS=plain DOCKER_BUILDKIT=1 docker compose -f docker-compose.yml -f docker-compose.ci.yml --env-file $(ENV_FILE)
-    DOCKER_EXEC_PHP := $(DOCKER_COMPOSE) exec -T php
-    DOCKER_EXEC_ROOT_PHP := $(DOCKER_COMPOSE) exec -T -u root php
+    DOCKER_EXEC_PHP := $(DOCKER_COMPOSE) exec -e DB_CONNECTION=$(DB_CONNECTION)  -T php
+    DOCKER_EXEC_ROOT_PHP := $(DOCKER_COMPOSE) exec -e DB_CONNECTION=$(DB_CONNECTION) -T -u root php
 else
 	SHELL = /bin/zsh
 	DOCKER_COMPOSE := DOCKER_ENV=$(DOCKER_ENV) HOST_UID=$(HOST_UID) HOST_GID=$(HOST_GID) BUILDKIT_PROGRESS=plain DOCKER_BUILDKIT=1 docker compose -f docker-compose.yml --env-file $(ENV_FILE)
-	DOCKER_EXEC_PHP := $(DOCKER_COMPOSE) exec php
-    DOCKER_EXEC_ROOT_PHP := $(DOCKER_COMPOSE) exec -u root php
+	DOCKER_EXEC_PHP := $(DOCKER_COMPOSE) exec -e DB_CONNECTION=$(DB_CONNECTION) php
+    DOCKER_EXEC_ROOT_PHP := $(DOCKER_COMPOSE) exec -e DB_CONNECTION=$(DB_CONNECTION) -u root php
 endif
 
 .DEFAULT_GOAL = help
@@ -81,18 +85,15 @@ test-variables:  ## Show all variables
 	@echo "ENV_FILE: $(ENV_FILE)"
 	@echo "HOST_UID: $(HOST_UID)"
 	@echo "HOST_GID: $(HOST_GID)"
-	@echo "PROJECT_NAME: $$PROJECT_NAME"
-	@echo "APP_DIRECTORY: $$APP_DIRECTORY"
-	@echo "SYMFONY APP_ENV: $$APP_ENV"
-	@echo "SYMFONY APP_DEBUG: $$APP_DEBUG"
-	@echo "PHP_VERSION: $$PHP_VERSION"
-	@echo "HOST IP: $(HOST_IP)"
-	@echo $(MAKECMDGOALS)
-	make docker -- config
+	@echo "MYSQL_DATABASE_URL: $(MYSQL_DATABASE_URL)"
+	@echo "POSTGRES_DATABASE_URL: $(POSTGRES_DATABASE_URL)"
+	@echo "DB_CONNECTION: $(DB_CONNECTION)"
 
 
 ##@ General
 ci: lint test composer-validate ## All in one
+lint: phpstan-clear phpstan php-cs-fixer ## All in one for lint tools
+test: phpunit behat ## All in one for test tools
 
 # remember add *.Makefile in Configuration -> Editor -> Files Types in PHPSTORM (GNU Makefile)
 -include tools/make/docker.Makefile

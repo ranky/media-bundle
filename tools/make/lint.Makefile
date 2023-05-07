@@ -31,8 +31,6 @@ phpstan-single: ## Run PHPStan Example: -c phpstan.neon --memory-limit 1G --no-p
 phpstan-ci: ## Run PHPStan as root for CI
 	$(DOCKER_EXEC_ROOT_PHP) bash -c "$(PHPSTAN_BIN) analyse -c $(PHPSTAN_DIRECTORY)/phpstan.neon --no-progress --no-interaction"
 
-lint: phpstan-clear phpstan php-cs-fixer ## All in one for lint tools
-
 ##@ Validate
 
 validate-composer: ## Composer validate && diagnose && audit

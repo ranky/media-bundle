@@ -99,7 +99,7 @@ git-change-log: ## generate change log and make commit
 	git commit -m "docs: update change log"
 
 git-publish: ## fix with php-cs-fixer, create tag version && push
-	make tools-generate-change-log
+	make git-change-log
 	make git-php-cs-fixer
 	make git-tag
 
@@ -113,7 +113,7 @@ git-tag: ## create new tag version && push
 	@echo "Pushing tag $(NEXT_GIT_TAG_VERSION)..."
 	git push --atomic origin HEAD --tags
 
-## with date: https://stackoverflow.com/a/21759466/2046442
+## other option with date: https://stackoverflow.com/a/21759466/2046442
 git-tag-from-last-commit: ## create new tag version from last commit && push
 	@echo "Updating tags from remote..."
 	git fetch --all --tags --force

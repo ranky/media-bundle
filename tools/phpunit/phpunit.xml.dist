@@ -18,6 +18,9 @@
       <directory suffix="Test.php">../../tests/src/Domain</directory>
       <directory suffix="Test.php">../../tests/src/Infrastructure</directory>
       <directory suffix="Test.php">../../tests/src/Presentation</directory>
+     <!-- <exclude>
+        <directory suffix="Test.php">../../tests/src/Infrastructure/Persistence/Orm/Dql</directory>
+      </exclude>-->
     </testsuite>
     <testsuite name="clean">
       <file>../../tests/src/CleanTest.php</file>

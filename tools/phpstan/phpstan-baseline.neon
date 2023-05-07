@@ -1,5 +1,6 @@
 parameters:
   excludePaths:
+    - ../../tests/var/*
     - ../../tests/config/*
     - ../../tests/src/TestKernel.php
     - ../../src/Infrastructure/DependencyInjection/MediaCompilerPass.php
