@@ -21,7 +21,7 @@ class MediaIdType extends TestCase
             $mediaIdType->getSQLDeclaration([], new MySqlPlatform())
         );
 
-        $mediaId = MediaId::generate();
+        $mediaId = MediaId::create();
         $this->assertEquals(
             $mediaId,
             $mediaIdType->convertToPHPValue($mediaId->asString(), new MySqlPlatform())

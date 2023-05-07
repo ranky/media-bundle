@@ -37,7 +37,7 @@ final class MediaFactory
         UserIdentifier $userIdentifier = null
     ): Media {
         $userIdentifier ??= UserIdentifier::fromString(self::DEFAULT_USER_IDENTIFIER);
-        $mediaId        ??= MediaId::generate();
+        $mediaId        ??= MediaId::create();
         if ($extension !== null) {
             $files = self::filesByExtension($mimeType, $extension);
         } else {

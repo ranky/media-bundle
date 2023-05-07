@@ -35,7 +35,7 @@ class Media extends AggregateRoot
     use DateAtTrait;
 
     #[ORM\Id]
-    #[ORM\Column(type: 'media_id', unique: true)]
+    #[ORM\Column(type: 'media_id')]
     private MediaId $id;
 
 

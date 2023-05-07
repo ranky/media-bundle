@@ -31,16 +31,16 @@ class MediaCriteria extends Criteria
         return [
             'id' => static function (mixed $value) {
                 if ($value instanceof MediaId) {
-                    return $value->asBinary();
+                    return $value;
                 }
                 if (\str_contains($value, ',')) {
                     return \array_map(
-                        static fn (string $mediaId) => MediaId::fromString($mediaId)->asBinary(),
+                        static fn (string $mediaId) => MediaId::fromString($mediaId),
                         \explode(',', $value)
                     );
                 }
 
-                return MediaId::fromString($value)->asBinary();
+                return MediaId::fromString($value);
             },
         ];
     }
