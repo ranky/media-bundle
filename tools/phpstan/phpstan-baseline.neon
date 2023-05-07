@@ -10,6 +10,7 @@ parameters:
     - ../../src/Presentation/Form/EasyAdmin/EARankyMediaFileManagerField.php
   reportUnmatchedIgnoredErrors: false
   ignoreErrors:
+    - '#Parameter \#1 (.*) Doctrine\\DBAL\\DriverManager(.*) expects (.*)#'
     - '#(.*)\\Icu\\IntlDateFormatter(.*)#'
     - '#^Call to method getManager\(\) on an unknown class doctrine#'
     - '#Parameter (.*) \$classOrId of static method(.*)#'
