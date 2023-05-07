@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Tests;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Ranky\MediaBundle\Infrastructure\DependencyInjection\MediaBundleExtension;
 use Ranky\SharedBundle\Common\FileHelper;
@@ -83,7 +82,7 @@ abstract class BaseIntegrationTestCase extends KernelTestCase
         self::getDoctrineManager()->clear();
     }
 
-    public function tearDown():void
+    protected function tearDown():void
     {
         parent::tearDown();
         self::clearUnitOfWork();

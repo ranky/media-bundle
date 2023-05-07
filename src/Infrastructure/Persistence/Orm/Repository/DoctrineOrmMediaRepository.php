@@ -100,8 +100,8 @@ final class DoctrineOrmMediaRepository extends ServiceEntityRepository implement
     }
 
     /**
-     * @return Media[]
      * @throws \Doctrine\DBAL\Exception
+     * @return Media[]
      */
     public function findByIds(MediaId ...$ids): array
     {

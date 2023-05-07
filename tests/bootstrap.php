@@ -4,7 +4,6 @@ declare(strict_types=1);
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Ranky\MediaBundle\Tests\TestKernel;
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Dotenv\Dotenv;
 
 
@@ -47,7 +46,7 @@ $application->run(
     new ArrayInput([
         'command' => 'doctrine:schema:update',
         '--force' => true,
-        '--complete' => true
+        '--complete' => true,
     ])
 );
 
@@ -55,6 +54,6 @@ $application->run(
     new ArrayInput([
         'command' => 'doctrine:fixtures:load',
         '--no-interaction' => true,
-        '--env' => 'test'
+        '--env' => 'test',
     ])
 );

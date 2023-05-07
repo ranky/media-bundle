@@ -20,7 +20,7 @@ return static function (ContainerConfigurator $configurator): void {
   $services
         ->load('Ranky\\MediaBundle\\Tests\\Presentation\\Behat\\', '../src/Presentation/Behat/*')
         ->exclude([
-            '../src/Presentation/Behat/MediaApiContextTrait.php'
+            '../src/Presentation/Behat/MediaApiContextTrait.php',
         ]);
 
     $services->load('Ranky\\MediaBundle\\Tests\\DataFixtures\\', '../src/DataFixtures');
