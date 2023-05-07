@@ -5,14 +5,14 @@ namespace Ranky\MediaBundle\Infrastructure\Filesystem\Local;
 
 use Ranky\MediaBundle\Domain\Contract\FileUrlResolverInterface;
 use Ranky\MediaBundle\Domain\Enum\Breakpoint;
-use Ranky\SharedBundle\Domain\Site\SiteUrlResolverInterface;
+use Ranky\SharedBundle\Domain\Site\SiteUrlResolver;
 
 
 final class LocalFileUrlResolver implements FileUrlResolverInterface
 {
 
     public function __construct(
-        private readonly SiteUrlResolverInterface $siteUrlResolver,
+        private readonly SiteUrlResolver $siteUrlResolver,
         private readonly string $uploadUrl
     ) {
     }
