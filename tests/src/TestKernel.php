@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Ranky\MediaBundle\Tests;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle;
 use FriendsOfBehat\SymfonyExtension\Bundle\FriendsOfBehatSymfonyExtensionBundle;
 use Ranky\MediaBundle\RankyMediaBundle;
 use Ranky\SharedBundle\RankySharedBundle;
@@ -26,6 +27,7 @@ class TestKernel extends Kernel
         return [
             new FrameworkBundle(),
             new DoctrineBundle(),
+            new DoctrineFixturesBundle(),
             new SecurityBundle(),
             new TwigBundle(),
             new RankySharedBundle(),

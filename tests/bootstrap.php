@@ -10,11 +10,10 @@ use Symfony\Component\Dotenv\Dotenv;
 
 require __DIR__.'/../vendor/autoload.php';
 
-DG\BypassFinals::enable();
-
 
 (new Dotenv())->bootEnv(__DIR__.'/.env');
 
+DG\BypassFinals::enable();
 // Create and boot 'test' kernel
 $kernel = new TestKernel('test', (bool)$_ENV['APP_DEBUG']);
 $kernel->boot();
@@ -38,7 +37,6 @@ $application->run(
         '--force'     => true,
     ])
 );
-
 $application->run(
     new ArrayInput([
         'command' => 'doctrine:database:create',
@@ -49,9 +47,14 @@ $application->run(
     new ArrayInput([
         'command' => 'doctrine:schema:update',
         '--force' => true,
-        '--complete' => true,
+        '--complete' => true
     ])
 );
 
-$queryFixtures = "INSERT INTO user (username,password,email,roles) VALUES ('jcarlos','password','jcarlos@test.test','[\"ROLE_USER\"]'),('pedro','password','pedro@test.test','[\"ROLE_USER\"]')";
-$application->run(new StringInput(sprintf('%s "%s"', 'dbal:run-sql', \addslashes($queryFixtures))));
+$application->run(
+    new ArrayInput([
+        'command' => 'doctrine:fixtures:load',
+        '--no-interaction' => true,
+        '--env' => 'test'
+    ])
+);
