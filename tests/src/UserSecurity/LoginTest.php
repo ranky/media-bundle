@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Tests\UserSecurity;
 
-use Ranky\MediaBundle\Tests\Dummy\User\Domain\UserRepositoryInterface;
+use Ranky\MediaBundle\Tests\Dummy\User\Domain\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -17,8 +17,8 @@ class LoginTest extends WebTestCase
         static::ensureKernelShutdown();
         $client = static::createClient();
 
-        /** @var UserRepositoryInterface $userRepository */
-        $userRepository = self::getContainer()->get(UserRepositoryInterface::class);
+        /** @var UserRepository $userRepository */
+        $userRepository = self::getContainer()->get(UserRepository::class);
         $testUser       = $userRepository->getByUsername('jcarlos');
         if (!$testUser){
             throw new \RuntimeException('User with username "jcarlos" not found');
