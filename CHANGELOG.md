@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - refactor: Reduced the number of Twig functions. [`0d1d7dd`](https://github.com/ranky/media-bundle/commit/0d1d7dd38fc287bfb4132c1cf9ff5aa3b955ab4d)
 - style: remove extra lines [`26bb06c`](https://github.com/ranky/media-bundle/commit/26bb06cd39213d0b1ea57519671ad829722be4e1)
 
-## [v2.0.0-beta.1](https://github.com/ranky/media-bundle/compare/v1.2.4...v2.0.0-beta.1) - 2023-02-12
+## [v2.0.0-beta.1](https://github.com/ranky/media-bundle/compare/v1.3.0...v2.0.0-beta.1) - 2023-02-12
 
 ### Commits
 
@@ -42,6 +42,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - style: update PHP CS Fixer configuration to avoid mbstring extension requeriment [`b7cf54d`](https://github.com/ranky/media-bundle/commit/b7cf54d8c28b9c5d00ac89bc94e059d5c3ba2228)
 - fix: correct function return in PHPDoc to comply with PHPStan [`078344d`](https://github.com/ranky/media-bundle/commit/078344dfba9998410d71ccdcd2cf5ead2c7a8f85)
 - test: Update behat feature to meet new requirements for supporting multiple storage options [`05dc1cc`](https://github.com/ranky/media-bundle/commit/05dc1cc0147b7caa4a7f746f00ddff87b9be90c2)
+
+## [v1.3.0](https://github.com/ranky/media-bundle/compare/v1.2.4...v1.3.0) - 2023-05-07
+
+### Commits
+
+- test(feat): add `DB_CONNECTION` environment variable for test different database platform [`5bec106`](https://github.com/ranky/media-bundle/commit/5bec106842928e6c640b53d1e2f7662530543b2c)
+- test(feat): update DQL test for different platforms [`5000cd4`](https://github.com/ranky/media-bundle/commit/5000cd4f60e211a7f4b2678c4ac9b1f3deafbd3a)
+- test(feat): update Behat context to use the new ApiContext from SharedBundle [`3c6b9e0`](https://github.com/ranky/media-bundle/commit/3c6b9e0445853651bf39bb3f6af7fa7fe3002487)
+- feat: add UidMapperPlatform to convert database values to corresponding platforms [`337d9fa`](https://github.com/ranky/media-bundle/commit/337d9faf2e9f746273e8c023ec538cac14756720)
+- test(feat): add Doctrine fixtures [`8e0b776`](https://github.com/ranky/media-bundle/commit/8e0b776d5f75127709f369581e97ac60ec443ab5)
+- docs: update README.md file to clarify custom DBAL types [`3aaa582`](https://github.com/ranky/media-bundle/commit/3aaa582064cdd005405761c8570c71f2d48fb0ee)
+- test(feat): correct User model and add UserRepository with its implementation [`3114d5d`](https://github.com/ranky/media-bundle/commit/3114d5df70979883885bab7c78ca7b22a31503c5)
+- feat: update Ulid value objects and related Dbal types [`fc18ab6`](https://github.com/ranky/media-bundle/commit/fc18ab60d46cd8ec44bc68c8c37ce46a4cf75280)
+- style: apply PHP CS Fixer [`850efa0`](https://github.com/ranky/media-bundle/commit/850efa05d8371cb3609d5f6aafadd4da101e084c)
+- docs: update change log [`8140b89`](https://github.com/ranky/media-bundle/commit/8140b898b8765be0787a08947e02251e99b00ee8)
+- chore: update and add dependencies in composer.json [`d748748`](https://github.com/ranky/media-bundle/commit/d748748594b4e01ffb9b971462b26fb8f8cbb06b)
+- feat: update LoadDqlFunctionsSubscriber with minor changes [`60baff6`](https://github.com/ranky/media-bundle/commit/60baff631e56e039b70adfac1d5f96e3379873ae)
+- test: update SiteUrlResolver service [`82ec7b5`](https://github.com/ranky/media-bundle/commit/82ec7b5c090a16d1b5fdd263d1753631a8d954ca)
+- feat: update SiteUrlResolver service with new one [`7840f69`](https://github.com/ranky/media-bundle/commit/7840f694f4a66b4d9429bf6a4731066068d5a27a)
+- ci: update PHPStan configuration to ignoreErrors from DriverManager::getConnection [`480cdf4`](https://github.com/ranky/media-bundle/commit/480cdf471e851ed02b10ece1505f970ed093d5f3)
 
 ## [v1.2.4](https://github.com/ranky/media-bundle/compare/v1.2.3...v1.2.4) - 2023-04-18
 
