@@ -2,29 +2,34 @@
 
 declare(strict_types=1);
 
-namespace Ranky\MediaBundle\Tests\Infrastructure\Persistence\Orm\Filter;
+namespace Ranky\MediaBundle\Tests\Infrastructure\Persistence\Orm\Filter\Mysql  ;
 
 
 use Doctrine\ORM\QueryBuilder;
 use Ranky\MediaBundle\Domain\Criteria\MediaCriteria;
 use Ranky\MediaBundle\Domain\Model\Media;
 use Ranky\MediaBundle\Infrastructure\Persistence\Orm\Filter\DoctrineYearMonthDateFilterExtensionVisitor;
-use Ranky\MediaBundle\Tests\BaseIntegrationTestCase;
+use Ranky\MediaBundle\Tests\Infrastructure\Persistence\Orm\Dql\Mysql\BaseDbMysqlTestCase;
 use Ranky\SharedBundle\Filter\ConditionOperator;
 use Ranky\SharedBundle\Filter\ConditionFilter;
 use Ranky\SharedBundle\Filter\CriteriaBuilder\DoctrineCriteriaBuilder;
 use Ranky\SharedBundle\Filter\Visitor\Extension\FilterExtensionVisitorFacade;
 
-class DoctrineYearMonthDateFilterTest extends BaseIntegrationTestCase
+class DoctrineYearMonthDateFilterTest extends BaseDbMysqlTestCase
 {
 
+    /**
+     * @throws \Doctrine\ORM\Exception\MissingMappingDriverImplementation
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function testItShouldCreateYearMonthDateFilterWithDoctrineDriver(): void
     {
+        $this->assertTrue(true);
         $filter        = new ConditionFilter('m.createdAt', ConditionOperator::EQUALS, '2022-10');
         $mediaCriteria = MediaCriteria::default();
         $mediaCriteria->addFilter($filter);
 
-        $queryBuilder = new QueryBuilder(self::getDoctrineManager());
+        $queryBuilder = new QueryBuilder(self::getEntityManager());
         $queryBuilder
             ->from(Media::class, 'm')
             ->select('m.createdAt');

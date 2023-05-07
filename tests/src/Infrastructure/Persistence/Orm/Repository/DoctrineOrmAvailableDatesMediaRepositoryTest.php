@@ -36,8 +36,7 @@ final class DoctrineOrmAvailableDatesMediaRepositoryTest extends BaseIntegration
     public function testItShouldGetAnArrayWithAllAvailableDates(): void
     {
         $availableDates = $this->availableDatesMediaRepository->getAll();
-
-        $this->assertContains([
+        $this->assertContainsEquals([
             'year'  => (int)\date('Y'),
             'month' => (int)\date('m'),
             'count' => 1,

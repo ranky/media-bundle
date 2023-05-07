@@ -31,7 +31,7 @@ class BaseDbPostgresqlTestCase extends TestCase
         $config->addCustomStringFunction('MONTH', Month::class);
 
         $connection = [
-            'url' => 'pdo-sqlite://:memory:',
+            'url' => getenv('POSTGRES_DATABASE_URL'),
         ];
 
         return new EntityManager(DriverManager::getConnection($connection, $config), $config);

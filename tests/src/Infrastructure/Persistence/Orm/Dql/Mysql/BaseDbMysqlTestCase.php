@@ -3,24 +3,25 @@
 declare(strict_types=1);
 
 
-namespace Ranky\MediaBundle\Tests\Infrastructure\Persistence\Orm\Dql\Sqlite;
+namespace Ranky\MediaBundle\Tests\Infrastructure\Persistence\Orm\Dql\Mysql;
 
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
 use PHPUnit\Framework\TestCase;
-use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Sqlite\MimeSubType;
-use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Sqlite\MimeType;
-use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Sqlite\Month;
-use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Sqlite\Year;
+use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\MimeSubType;
+use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\MimeType;
+use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\Month;
+use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\Year;
 
-class BaseDbSqliteTestCase extends TestCase
+class BaseDbMysqlTestCase extends TestCase
 {
+
     /**
-     * @throws \Doctrine\ORM\Exception\ORMException
      * @throws \Doctrine\DBAL\Exception
+     * @throws \Doctrine\ORM\Exception\MissingMappingDriverImplementation
      */
-    public static function createEntityManager(): EntityManager
+    public static function getEntityManager(): EntityManager
     {
         $paths  = [$_SERVER['APP_DIRECTORY'].'/tests/src/Dummy'];
         $config = ORMSetup::createAttributeMetadataConfiguration($paths, true);
@@ -30,8 +31,7 @@ class BaseDbSqliteTestCase extends TestCase
         $config->addCustomStringFunction('MONTH', Month::class);
 
         $connection = [
-            'driver' => 'pdo_sqlite',
-            'memory' => true,
+            'url' => getenv('MYSQL_DATABASE_URL'),
         ];
 
         return new EntityManager(DriverManager::getConnection($connection, $config), $config);

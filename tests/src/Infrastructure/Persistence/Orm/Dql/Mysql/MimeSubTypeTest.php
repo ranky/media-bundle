@@ -1,17 +1,20 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Tests\Infrastructure\Persistence\Orm\Dql\Mysql;
 
 use Ranky\MediaBundle\Domain\Model\Media;
-use Ranky\MediaBundle\Tests\BaseIntegrationTestCase;
 
-class MimeSubTypeTest extends BaseIntegrationTestCase
+class MimeSubTypeTest extends BaseDbMysqlTestCase
 {
-
+    /**
+     * @throws \Doctrine\ORM\Exception\MissingMappingDriverImplementation
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function testItShouldGetMimeSubTypeQuery(): void
     {
-        $em    = self::getDoctrineManager();
+        $em    = self::getEntityManager();
         $query = $em->createQuery('SELECT MIME_SUBTYPE(m.file.mime) from '.Media::class.' m');
 
         $this->assertSame(

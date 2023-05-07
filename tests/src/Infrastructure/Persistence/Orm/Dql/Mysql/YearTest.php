@@ -1,17 +1,20 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Tests\Infrastructure\Persistence\Orm\Dql\Mysql;
 
 use Ranky\MediaBundle\Domain\Model\Media;
-use Ranky\MediaBundle\Tests\BaseIntegrationTestCase;
 
-class YearTest extends BaseIntegrationTestCase
+class YearTest extends BaseDbMysqlTestCase
 {
-
+    /**
+     * @throws \Doctrine\ORM\Exception\MissingMappingDriverImplementation
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function testItShouldGetYearQuery(): void
     {
-        $em    = self::getDoctrineManager();
+        $em    = self::getEntityManager();
         $query = $em->createQuery('SELECT YEAR(m.createdAt) from '.Media::class.' m');
 
         $this->assertSame(
