@@ -6,7 +6,7 @@ namespace Ranky\MediaBundle\Tests\Presentation\Twig;
 
 use Ranky\MediaBundle\Infrastructure\Filesystem\Local\LocalFileUrlResolver;
 use Ranky\MediaBundle\Presentation\Twig\MediaTwigExtension;
-use Ranky\SharedBundle\Domain\Site\SiteUrlResolverInterface;
+use Ranky\SharedBundle\Domain\Site\SiteUrlResolver;
 use Twig\Test\IntegrationTestCase;
 
 class MediaTwigExtensionIntegrationTest extends IntegrationTestCase
@@ -15,7 +15,7 @@ class MediaTwigExtensionIntegrationTest extends IntegrationTestCase
     protected function getExtensions(): array
     {
         $uploadUrl           = '/uploads';
-        $mockSiteUrlResolver = $this->getMockBuilder(SiteUrlResolverInterface::class)
+        $mockSiteUrlResolver = $this->getMockBuilder(SiteUrlResolver::class)
             ->disableOriginalConstructor()
             ->getMock();
         $mockSiteUrlResolver
