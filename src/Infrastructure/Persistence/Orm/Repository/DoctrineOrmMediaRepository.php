@@ -16,6 +16,7 @@ use Ranky\SharedBundle\Filter\Criteria;
 use Ranky\SharedBundle\Filter\CriteriaBuilder\DoctrineCriteriaBuilderFactory;
 use Ranky\SharedBundle\Filter\Order\OrderBy;
 use Ranky\SharedBundle\Filter\Pagination\OffsetPagination;
+use Ranky\SharedBundle\Infrastructure\Persistence\Orm\UidMapperPlatform;
 
 /**
  * @extends ServiceEntityRepository<Media>
@@ -24,14 +25,15 @@ final class DoctrineOrmMediaRepository extends ServiceEntityRepository implement
 {
     public function __construct(
         ManagerRegistry $registry,
-        private readonly DoctrineCriteriaBuilderFactory $doctrineCriteriaBuilderFactory
+        private readonly DoctrineCriteriaBuilderFactory $doctrineCriteriaBuilderFactory,
+        private readonly UidMapperPlatform $uidMapperPlatform,
     ) {
         parent::__construct($registry, Media::class);
     }
 
     public function nextIdentity(): MediaId
     {
-        return MediaId::generate();
+        return MediaId::create();
     }
 
     public function filter(Criteria $criteria): array
@@ -99,10 +101,13 @@ final class DoctrineOrmMediaRepository extends ServiceEntityRepository implement
 
     /**
      * @return Media[]
+     * @throws \Doctrine\DBAL\Exception
      */
     public function findByIds(MediaId ...$ids): array
     {
-        $mediaIds        = \array_map(static fn(MediaId $mediaId) => $mediaId->asBinary(), $ids);
+        $mediaIds        = \array_map( fn(MediaId $mediaId) => $this->uidMapperPlatform->convertToDatabaseValue(
+            $mediaId
+        ), $ids);
         $criteria        = MediaCriteria::default();
         $orderPagination = $criteria->orderBy();
 

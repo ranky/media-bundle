@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ranky\MediaBundle;
 
+use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass;
 use Ranky\MediaBundle\Infrastructure\DependencyInjection\MediaBundleExtension;
 use Ranky\MediaBundle\Infrastructure\DependencyInjection\MediaCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -18,6 +19,15 @@ class RankyMediaBundle extends Bundle
     {
         parent::build($container);
         $container->addCompilerPass(new MediaCompilerPass()); // PassConfig::TYPE_REMOVE
+        if (\class_exists( 'Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass'))
+        {
+            $container->addCompilerPass(
+                DoctrineOrmMappingsPass::createAttributeMappingDriver(
+                    ['Ranky\MediaBundle\Domain'],
+                    [\dirname(__DIR__).'/src/Domain']
+                )
+            );
+        }
     }
 
     /**

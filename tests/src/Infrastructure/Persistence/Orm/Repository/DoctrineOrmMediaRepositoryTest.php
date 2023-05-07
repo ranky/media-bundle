@@ -64,7 +64,7 @@ final class DoctrineOrmMediaRepositoryTest extends BaseIntegrationTestCase
      */
     public function testItShouldFilterMedia(MediaId $mediaId): MediaId
     {
-        $filterById       = new ConditionFilter('id', ConditionOperator::EQUALS, $mediaId->asString());
+        $filterById       = new ConditionFilter('id', ConditionOperator::EQUALS, $mediaId);
         $offsetPagination = new OffsetPagination(1, 10);
         $orderBy          = new OrderBy('id', OrderBy::DESC);
 
@@ -73,6 +73,19 @@ final class DoctrineOrmMediaRepositoryTest extends BaseIntegrationTestCase
         $this->assertContains($currentMedia, $medias);
 
         return $mediaId;
+    }
+
+    /**
+     * @depends testItShouldSaveMedia
+     * @param \Ranky\MediaBundle\Domain\ValueObject\MediaId $mediaId
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testItShouldFindByIds(MediaId $mediaId): void
+    {
+        $ids       = [$mediaId];
+        $medias    = $this->mediaRepository->findByIds(...$ids);
+        $media     = $this->mediaRepository->getById($mediaId);
+        $this->assertContains($media, $medias);
     }
 
     /**
