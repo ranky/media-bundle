@@ -29,7 +29,7 @@ class DoctrineYearMonthDateFilterExtensionVisitor implements FilterExtensionVisi
         $filter->expression()->setExpression($expression);
         $filter->expression()->setParameters([
             ':year' => $date['year'],
-            ':month' => $date['month'],
+            ':month' => \sprintf('%02d', $date['month']),
         ]);
 
         return $filter;
