@@ -224,7 +224,51 @@ PHP
 };
 ```
 
-#### Step 4: Schema update and assets install
+#### Step 4 (optional): Add custom Dbal types
+
+Originally this should not be needed, since an event has been added to add the types automatically. But if you have problems, you can add them manually.
+
+PHP
+```php
+// config/packages/doctrine.php
+// MySQL
+use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\MimeSubType;
+use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\MimeType;
+use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\Month;
+use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\Year;
+// Postgres
+use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Postgresql\MimeSubTypee;
+use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Postgresql\MimeType;
+use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Postgresql\Month;
+use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Postgresql\Year;
+use Symfony\Config\DoctrineConfig;
+
+return static function (DoctrineConfig $doctrineConfig): void {
+   // ...
+  $orm = $doctrineConfig->orm();
+  $em = $orm->entityManager('default');
+  $dql = $em->dql();
+  $dql->stringFunction('MIME_TYPE', MimeType::class);
+  $dql->stringFunction('MIME_SUBTYPE', MimeSubType::class);
+  $dql->datetimeFunction('YEAR', Year::class);
+  $dql->datetimeFunction('MONTH', Month::class);
+}
+```
+YAML
+```yaml
+# config/packages/doctrine.yaml
+doctrine:
+  orm:
+      dql:
+        string_functions:
+          MIME_TYPE: Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\MimeType
+          MIME_SUBTYPE: Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\MimeSubType
+        datetime_functions:
+          YEAR: Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\Year
+          MONTH: Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\Month
+```
+
+#### Step 5: Schema update and assets install
 
 ```sh
 php bin/console doctrine:schema:update --force
