@@ -25,11 +25,11 @@ class LoadDqlFunctionsSubscriber implements EventSubscriberInterface
      */
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs): void
     {
+        $connection    = $eventArgs->getEntityManager()->getConnection();
         $config        = $eventArgs->getEntityManager()->getConfiguration();
-        $platform      = $eventArgs->getEntityManager()->getConnection()->getDatabasePlatform();
+        $platform      = $connection->getDatabasePlatform();
         $classPlatform = ClassHelper::className($platform::class);
-
-        $functions = DqlFunctionsManager::getFunctionsByClassPlatform($classPlatform);
+        $functions     = DqlFunctionsManager::getFunctionsByClassPlatform($classPlatform);
 
         if (isset($functions['string_functions'])) {
             foreach ($functions['string_functions'] as $name => $function) {
