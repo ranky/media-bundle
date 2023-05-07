@@ -17,7 +17,6 @@ services:
     container_name: ${PROJECT_NAME}-postgres
     hostname: postgres
     mem_limit: 300m
-    memswap_limit: 100m
     restart: always
     <<: *logging
     environment:
