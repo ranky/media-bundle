@@ -26,6 +26,19 @@ class DoctrineUlidFilterExtensionVisitor implements FilterExtensionVisitor
     public function visit(ConditionFilter $filter, Criteria $criteria): ConditionFilter
     {
         $value = $filter->value();
+
+        if (is_array($value) && $value[0] instanceof MediaId) {
+            $expression = \sprintf('%s IN (%s)', $filter->field(), ':ulids');
+            $filter->expression()->setExpression($expression);
+            foreach ($value as $key => $mediaId) {
+                $value[$key] = $this->uidMapperPlatform->convertToDatabaseValue($mediaId);
+            }
+            $filter->expression()->setParameters([
+                ':ulids' => $value,
+            ]);
+            return $filter;
+        }
+        
         if (!$value instanceof MediaId) {
             return $filter;
         }
