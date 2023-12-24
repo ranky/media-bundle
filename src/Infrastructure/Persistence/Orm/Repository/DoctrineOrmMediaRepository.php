@@ -63,11 +63,16 @@ final class DoctrineOrmMediaRepository extends ServiceEntityRepository implement
             ->createQueryBuilder($criteria::modelAlias())
             ->select('COUNT('.$criteria::modelAlias().'.id)');
 
-        return $this->doctrineCriteriaBuilderFactory
+        /**
+         * @var int $result
+         */
+        $result = $this->doctrineCriteriaBuilderFactory
             ->create($queryBuilder, $criteria)
             ->where()
             ->getQuery()
             ->getSingleScalarResult();
+
+        return $result;
     }
 
 
@@ -100,12 +105,12 @@ final class DoctrineOrmMediaRepository extends ServiceEntityRepository implement
     }
 
     /**
-     * @throws \Doctrine\DBAL\Exception
      * @return Media[]
+     * @throws \Doctrine\DBAL\Exception
      */
     public function findByIds(MediaId ...$ids): array
     {
-        $mediaIds        = \array_map( fn(MediaId $mediaId) => $this->uidMapperPlatform->convertToDatabaseValue(
+        $mediaIds        = \array_map(fn(MediaId $mediaId) => $this->uidMapperPlatform->convertToDatabaseValue(
             $mediaId
         ), $ids);
         $criteria        = MediaCriteria::default();
