@@ -4,31 +4,31 @@ ENV_FILE = .env
 
 ### Docker Environment ###
 ifneq (,$(wildcard .env.local))
-	ENV_FILE = .env.local
+    ENV_FILE = .env.local
 else ifneq (,$(wildcard .env.$(DOCKER_ENV)))
-	ENV_FILE = .env.$(DOCKER_ENV)
+    ENV_FILE = .env.$(DOCKER_ENV)
 else
-	ENV_FILE = .env
+    ENV_FILE = .env
 endif
 
 include $(ENV_FILE)
 
 ### Symfony Test Environment  ###
 ifneq (,$(wildcard tests/.env.local))
-	include tests/.env.local
+    include tests/.env.local
 else ifneq (,$(wildcard tests/.env.$(DOCKER_ENV)))
-	include tests/.env.$(DOCKER_ENV)
+    include tests/.env.$(DOCKER_ENV)
 else
-	include tests/.env
+    include tests/.env
 endif
 
 # override DOCKER_ENV from parameter if TMP_ENV is not empty
 ifneq ($(TMP_ENV),)
-	override DOCKER_ENV = $(TMP_ENV)
+    override DOCKER_ENV = $(TMP_ENV)
 endif
 
 ifneq ($(DB_CONNECTION_OVERRIDE),)
-	override DB_CONNECTION = $(DB_CONNECTION_OVERRIDE)
+    override DB_CONNECTION = $(DB_CONNECTION_OVERRIDE)
 endif
 
 .EXPORT_ALL_VARIABLES:
@@ -39,17 +39,17 @@ HOST_GID ?= $(shell id -g)
 HOST_IP = $(shell hostname -I | awk '{print $1}')
 
 ifeq ($(CI_ENABLED),true)
-	# CI, Github Actions, runs-on: ubuntu-latest
-	SHELL = /bin/bash
+    # CI, Github Actions, runs-on: ubuntu-latest
+    SHELL = /bin/bash
     HOST_UID = 1001
     HOST_GID = 1001
     DOCKER_COMPOSE := DOCKER_ENV=$(DOCKER_ENV) HOST_UID=$(HOST_UID) HOST_GID=$(HOST_GID) BUILDKIT_PROGRESS=plain DOCKER_BUILDKIT=1 docker compose -f docker-compose.yml -f docker-compose.ci.yml --env-file $(ENV_FILE)
     DOCKER_EXEC_PHP := $(DOCKER_COMPOSE) exec -e DB_CONNECTION=$(DB_CONNECTION)  -T php
     DOCKER_EXEC_ROOT_PHP := $(DOCKER_COMPOSE) exec -e DB_CONNECTION=$(DB_CONNECTION) -T -u root php
 else
-	SHELL = /bin/zsh
-	DOCKER_COMPOSE := DOCKER_ENV=$(DOCKER_ENV) HOST_UID=$(HOST_UID) HOST_GID=$(HOST_GID) BUILDKIT_PROGRESS=plain DOCKER_BUILDKIT=1 docker compose -f docker-compose.yml --env-file $(ENV_FILE)
-	DOCKER_EXEC_PHP := $(DOCKER_COMPOSE) exec -e DB_CONNECTION=$(DB_CONNECTION) php
+    SHELL = /bin/zsh
+    DOCKER_COMPOSE := DOCKER_ENV=$(DOCKER_ENV) HOST_UID=$(HOST_UID) HOST_GID=$(HOST_GID) BUILDKIT_PROGRESS=plain DOCKER_BUILDKIT=1 docker compose -f docker-compose.yml --env-file $(ENV_FILE)
+    DOCKER_EXEC_PHP := $(DOCKER_COMPOSE) exec -e DB_CONNECTION=$(DB_CONNECTION) php
     DOCKER_EXEC_ROOT_PHP := $(DOCKER_COMPOSE) exec -e DB_CONNECTION=$(DB_CONNECTION) -u root php
 endif
 
@@ -91,7 +91,13 @@ test-variables:  ## Show all variables
 
 
 ##@ General
-ci: lint test composer-validate ## All in one
+ci: ## All in one for CI
+	@make composer-validate
+	@make lint-ci
+	@make test-ci
+	@DB_CONNECTION_OVERRIDE=postgres make test-ci
+lint-ci: phpstan-clear phpstan-ci php-cs-fixer-ci ## All in one for lint tools for CI
+test-ci: phpunit-ci behat-ci ## All in one for test tools for CI
 lint: phpstan-clear phpstan php-cs-fixer ## All in one for lint tools
 test: phpunit behat ## All in one for test tools
 
