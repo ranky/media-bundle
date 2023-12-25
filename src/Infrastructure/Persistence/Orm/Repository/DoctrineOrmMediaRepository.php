@@ -36,6 +36,38 @@ final class DoctrineOrmMediaRepository extends ServiceEntityRepository implement
         return MediaId::create();
     }
 
+
+    public function getById(MediaId $id): Media
+    {
+        $media = $this->find($id);
+        if (null === $media) {
+            throw NotFoundMediaException::withId((string)$id);
+        }
+
+        return $media;
+    }
+
+    /**
+     * @return Media[]
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function findByIds(MediaId ...$ids): array
+    {
+        $mediaIds        = \array_map(fn(MediaId $mediaId) => $this->uidMapperPlatform->convertToDatabaseValue(
+            $mediaId
+        ), $ids);
+        $criteria        = MediaCriteria::default();
+        $orderPagination = $criteria->orderBy();
+
+        return $this
+            ->createQueryBuilder('m')
+            ->where('m.id IN (:ids)')
+            ->setParameter('ids', $mediaIds)
+            ->orderBy($orderPagination->field(), $orderPagination->direction())
+            ->getQuery()
+            ->getResult();
+    }
+
     public function filter(Criteria $criteria): array
     {
         $queryBuilder = $this->createQueryBuilder($criteria::modelAlias());
@@ -75,6 +107,24 @@ final class DoctrineOrmMediaRepository extends ServiceEntityRepository implement
         return $result;
     }
 
+    public function getByFilePath(string $filePath): Media
+    {
+        $media = $this->findOneBy(['file.path' => $filePath]);
+        if (!$media) {
+            throw NotFoundMediaException::withFilePath($filePath);
+        }
+
+        return $media;
+    }
+
+    /**
+     * @return Media[]
+     */
+    public function findByFilePaths(array $filePaths): array
+    {
+        return $this->findBy(['file.path' => $filePaths]);
+    }
+
 
     public function getByFileName(string $fileName): Media
     {
@@ -92,37 +142,6 @@ final class DoctrineOrmMediaRepository extends ServiceEntityRepository implement
     public function findByFileNames(array $fileNames): array
     {
         return $this->findBy(['file.name' => $fileNames]);
-    }
-
-    public function getById(MediaId $id): Media
-    {
-        $media = $this->find($id);
-        if (null === $media) {
-            throw NotFoundMediaException::withId((string)$id);
-        }
-
-        return $media;
-    }
-
-    /**
-     * @return Media[]
-     * @throws \Doctrine\DBAL\Exception
-     */
-    public function findByIds(MediaId ...$ids): array
-    {
-        $mediaIds        = \array_map(fn(MediaId $mediaId) => $this->uidMapperPlatform->convertToDatabaseValue(
-            $mediaId
-        ), $ids);
-        $criteria        = MediaCriteria::default();
-        $orderPagination = $criteria->orderBy();
-
-        return $this
-            ->createQueryBuilder('m')
-            ->where('m.id IN (:ids)')
-            ->setParameter('ids', $mediaIds)
-            ->orderBy($orderPagination->field(), $orderPagination->direction())
-            ->getQuery()
-            ->getResult();
     }
 
     public function getAll(OrderBy $orderPagination): array

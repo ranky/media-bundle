@@ -16,4 +16,9 @@ final class NotFoundMediaException extends HttpDomainException
     {
         return new self(\sprintf('No media found with file name "%s"', $fileName), 404);
     }
+
+    public static function withFilePath(string $path): self
+    {
+        return new self(\sprintf('No media found with path "%s"', $path), 404);
+    }
 }
