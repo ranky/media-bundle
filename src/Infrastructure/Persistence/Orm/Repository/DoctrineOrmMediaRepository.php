@@ -20,6 +20,10 @@ use Ranky\SharedBundle\Infrastructure\Persistence\Orm\UidMapperPlatform;
 
 /**
  * @extends ServiceEntityRepository<Media>
+ * @method Media|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Media|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Media[]    findAll()
+ * @method Media[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 final class DoctrineOrmMediaRepository extends ServiceEntityRepository implements MediaRepositoryInterface
 {
@@ -146,20 +150,20 @@ final class DoctrineOrmMediaRepository extends ServiceEntityRepository implement
 
     public function getAll(OrderBy $orderPagination): array
     {
-        return $this->getAllQueryBuilder($orderPagination)->getQuery()->getResult();
+        return $this->queryBuilder($orderPagination)->getQuery()->getResult();
     }
 
     public function paginate(OffsetPagination $offsetPagination, OrderBy $orderPagination): array
     {
         return $this
-            ->getAllQueryBuilder($orderPagination)
+            ->queryBuilder($orderPagination)
             ->setFirstResult(($offsetPagination->page() - 1) * $offsetPagination->limit())
             ->setMaxResults($offsetPagination->limit())
             ->getQuery()
             ->getResult();
     }
 
-    private function getAllQueryBuilder(OrderBy $orderPagination): QueryBuilder
+    private function queryBuilder(OrderBy $orderPagination): QueryBuilder
     {
         return $this
             ->createQueryBuilder('m')
