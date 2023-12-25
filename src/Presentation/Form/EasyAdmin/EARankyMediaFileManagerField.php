@@ -17,6 +17,7 @@ if (\interface_exists('EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInte
         public const        OPTION_MULTIPLE_SELECTION = 'multiple_selection';
         public const        OPTION_ASSOCIATION        = 'association';
         public const        OPTION_MODAL_TITLE        = 'modal_title';
+        public const        OPTION_SAVE_PATH          = 'save_path';
 
         public static function new(string $propertyName, $label = null): self
         {
@@ -29,6 +30,7 @@ if (\interface_exists('EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInte
                 )
                 ->setFormType(RankyMediaFileManagerType::class)
                 ->setFormTypeOptions([
+                    self::OPTION_SAVE_PATH => false,
                     self::OPTION_MULTIPLE_SELECTION => false,
                     self::OPTION_ASSOCIATION        => false,
                     self::OPTION_MODAL_TITLE        => 'Media File Manager',
@@ -55,6 +57,13 @@ if (\interface_exists('EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInte
         public function modalTitle(string $modalTitle): self
         {
             $this->setFormTypeOption(self::OPTION_MODAL_TITLE, $modalTitle);
+
+            return $this;
+        }
+
+        public function savePath(bool $savePath = true): self
+        {
+            $this->setFormTypeOption(self::OPTION_SAVE_PATH, $savePath);
 
             return $this;
         }

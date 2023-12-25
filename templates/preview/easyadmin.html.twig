@@ -12,14 +12,18 @@
 {% if isMultiple == false %}
     {% if isAssociation %}
         {% set media = field.value ? ranky_media.mediaToResponse(field.value) : null %}
-    {% else %}
+    {% elseif field.value | isMediaId %}
         {% set media = field.value ? ranky_media.findById(field.value.asString()) : null %}
+    {% else %}
+       {% set media = field.value ? ranky_media.findByPath(field.value) : null %}
     {% endif %}
 {% else %}
     {% if isAssociation %}
         {% set medias = field.value ? ranky_media.mediaCollectionToArrayResponse(field.value) : null %}
-    {% else %}
+    {% elseif field.value | isMediaId %}
         {% set medias = field.value ? ranky_media.findByIds(field.value) : null %}
+    {% else %}
+        {% set medias = field.value ? ranky_media.findByPaths(field.value) : null %}
     {% endif %}
 {% endif %}
 {% if ea.crud.currentAction == 'detail' %}
