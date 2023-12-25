@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Application\FindMedia;
@@ -7,9 +8,8 @@ namespace Ranky\MediaBundle\Application\FindMedia;
 use Ranky\MediaBundle\Application\DataTransformer\MediaToResponseTransformer;
 use Ranky\MediaBundle\Application\DataTransformer\Response\MediaResponse;
 use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
-use Ranky\MediaBundle\Domain\ValueObject\MediaId;
 
-class FindMediaByIds
+class FindMediaByPaths
 {
 
     public function __construct(
@@ -19,15 +19,12 @@ class FindMediaByIds
     }
 
     /**
-     * @param array<string> $ids
+     * @param array<string> $paths
      * @return array<MediaResponse>
      */
-    public function __invoke(array $ids): array
+    public function __invoke(array $paths): array
     {
-        $mediaIds = \array_map(static fn(string $id) => MediaId::fromString($id), $ids);
-        $results        = $this->mediaRepository->findByIds(
-            ...$mediaIds
-        );
+        $results = $this->mediaRepository->findByFilePaths($paths);
 
         return $this->responseTransformer->mediaCollectionToArrayResponse($results);
     }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Domain\Contract;
@@ -38,19 +39,29 @@ interface MediaRepositoryInterface
 
     public function getById(MediaId $id): Media;
 
-    public function getByFileName(string $fileName): Media;
-
     /**
      * @param MediaId ...$ids
      * @return Media[]
      */
     public function findByIds(MediaId ...$ids): array;
 
+    public function getByFilePath(string $filePath): Media;
+
+    /**
+     * @param string[] $filePaths
+     * @return Media[]
+     */
+    public function findByFilePaths(array $filePaths): array;
+
+    public function getByFileName(string $fileName): Media;
+
     /**
      * @param string[] $fileNames
      * @return Media[]
      */
     public function findByFileNames(array $fileNames): array;
+
+
 
     public function save(Media $media): void;
 
