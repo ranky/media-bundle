@@ -54,9 +54,9 @@ jobs:
       - name: Run Behat tests
         run: make behat-ci
       - name: Run PHPUnit tests with Postgres
-        run: DB_CONNECTION=postgres make phpunit-ci
+        run: DB_CONNECTION_OVERRIDE=postgres make phpunit-ci
       - name: Run Behat tests with Postgres
-        run: DB_CONNECTION=postgres make behat-ci
+        run: DB_CONNECTION_OVERRIDE=postgres make behat-ci
       - name: Stop and remove containers
         if: always()
         run: make docker-down
