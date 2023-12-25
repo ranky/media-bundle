@@ -25,7 +25,7 @@ use Ranky\SharedBundle\Domain\ValueObject\UserIdentifier;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'ranky_media')]
-#[ORM\Index(columns: ['id', 'name', 'extension', 'mime', 'created_by'], name: 'search_idx')]
+#[ORM\Index(columns: ['name', 'extension', 'mime', 'created_by'], name: 'search_idx')]
 class Media extends AggregateRoot
 {
     public const IMAGE_QUALITY            = 80;
