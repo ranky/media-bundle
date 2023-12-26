@@ -1,0 +1,6 @@
+directories:
+  '%CONFIG_DIR%/': recipes/config/
+post_install_output: |
+  * RankyMediaBundle has been installed and configured.
+  * Check config/packages/ranky_media.yaml file and modify it if necessary.
+  * Check config/routes/ranky_media.yaml file and modify it if necessary.
