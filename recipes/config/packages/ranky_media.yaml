@@ -1,0 +1,4 @@
+ranky_media:
+  user_entity: App\Entity\User
+  api_prefix: /
+  upload_url: /uploads
