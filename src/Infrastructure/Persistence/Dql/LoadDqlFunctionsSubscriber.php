@@ -5,11 +5,13 @@ declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Infrastructure\Persistence\Dql;
 
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
 use Ranky\SharedBundle\Common\ClassHelper;
 
+#[AsDoctrineListener(event: Events::loadClassMetadata)]
 class LoadDqlFunctionsSubscriber implements EventSubscriberInterface
 {
 
