@@ -36,8 +36,10 @@ class UploadMediaApiController extends BaseMediaApiController
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function __invoke(
-        #[CurrentUser] ?UserInterface $user,
-        #[File] UploadedFileRequest $uploadedFileRequest = null
+        #[CurrentUser]
+        ?UserInterface $user,
+        #[File]
+        UploadedFileRequest $uploadedFileRequest = null
     ): JsonResponse {
         if (null === $uploadedFileRequest) {
             throw ApiProblemException::create($this->trans('errors.not_files'));
