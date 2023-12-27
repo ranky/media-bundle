@@ -35,8 +35,10 @@ class UpdateMediaApiController extends BaseMediaApiController
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function __invoke(
-        #[CurrentUser] ?UserInterface $user,
-        #[Body(constraint: UpdateMediaConstraint::class)] UpdateMediaRequest $updateMediaRequest,
+        #[CurrentUser]
+        ?UserInterface $user,
+        #[Body(constraint: UpdateMediaConstraint::class)]
+        UpdateMediaRequest $updateMediaRequest,
         string $id = null
     ): JsonResponse {
         if (null === $id) {
