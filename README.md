@@ -44,7 +44,7 @@ https://user-images.githubusercontent.com/2461400/208732093-44cf5a21-62f9-4402-b
 
 ## Advantages
 
-* Tested in projects with Symfony 5.4, ^6.0 and 7.0
+* Tested in projects with Symfony 5.4, ^6.0 and 7.0 (need to fix some deprecations)
 * Symfony form types for easy integration
 * EasyAdmin integration
 * TinyMCE integration
