@@ -44,15 +44,10 @@ https://user-images.githubusercontent.com/2461400/208732093-44cf5a21-62f9-4402-b
 
 ## Advantages
 
-* One of the advantages of using this bundle is that it is compatible with any Symfony project, whether using EasyAdmin or any other content management system. This means it can easily be integrated into your existing project without having to worry about compatibility issues.
-* The interface is built with React, not jQuery, which means it is more modern and efficient.
-* File resizing and compression is handled on the server side (admin), not endorsed to the client, which saves resources and improves performance.
-* The interface is inspired by WordPress, a widely-used and well-respected platform, which means it is user-friendly and reliable.
-* Media File Manager is managed through the database, rather than the hard drive, which means it is more organized and easier to manage.
-* The Media File Manager is designed with SEO in mind, which means it can help improve your website's search engine rankings.
-* You can choose not to secure the routes, which means you have more flexibility in how you use the Media File Manager.
-* The Media File Manager is designed to be scalable and customizable, thanks to its use of interfaces and Dependency Inversion Principle (DIP). This allows for the creation of reusable and adaptable components that can be modified without changing the existing code.
-* By adhering to a Hexagonal/Layered Architecture and Domain-Driven Design (DDD), the Media File Manager is able to maintain a clear separation of concerns and prioritize the business logic.
+* Tested in projects with Symfony 5.4, ^6.0 and 7.0
+* Symfony form types for easy integration
+* EasyAdmin integration
+* TinyMCE integration
 
 ## Features
 
@@ -196,7 +191,7 @@ use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 return static function (RoutingConfigurator $routes) {
     $routes
-        ->import('@RankyMediaBundle/config/routes.php')
+        ->import('@RankyMediaBundle/config/routes.php') // annotation or attributes
         ->prefix('/admin')
         ;
 };
@@ -512,6 +507,7 @@ class MyFormType extends AbstractType
 }
 ```
 
+
 #### 2. Multiple selection. Store the array of mediaId (json) without association
 
 ```php
@@ -537,7 +533,58 @@ class MyFormType extends AbstractType
 }
 ```
 
-#### 3. Single selection. Store the mediaId (Ulid) with ManyToOne association
+#### 3. Single selection. Store path without association
+
+```php
+#[ORM\Column(name: 'image', type: Types::STRING, nullable: true)]
+public string $image;
+```
+
+```php
+use Ranky\MediaBundle\Presentation\Form\RankyMediaFileManagerType;
+
+class MyFormType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('image', RankyMediaFileManagerType::class, [
+                'label' => 'Image',
+                'save_path' => true,
+                'modal_title' => 'Select image',
+            ])
+        ;
+    }
+}
+```
+
+#### 4. Multiple selection. Store the array of paths without association
+
+```php
+#[ORM\Column(name: 'gallery', type: Types::JSON, nullable: true)]
+private ?array $gallery;
+```
+
+```php
+use Ranky\MediaBundle\Presentation\Form\RankyMediaFileManagerType;
+
+class MyFormType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('gallery', RankyMediaFileManagerType::class, [
+                'label' => 'Array of paths',
+                'multiple' => true,
+                'save_path' => true,
+                'modal_title' => 'Gallery',
+            ])
+        ;
+    }
+}
+```
+
+#### 5. Single selection. Store the mediaId (Ulid) with ManyToOne association
 
 ```php
 #[ORM\ManyToOne(targetEntity: Media::class)]
@@ -563,7 +610,7 @@ class MyFormType extends AbstractType
 }
 ```
 
-#### 4. Multiple selection. Store the media collection with ManyToMany association
+#### 6. Multiple selection. Store the media collection with ManyToMany association
 
 ```php
 #[ORM\JoinTable(name: 'pages_medias')]
@@ -601,18 +648,24 @@ class MyFormType extends AbstractType
 ### Retrieve media files in Twig
 To retrieve the media files, you have a global twig service will help you. Let's see the examples in the same order as we have looked in the types of forms.
 
-Service: `ranky_media` 
+Service: `ranky_media` [RankyMediaTwigExtension](src/Presentation/Twig/MediaTwigExtension.php)
 
-Methods:
   * **findById:** Retrieve a media response by MediaId 
   * **findByIds:** Retrieve a collection of media response by MediaId array
+  * **findByPath:** Retrieve a media response by path
+  * **findByPaths:** Retrieve a collection of media response by path array
   * **mediaToResponse:** Convert a media entity to a media response
   * **mediaCollectionToArrayResponse:** Convert a collection of media entity to a collection of media response
 
-#### 1. One media without association [(media_id)](#1-single-selection-store-the-mediaid-ulid-without-association)
+Extension:  
+    * **ranky_media_url:** Twig function to retrieve the url of a media file
+    * **ranky_media_thumbnail_url:** Twig function to retrieve the url of a thumbnail
+
+#### Example
 ```twig
 {# @var media \Ranky\MediaBundle\Application\DataTransformer\Response\MediaResponse #}
 {% set media = ranky_media.findById(page.mediaId) %}
+{# {% set medias = ranky_media.findByIds(page.gallery) %} #}
 {{ dump(media) }}
 {% if media %}
   <p>
@@ -635,27 +688,6 @@ Methods:
       <p>{{ ranky_media_thumbnail_url(thumbnail.path, thumbnail.breakpoint) }}</p>
   {% endfor %}
 {% endif %}
-```
-#### 2. Array of media without association [(json)](#2-multiple-selection-store-the-array-of-mediaid-json-without-association)
-
-```twig
-{% set medias = ranky_media.findByIds(page.gallery) %}
-{% for media in medias %}
-  {# @var media \Ranky\MediaBundle\Application\DataTransformer\Response\MediaResponse #}
-  {# ... #}
-{% endfor %}
-```
-#### 3. One media with association [(ManyToOne)](#3-single-selection-store-the-mediaid-ulid-with-manytoone-association)
-
-```twig
-{% set media = ranky_media.mediaToResponse(page.media) %}
-{# ... #}
-```
-#### 4. Array of media with association [(collection)](#4-multiple-selection-store-the-media-collection-with-manytomany-association)
-
-```twig
-{% set medias = ranky_media.mediaCollectionToArrayResponse(page.medias) %}
-{# ... #}
 ```
 
 ### Responsive images with Twig macro
@@ -734,7 +766,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 A [field](src/Presentation/Form/EasyAdmin/EARankyMediaFileManagerField.php) for EasyAdmin has been created that integrates the same functionalities previously explained in [Form Types](#form-types)
 
-Here, I show an example of the four variations:
+Here, I show an example of the six variations:
 
 ```php
 use Ranky\MediaBundle\Presentation\Form\EasyAdmin\EARankyMediaFileManagerField;
@@ -744,6 +776,8 @@ use Ranky\MediaBundle\Presentation\Form\EasyAdmin\EARankyMediaFileManagerField;
 public function configureFields(string $pageName): iterable
     {
        // ...
+        yield EARankyMediaFileManagerField::new('path')->savePath();
+        yield EARankyMediaFileManagerField::new('paths')->multipleSelection()->savePath();
         yield EARankyMediaFileManagerField::new('mediaId');
         yield EARankyMediaFileManagerField::new('gallery')->multipleSelection()->modalTitle('Gallery');
         yield EARankyMediaFileManagerField::new('media')->association();
@@ -806,10 +840,8 @@ You can see how to install PHP extensions and compression tools through Docker i
 
 
 ## To Do
-- [x] GitHub Actions
-- [x] Postgresql support
+- [ ] Private media files
 - [ ] ~~Recipes~~
-- [x] Fix some styles being overridden
 - [ ] Adapters for [file storage](https://github.com/thephpleague/flysystem-bundle): S3, Azure, Google Cloud, etc.
 - [ ] Support for php-vips (libvips) https://github.com/libvips/php-vips
 - [ ] Image Editor
