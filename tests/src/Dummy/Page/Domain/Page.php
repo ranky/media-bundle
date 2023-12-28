@@ -16,7 +16,7 @@ use Ranky\MediaBundle\Domain\ValueObject\MediaId;
 class Page
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $id;
 
