@@ -2,13 +2,13 @@
   "entrypoints": {
     "ranky_media": {
       "js": [
-        "/bundles/rankymedia/react.17.0.2.js?v=f20c7cf6",
-        "/bundles/rankymedia/ranky_media.vendors.js?v=f20c7cf6",
-        "/bundles/rankymedia/ranky_media.js?v=f20c7cf6"
+        "/bundles/rankymedia/react.17.0.2.js?v=bfc693fd",
+        "/bundles/rankymedia/ranky_media.vendors.js?v=bfc693fd",
+        "/bundles/rankymedia/ranky_media.js?v=bfc693fd"
       ],
       "css": [
-        "/bundles/rankymedia/ranky_media.vendors.css?v=f20c7cf6",
-        "/bundles/rankymedia/ranky_media.css?v=f20c7cf6"
+        "/bundles/rankymedia/ranky_media.vendors.css?v=bfc693fd",
+        "/bundles/rankymedia/ranky_media.css?v=bfc693fd"
       ]
     }
   }
