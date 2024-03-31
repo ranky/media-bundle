@@ -1,0 +1,18 @@
+@import "../../../styles/variables";
+
+.#{$ranky-media-class} {
+  &__upload-floating-button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 2;
+    button {
+      width: auto !important;
+      background: none !important;
+      padding: 0;
+      &:hover,&:focus{
+        box-shadow: none  !important;
+      }
+    }
+  }
+}

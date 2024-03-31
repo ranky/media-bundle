@@ -1,0 +1,48 @@
+@mixin blue_button {
+  display: block;
+  background-color: #45619d;
+  border: 1px solid #45619d;
+  color: white;
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  padding: 4px 10px;
+  font-size: 14px;
+  border-radius: 0.25rem;
+  transition-duration: 0.2s;
+  &:hover {
+    background-color: #374e7e;
+    border-color: #344976;
+  }
+}
+
+@mixin checkbox {
+  cursor: pointer;
+  color: #000000;
+  background-color: #efefef;
+  font-family: inherit;
+  font-size: inherit;
+  margin-right: 6px;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  outline: none;
+  transition: background-color 0.1s linear, border-color 0.1s linear, color 0.1s linear, box-shadow 0.1s linear, transform 0.1s ease;
+  width: 15px;
+  height: 15px;
+  margin-bottom: 0;
+  &:active {
+    transform: translateY(2px);
+  }
+  &:focus{
+    box-shadow: 0 0 0 2px #0096bfab;
+    outline: none;
+  }
+  &:disabled{
+    cursor: not-allowed;
+    opacity: .5;
+  }
+}

@@ -1,0 +1,6 @@
+.eslintrc.json
+.prettierrc.json
+webpack.config.js
+tsconfig.json
+.editorconfig
+.env

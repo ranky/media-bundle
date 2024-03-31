@@ -1,0 +1,74 @@
+{
+  "root": true,
+  "plugins": ["import","@typescript-eslint"],
+  "extends": [
+    "standard",
+    "eslint:recommended",
+    "airbnb",
+    "airbnb/hooks",
+    "airbnb-typescript",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "ecmaVersion": 2021,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "settings": {
+    "react":  {
+      "version":  "detect"
+    },
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "node": {
+        "paths": ["src"],
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  },
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es2021": true,
+    "node": true,
+    "es6": true
+  },
+  "ignorePatterns": ["webpack.config.js","temp.js","*_copy.js","**/vendor/*.js","dist","scripts"],
+  "rules": {
+    "no-dupe-else-if": "off",
+    "no-import-assign": "off",
+    "no-setter-return": "off",
+    "import/prefer-default-export": "off",
+    "func-names": ["warn", "as-needed"],
+    "max-len": ["warn",{ "code": 120, "ignoreTemplateLiterals": true, "ignoreUrls": true, "ignorePattern": "d=\"([\\s\\S]*?)\""}],
+    "no-console": "off",
+    "import/no-unresolved": "off",
+    "arrow-body-style":  "off",
+    "prefer-arrow-callback": "off",
+    "import/no-useless-path-segments": "off",
+    "import/no-self-import": "off",
+    "no-use-before-define": "off",
+    "no-underscore-dangle": "off",
+    "jsx-a11y/img-redundant-alt": "off",
+    "@typescript-eslint/no-empty-function": ["error", { "allow": ["constructors"]}],
+    "@typescript-eslint/no-use-before-define": ["error"],
+    "@typescript-eslint/no-var-requires": 0,
+    "@typescript-eslint/no-inferrable-types": "off",
+    "react/jsx-filename-extension": [2, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],
+    "react/function-component-definition": "off",
+    "react/prop-types": "off",
+    "react/require-default-props": "off",
+    "react/jsx-one-expression-per-line": "off",
+    "no-param-reassign": [2, { "props": false }],
+    "react/no-unescaped-entities": "off",
+    "jsx-a11y/label-has-associated-control": "off"
+  }
+}

@@ -1,0 +1,79 @@
+@import "variables";
+
+.#{$ranky-media-class} {
+
+  .uppy-Root {
+    button {
+      background-color: initial;
+      font-family: initial;
+      font-size: initial;
+      margin-right: initial;
+      margin-bottom: initial;
+      padding: initial;
+      border: initial;
+      border-radius: initial;
+      outline: initial;
+      appearance: auto;
+
+      &:focus {
+        box-shadow: none;
+      }
+    }
+    .uppy-DashboardContent-title {
+      margin: auto !important;
+      appearance: auto;
+    }
+
+    button.uppy-DashboardContent-back,
+    button.uppy-DashboardContent-addMore{
+      background-color: #efefef;
+      font-family: inherit;
+      padding: 7px;
+      border: none;
+      border-radius: 6px;
+      outline: none;
+      font-size: 15px;
+      font-weight: 400;
+      align-self: center;
+    }
+
+    .uppy-Dashboard-close {
+      font-size: 34px !important;
+      top: -34px !important;
+      color: #ffffff !important;
+      right: -23px !important;
+      &:hover{
+        background: initial;
+      }
+    }
+
+    .uppy-StatusBar-actions {
+      right: 0;
+      button.uppy-StatusBar-actionBtn--done {
+        background-color: #189c38 !important;
+        width: auto;
+        padding: 0 19px;
+        color: #fff;
+        font-size: 15px;
+        line-height: 1;
+        border-radius: 0;
+        height: 100%;
+        right: 0;
+        margin: 0;
+        border: none;
+
+        &:hover {
+          background-color: #1d6a2e !important;
+        }
+      }
+      .uppy-u-reset{
+        margin-right: 10px;
+      }
+    }
+
+    .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
+      font-family: Arial, serif;
+    }
+  }
+}
+

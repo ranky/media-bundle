@@ -1,0 +1,148 @@
+@use "./variables";
+@use './mixins';
+
+.ranky-media-modal {
+  position: fixed;
+  top: 30px;
+  left: 30px;
+  right: 30px;
+  bottom: 30px;
+  height: calc(100% - 60px);
+  z-index: 1057;
+  outline: 0;
+  transition: all 0.3s;
+  opacity: 0;
+  font-family: apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  width: 90%;
+  margin: 0 auto !important;
+  .uppy-Dashboard--modal {
+    z-index: 1057 !important;
+  }
+
+  &__btn-media-close{
+    position: absolute;
+    top: 0;
+    right: 5px;
+    font-size: 41px;
+    color: #3f3f3f;
+    height: auto;
+    padding: 0;
+    background: none;
+    margin: 0;
+    width: auto;
+    line-height: 1;
+    border: none;
+    outline: none;
+  }
+
+  &__backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1056;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+    opacity: .8;
+  }
+
+  &__fullscreen {
+    width: 100vw;
+    max-width: none;
+    height: 100%;
+    margin: 0
+  }
+
+  &--show {
+    opacity: 1;
+  }
+
+  &--hide {
+    transform: scale(0.5);
+    opacity: 0.8;
+  }
+
+  &__dialog {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1057;
+    background: white;
+    &__title{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      width: 100%;
+      min-height: 50px;
+      h2{
+        margin: 0;
+        color: #4e4e4e;
+        font-size: 23px;
+        padding: 0;
+      }
+    }
+    &__footer{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-direction: row;
+      background: #fff;
+      max-width: 100%;
+      box-shadow: inset -2px 1px 0px 0 rgb(215 215 215);
+      border-top: 2px solid #e7e7e7;
+      min-height: 75px;
+      width: 100%;
+      p{
+        margin: 0;
+        padding: 0;
+        line-height: 1;
+      }
+      &__info{
+        padding-left: 20px;
+        p{
+          text-align: left;
+        }
+        button{
+          display: block;
+          padding: 5px 0;
+          background: none;
+          border: none;
+          width: auto;
+          margin: 3px 0;
+          box-shadow: none;
+          transform: none;
+          color: #a81616;
+          font-size: 15px;
+        }
+      }
+      &__actions {
+        padding-right: 20px;
+        button {
+          @include mixins.blue_button();
+          font-size: 16px;
+          padding: 0.4rem;
+        }
+      }
+    }
+  }
+  &__content {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    outline: 0;
+    max-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 0;
+    height: 100vh;
+
+  }
+}

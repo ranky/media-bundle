@@ -1,0 +1,22 @@
+{
+  "trailingComma": "all",
+  "semi": true,
+  "printWidth": 120,
+  "proseWrap": "always",
+  "bracketSpacing": true,
+  "singleQuote": true,
+  "overrides": [
+    {
+      "files": "*.md",
+      "options": {
+        "tabWidth": 4
+      }
+    },
+    {
+      "files": "*.json",
+      "options": {
+        "tabWidth": 6
+      }
+    }
+  ]
+}

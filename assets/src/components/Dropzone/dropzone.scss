@@ -1,0 +1,46 @@
+@import "../../styles/variables";
+
+.uppy-is-drag-over::after {
+  border: none;
+  background: transparent;
+  visibility: hidden;
+}
+
+.#{$ranky-media-class} {
+  .dropzone-drag-zone {
+    visibility: hidden;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    background: $dropzone-background-color;
+    z-index: 3;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 5px dashed $dropzone-border-color;
+
+    p {
+      span {
+        width: 50px;
+        height: 50px;
+        display: block;
+        text-align: center;
+        margin: 0 auto 7px;
+
+        svg {
+          fill: white;
+        }
+      }
+
+      text-align: center;
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+      font-weight: 600;
+      color: white;
+    }
+  }
+}

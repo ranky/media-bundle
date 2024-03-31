@@ -1,0 +1,86 @@
+@use './mixins';
+
+.ranky-media-form-type {
+  display: block;
+  width: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+
+  &__content {
+    position: relative;
+    display: block;
+
+    >#page-loader {
+      height: 250px;
+      width: 100%;
+      display: block;
+      position: relative;
+    }
+
+    &__preview {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 15px;
+
+      img {
+        text-align: center;
+        display: block;
+        margin: 0 auto;
+        vertical-align: middle;
+        max-width: 100%;
+        height: 130px;
+        width: 130px;
+        object-fit: cover;
+        border: 1px solid white;
+        box-shadow: 0 0 6px rgb(0 0 0 / 10%);
+
+        &.choose-image {}
+      }
+    }
+
+    &__wrapper_button {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      margin: 18px 0;
+      justify-content: flex-end;
+      gap: 18px;
+
+      button {
+        @include mixins.blue_button();
+
+        &.clean-selected-media-files {
+          background: #da4453;
+          border-color: #c92a39;
+
+          &:hover {
+            background: #b00c1d;
+          }
+        }
+      }
+    }
+
+    &__wrapper_checkbox {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      justify-content: center;
+      margin-top: 20px;
+
+      label {
+        display: inline-block;
+        vertical-align: middle;
+        font-weight: 500;
+      }
+
+      input[type="checkbox"] {
+        @include mixins.checkbox();
+      }
+    }
+
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "./lib",
+    "declarationDir": "./lib",
+    "paths": {
+      "@assets/*": ["./public/*"],
+      "@rankyMedia/*": ["./src/*"]
+    },
+    "target": "es2018",
+    "module": "commonjs", //esNext
+    "moduleResolution": "node",
+    "lib": [
+      "esnext",
+      "dom",
+    ],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types",
+      "./src/globals.d.ts"
+    ],
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": false,
+    "noEmit": false,
+    "incremental": false,
+    "allowJs": true,
+    "checkJs": true,
+    "removeComments": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "noLib": false,
+    "jsx": "react",
+    "suppressImplicitAnyIndexErrors": true,
+    "forceConsistentCasingInFileNames": true,
+  },
+  "compileOnSave": false,
+  "include": ["src"],
+  "exclude": [
+    "test.ts",
+    "webpack.config.js",
+    "**/*.spec.ts",
+    ".history",
+    "node_modules",
+    "library",
+    "public"
+  ]
+}
