@@ -1,9 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Presentation\Twig;
 
 use Ranky\MediaBundle\Domain\Contract\FileUrlResolverInterface;
+use Ranky\MediaBundle\Domain\Model\MediaInterface;
 use Ranky\MediaBundle\Domain\ValueObject\MediaId;
 use Ranky\SharedBundle\Common\FileHelper;
 use Twig\Extension\AbstractExtension;
@@ -38,29 +40,37 @@ class MediaTwigExtension extends AbstractExtension
     public function isMediaId(mixed $value): bool
     {
         if (\is_array($value) && !empty($value)) {
-            $value = reset($value);
+            $value = \reset($value);
         }
+
         return $value && (($value instanceof MediaId || MediaId::isValid($value)));
     }
 
     /**
-     * @param string $fileName The file name or the file path
+     * @param string|MediaInterface $path The the file path or media entity
      * @param bool $absolute
      * @return string
      */
-    public function mediaUrl(string $fileName, bool $absolute = false): string
+    public function mediaUrl(string|MediaInterface $path, bool $absolute = false): string
     {
-        return $this->fileUrlResolver->resolve($fileName, $absolute);
+        if ($path instanceof MediaInterface) {
+            $path = $path->file()->path();
+        }
+
+        return $this->fileUrlResolver->resolve($path, $absolute);
     }
 
     /**
-     * @param string $fileName The file name or the file path
+     * @param string|MediaInterface $path The file path or media entity
      * @param string $breakpoint
      * @param bool $absolute
      * @return string
      */
-    public function mediaThumbnailUrl(string $fileName, string $breakpoint, bool $absolute = false): string
+    public function mediaThumbnailUrl(string|MediaInterface $path, string $breakpoint, bool $absolute = false): string
     {
-        return $this->fileUrlResolver->resolveFromBreakpoint($breakpoint, $fileName, $absolute);
+        if ($path instanceof MediaInterface) {
+            $path = $path->file()->path();
+        }
+        return $this->fileUrlResolver->resolveFromBreakpoint($breakpoint, $path, $absolute);
     }
 }

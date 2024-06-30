@@ -11,9 +11,9 @@ use Ranky\MediaBundle\Application\FindMedia\FindMediaByIds;
 use Ranky\MediaBundle\Application\FindMedia\FindMediaByPaths;
 use Ranky\MediaBundle\Application\GetMedia\GetMediaByFilePath;
 use Ranky\MediaBundle\Application\GetMedia\GetMediaById;
+use Ranky\MediaBundle\Application\MediaService;
 use Ranky\MediaBundle\Domain\Enum\MimeType;
 use Ranky\MediaBundle\Domain\Model\Media;
-use Ranky\MediaBundle\Presentation\Twig\MediaTwigService;
 use Ranky\MediaBundle\Tests\BaseUnitTestCase;
 use Ranky\MediaBundle\Tests\Domain\MediaFactory;
 use Ranky\SharedBundle\Domain\ValueObject\UserIdentifier;
@@ -23,7 +23,7 @@ class MediaTwigServiceTest extends BaseUnitTestCase
     private Media $media;
     private UserIdentifier $userIdentifier;
     private MediaToResponseTransformer $responseTransformer;
-    private MediaTwigService $mediaTwigService;
+    private MediaService $mediaTwigService;
 
     protected function setUp(): void
     {
@@ -40,7 +40,7 @@ class MediaTwigServiceTest extends BaseUnitTestCase
         $getMediaById     = $this->createMock(GetMediaById::class);
         $findMediaByIds   = $this->createMock(FindMediaByIds::class);
 
-        $this->mediaTwigService = new MediaTwigService(
+        $this->mediaTwigService = new MediaService(
             $getMediaByPath,
             $findMediaByPaths,
             $getMediaById,
@@ -68,7 +68,7 @@ class MediaTwigServiceTest extends BaseUnitTestCase
         $getMediaById     = $this->createMock(GetMediaById::class);
         $findMediaByIds   = $this->createMock(FindMediaByIds::class);
 
-        $this->mediaTwigService = new MediaTwigService(
+        $this->mediaTwigService = new MediaService(
             $getMediaByPath,
             $findMediaByPaths,
             $getMediaById,

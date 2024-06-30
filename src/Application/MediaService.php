@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 
-namespace Ranky\MediaBundle\Presentation\Twig;
+namespace Ranky\MediaBundle\Application;
 
 use Doctrine\Common\Collections\Collection;
 use Ranky\MediaBundle\Application\DataTransformer\MediaToResponseTransformer;
@@ -13,9 +13,9 @@ use Ranky\MediaBundle\Application\FindMedia\FindMediaByPaths;
 use Ranky\MediaBundle\Application\GetMedia\GetMediaByFilePath;
 use Ranky\MediaBundle\Application\GetMedia\GetMediaById;
 use Ranky\MediaBundle\Domain\Exception\NotFoundMediaException;
-use Ranky\MediaBundle\Domain\Model\Media;
+use Ranky\MediaBundle\Domain\Model\MediaInterface;
 
-class MediaTwigService
+class MediaService
 {
 
 
@@ -64,13 +64,13 @@ class MediaTwigService
         return $this->findMediaByIds->__invoke($ids);
     }
 
-    public function mediaToResponse(Media $media): ?MediaResponse
+    public function mediaToResponse(MediaInterface $media): ?MediaResponse
     {
         return $this->responseTransformer->mediaToResponse($media);
     }
 
     /**
-     * @param Collection<int,Media> $mediaCollection
+     * @param Collection<int,MediaInterface> $mediaCollection
      * @return array<MediaResponse>
      */
     public function mediaCollectionToArrayResponse(Collection $mediaCollection): array
