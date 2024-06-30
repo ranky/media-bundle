@@ -1,4 +1,5 @@
 ranky_media:
+  media_entity: App\Entity\Media
   user_entity: App\Entity\User
   api_prefix: /
   upload_url: /uploads
