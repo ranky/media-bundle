@@ -205,6 +205,7 @@ YAML
 ```yaml 
 # config/packages/ranky_media.yaml
 ranky_media:
+  media_entity: App\Entity\Media
   user_entity: App\Entity\User
   api_prefix: /admin
 ```
@@ -213,13 +214,48 @@ PHP
 # config/packages/ranky_media.php
   return static function (RankyMediaConfig $rankyMediaConfig) {
     $rankyMediaConfig
+        ->mediaEntity(Media::class)
         ->userEntity(User::class)
         ->apiPrefix('/admin') // Optional: The same prefix you use when importing the routes must be the same here
         ;
 };
 ```
 
-#### Step 4 (Optional): Add custom Dbal types
+#### Step 4: Media entity and repository
+
+```php
+# src/Entity/Media.php
+use Doctrine\ORM\Mapping as ORM;
+use Ranky\MediaBundle\Domain\Model\Media as BaseMedia;
+
+#[ORM\Table(name: 'ranky_media')]
+#[ORM\Entity(repositoryClass: MediaRepository::class)]
+class Media extends BaseMedia
+{
+
+}
+```
+```php
+# src/Repository/MediaRepository.php
+class MediaRepository extends DoctrineOrmMediaRepository
+{
+    public function __construct(
+        ManagerRegistry $registry,
+        DoctrineCriteriaBuilderFactory $doctrineCriteriaBuilderFactory,
+        UidMapperPlatform $uidMapperPlatform,
+    ) {
+        parent::__construct(
+            $registry,
+            $doctrineCriteriaBuilderFactory,
+            $uidMapperPlatform,
+            Media::class
+        );
+    }
+}
+```
+
+
+#### Step 5 (Optional): Add custom Dbal types
 
 Currently, the `LoadClassMetadata` event is responsible for loading custom DBAL types. If this event does not work, you can add custom functions manually using the following examples:
 
@@ -281,12 +317,14 @@ php bin/console assets:install
 
 ### Full configuration with default values
 All options are optional, but `user_entity` is necessary to configure if you do not want to include guest users in the user filter.
+Also, the `media_entity` is required. The default value is `App\Entity\Media`, thanks to this option you can use your own entity. 
 
 ```php
 # config/packages/ranky_media.php
 return static function (RankyMediaConfig $rankyMediaConfig) {
 
     $rankyMediaConfig
+        ->mediaEntity(Media::class)
         ->userEntity(User::class)
         ->userIdentifierProperty('username')
         ->apiPrefix(null)
@@ -316,11 +354,14 @@ return static function (RankyMediaConfig $rankyMediaConfig) {
 
 ### Configuration Explanation
 
-**user_entity** (string, default: `null`)
+**user_entity** (string, default: `App\Entity\User`)
 
 This is the fully qualified class name (FQCN) of the user entity class. This is required in order to get the username in case you are using a different UserIdentifier and in that way to be able to filter media by user.
 
 **Example:** `User::class`
+
+**media_entity** (string, default: `App\Entity\Media`)
+This is the fully qualified class name (FQCN) of the media entity class. This is required in order to use own entity.
 
 **user_identifier_property** (string, default: `username`)
 
@@ -674,7 +715,7 @@ Extension:
            title="{{ media.description.title }}"
       />
   </p>
-  <p>{{ ranky_media_url(media.file.url) }}</p>
+  <p>{{ ranky_media_url(media) }}</p>
   <p>Thumbnails</p>
   {% for thumbnail in media.thumbnails %}
       {# @var thumbnail \Ranky\MediaBundle\Application\DataTransformer\Response\ThumbnailResponse #}
