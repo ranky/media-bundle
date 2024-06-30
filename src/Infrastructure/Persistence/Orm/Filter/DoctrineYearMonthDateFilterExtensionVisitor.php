@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ranky\MediaBundle\Infrastructure\Persistence\Orm\Filter;
 
 
-use Ranky\MediaBundle\Domain\Model\Media;
+use Ranky\MediaBundle\Domain\Model\MediaInterface;
 use Ranky\SharedBundle\Filter\ConditionFilter;
 use Ranky\SharedBundle\Filter\Criteria;
 use Ranky\SharedBundle\Filter\Driver;
@@ -38,7 +38,7 @@ class DoctrineYearMonthDateFilterExtensionVisitor implements FilterExtensionVisi
     public function support(ConditionFilter $filter, Criteria $criteria): bool
     {
         return $filter->field() === 'm.createdAt'
-            && \is_a($criteria::modelClass(), Media::class, true);
+            && \is_a($criteria::modelClass(), MediaInterface::class, true);
     }
 
     public static function driver(): string

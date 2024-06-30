@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Application\DataTransformer\Response;
 
 
-use Ranky\MediaBundle\Domain\Model\Media;
+use Ranky\MediaBundle\Domain\Model\MediaInterface;
 use Ranky\SharedBundle\Application\Dto\ResponseDtoInterface;
 
 final class MediaResponse implements ResponseDtoInterface
@@ -31,7 +32,7 @@ final class MediaResponse implements ResponseDtoInterface
 
     private string $dateTimeFormat = self::DATETIME_FORMAT;
 
-    private function __construct(Media $media, string $uploadUrl, string $createdBy, string $updatedBy)
+    private function __construct(MediaInterface $media, string $uploadUrl, string $createdBy, string $updatedBy)
     {
         $this->id          = (string)$media->id();
         $this->file        = FileResponse::fromFile($media->file(), $uploadUrl);
@@ -44,8 +45,12 @@ final class MediaResponse implements ResponseDtoInterface
         $this->updatedAt   = $media->updatedAt();
     }
 
-    public static function fromMedia(Media $media, string $uploadUrl, string $createdBy, string $updatedBy): self
-    {
+    public static function fromMedia(
+        MediaInterface $media,
+        string $uploadUrl,
+        string $createdBy,
+        string $updatedBy
+    ): self {
         return new self($media, $uploadUrl, $createdBy, $updatedBy);
     }
 

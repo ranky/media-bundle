@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ranky\MediaBundle\Domain\Contract;
 
 
-use Ranky\MediaBundle\Domain\Model\Media;
+use Ranky\MediaBundle\Domain\Model\MediaInterface;
 use Ranky\MediaBundle\Domain\ValueObject\MediaId;
 use Ranky\SharedBundle\Filter\Criteria;
 use Ranky\SharedBundle\Filter\Order\OrderBy;
@@ -18,7 +18,7 @@ interface MediaRepositoryInterface
     public function nextIdentity(): MediaId;
 
     /**
-     * @return Media[]
+     * @return MediaInterface[]
      */
     public function getAll(OrderBy $orderPagination): array;
 
@@ -26,44 +26,46 @@ interface MediaRepositoryInterface
 
     /**
      * @param \Ranky\SharedBundle\Filter\Criteria $criteria
-     * @return Media[]
+     * @return MediaInterface[]
      */
     public function filter(Criteria $criteria): array;
 
     /**
      * @param \Ranky\SharedBundle\Filter\Pagination\OffsetPagination $offsetPagination
      * @param \Ranky\SharedBundle\Filter\Order\OrderBy $orderPagination
-     * @return Media[]
+     * @return MediaInterface[]
      */
     public function paginate(OffsetPagination $offsetPagination, OrderBy $orderPagination): array;
 
-    public function getById(MediaId $id): Media;
+    public function getById(MediaId $id): MediaInterface;
 
     /**
      * @param MediaId ...$ids
-     * @return Media[]
+     * @return MediaInterface[]
      */
     public function findByIds(MediaId ...$ids): array;
 
-    public function getByFilePath(string $filePath): Media;
+    public function getByFilePath(string $filePath): MediaInterface;
 
     /**
      * @param string[] $filePaths
-     * @return Media[]
+     * @return MediaInterface[]
      */
     public function findByFilePaths(array $filePaths): array;
 
-    public function getByFileName(string $fileName): Media;
+    public function getByFileName(string $fileName): MediaInterface;
+
+    public function findByFileName(string $value): ?MediaInterface;
 
     /**
      * @param string[] $fileNames
-     * @return Media[]
+     * @return MediaInterface[]
      */
     public function findByFileNames(array $fileNames): array;
 
 
+    public function save(MediaInterface $media): void;
 
-    public function save(Media $media): void;
+    public function delete(MediaInterface $media): void;
 
-    public function delete(Media $media): void;
 }

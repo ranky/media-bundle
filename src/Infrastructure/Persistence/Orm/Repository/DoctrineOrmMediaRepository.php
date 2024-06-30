@@ -10,7 +10,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
 use Ranky\MediaBundle\Domain\Criteria\MediaCriteria;
 use Ranky\MediaBundle\Domain\Exception\NotFoundMediaException;
-use Ranky\MediaBundle\Domain\Model\Media;
+use Ranky\MediaBundle\Domain\Model\MediaInterface;
 use Ranky\MediaBundle\Domain\ValueObject\MediaId;
 use Ranky\SharedBundle\Filter\Criteria;
 use Ranky\SharedBundle\Filter\CriteriaBuilder\DoctrineCriteriaBuilderFactory;
@@ -19,20 +19,27 @@ use Ranky\SharedBundle\Filter\Pagination\OffsetPagination;
 use Ranky\SharedBundle\Infrastructure\Persistence\Orm\UidMapperPlatform;
 
 /**
- * @extends ServiceEntityRepository<Media>
- * @method Media|null find($id, $lockMode = null, $lockVersion = null)
- * @method Media|null findOneBy(array $criteria, array $orderBy = null)
- * @method Media[]    findAll()
- * @method Media[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<MediaInterface>
+ * @method MediaInterface|null find($id, $lockMode = null, $lockVersion = null)
+ * @method MediaInterface|null findOneBy(array $criteria, array $orderBy = null)
+ * @method MediaInterface[]    findAll()
+ * @method MediaInterface[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-final class DoctrineOrmMediaRepository extends ServiceEntityRepository implements MediaRepositoryInterface
+class DoctrineOrmMediaRepository extends ServiceEntityRepository implements MediaRepositoryInterface
 {
+    /**
+     * @param ManagerRegistry $registry
+     * @param \Ranky\SharedBundle\Filter\CriteriaBuilder\DoctrineCriteriaBuilderFactory $doctrineCriteriaBuilderFactory
+     * @param \Ranky\SharedBundle\Infrastructure\Persistence\Orm\UidMapperPlatform $uidMapperPlatform
+     * @param class-string $mediaEntity
+     */
     public function __construct(
         ManagerRegistry $registry,
         private readonly DoctrineCriteriaBuilderFactory $doctrineCriteriaBuilderFactory,
         private readonly UidMapperPlatform $uidMapperPlatform,
+        string $mediaEntity
     ) {
-        parent::__construct($registry, Media::class);
+        parent::__construct($registry, $mediaEntity);
     }
 
     public function nextIdentity(): MediaId
@@ -41,9 +48,11 @@ final class DoctrineOrmMediaRepository extends ServiceEntityRepository implement
     }
 
 
-    public function getById(MediaId $id): Media
+    public function getById(MediaId $id): MediaInterface
     {
-        $media = $this->find($id);
+        $media = $this->findOneBy([
+            'id' => $id,
+        ]);
         if (null === $media) {
             throw NotFoundMediaException::withId((string)$id);
         }
@@ -53,7 +62,7 @@ final class DoctrineOrmMediaRepository extends ServiceEntityRepository implement
 
     /**
      * @throws \Doctrine\DBAL\Exception
-     * @return Media[]
+     * @return MediaInterface[]
      */
     public function findByIds(MediaId ...$ids): array
     {
@@ -111,7 +120,7 @@ final class DoctrineOrmMediaRepository extends ServiceEntityRepository implement
         return $result;
     }
 
-    public function getByFilePath(string $filePath): Media
+    public function getByFilePath(string $filePath): MediaInterface
     {
         $media = $this->findOneBy(['file.path' => $filePath]);
         if (!$media) {
@@ -122,7 +131,7 @@ final class DoctrineOrmMediaRepository extends ServiceEntityRepository implement
     }
 
     /**
-     * @return Media[]
+     * @return MediaInterface[]
      */
     public function findByFilePaths(array $filePaths): array
     {
@@ -130,9 +139,9 @@ final class DoctrineOrmMediaRepository extends ServiceEntityRepository implement
     }
 
 
-    public function getByFileName(string $fileName): Media
+    public function getByFileName(string $fileName): MediaInterface
     {
-        $media = $this->findOneBy(['file.name' => $fileName]);
+        $media = $this->findByFileName($fileName);
         if (!$media) {
             throw NotFoundMediaException::withFileName($fileName);
         }
@@ -140,8 +149,13 @@ final class DoctrineOrmMediaRepository extends ServiceEntityRepository implement
         return $media;
     }
 
+    public function findByFileName(string $value): ?MediaInterface
+    {
+        return $this->findOneBy(['file.name' => $value]);
+    }
+
     /**
-     * @return Media[]
+     * @return MediaInterface[]
      */
     public function findByFileNames(array $fileNames): array
     {
@@ -170,13 +184,13 @@ final class DoctrineOrmMediaRepository extends ServiceEntityRepository implement
             ->orderBy('m.'.$orderPagination->field(), $orderPagination->direction());
     }
 
-    public function save(Media $media): void
+    public function save(MediaInterface $media): void
     {
         $this->getEntityManager()->persist($media);
         $this->getEntityManager()->flush();
     }
 
-    public function delete(Media $media): void
+    public function delete(MediaInterface $media): void
     {
         $this->getEntityManager()->remove($media);
         $this->getEntityManager()->flush();

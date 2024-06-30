@@ -1,10 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Domain\Model;
 
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\MappedSuperclass;
 use Ranky\MediaBundle\Domain\Event\MediaCreated;
 use Ranky\MediaBundle\Domain\Event\MediaDeleted;
 use Ranky\MediaBundle\Domain\Event\MediaDescriptionUpdated;
@@ -23,10 +25,9 @@ use Ranky\SharedBundle\Domain\Traits\DateAtTrait;
 use Ranky\SharedBundle\Domain\ValueObject\UserIdentifier;
 
 
-#[ORM\Entity]
-#[ORM\Table(name: 'ranky_media')]
 #[ORM\Index(columns: ['name', 'extension', 'mime', 'created_by'], name: 'search_idx')]
-class Media extends AggregateRoot
+#[MappedSuperclass]
+class Media extends AggregateRoot implements MediaInterface
 {
     public const IMAGE_QUALITY            = 80;
     public const ORIGINAL_IMAGE_MAX_WIDTH = 1920;
@@ -36,33 +37,33 @@ class Media extends AggregateRoot
 
     #[ORM\Id]
     #[ORM\Column(type: 'media_id')]
-    private MediaId $id;
+    protected MediaId $id;
 
 
     #[ORM\Embedded(class: File::class, columnPrefix: false)]
-    private File $file;
+    protected File $file;
 
     #[ORM\Embedded(class: Dimension::class, columnPrefix: false)]
-    private Dimension $dimension;
+    protected Dimension $dimension;
 
 
     #[ORM\Embedded(class: Description::class, columnPrefix: false)]
-    private Description $description;
+    protected Description $description;
 
 
     #[ORM\Column(type: 'thumbnail_collection')]
-    private Thumbnails $thumbnails;
+    protected Thumbnails $thumbnails;
 
 
     #[ORM\Column(name: 'created_by', type: 'user_identifier', nullable: false)]
-    private UserIdentifier $createdBy;
+    protected UserIdentifier $createdBy;
 
 
     #[ORM\Column(name: 'updated_by', type: 'user_identifier', nullable: false)]
-    private UserIdentifier $updatedBy;
+    protected UserIdentifier $updatedBy;
 
 
-    private function __construct(
+    protected function __construct(
         MediaId $id,
         File $file,
         UserIdentifier $userIdentifier,
@@ -76,6 +77,11 @@ class Media extends AggregateRoot
         $this->thumbnails  = new Thumbnails();
         $this->createdBy   = $userIdentifier;
         $this->updatedBy   = $userIdentifier;
+    }
+
+    public function __toString(): string
+    {
+        return $this->description()->title();
     }
 
     public static function create(

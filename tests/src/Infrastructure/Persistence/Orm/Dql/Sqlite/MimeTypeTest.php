@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Tests\Infrastructure\Persistence\Orm\Dql\Sqlite;
 
-use Ranky\MediaBundle\Domain\Model\Media;
+use Ranky\MediaBundle\Tests\Dummy\Media\Domain\Media;
 
 class MimeTypeTest extends BaseDbSqliteTestCase
 {

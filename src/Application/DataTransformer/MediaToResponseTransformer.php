@@ -8,7 +8,7 @@ namespace Ranky\MediaBundle\Application\DataTransformer;
 
 use Ranky\MediaBundle\Application\DataTransformer\Response\MediaResponse;
 use Ranky\MediaBundle\Domain\Contract\UserMediaRepositoryInterface;
-use Ranky\MediaBundle\Domain\Model\Media;
+use Ranky\MediaBundle\Domain\Model\MediaInterface;
 
 class MediaToResponseTransformer
 {
@@ -20,7 +20,7 @@ class MediaToResponseTransformer
     ) {
     }
 
-    public function mediaToResponse(Media $media): MediaResponse
+    public function mediaToResponse(MediaInterface $media): MediaResponse
     {
         $createdBy = $this->userMediaRepository->getUsernameByUserIdentifier($media->createdBy());
         $updateBy  = $createdBy;
@@ -40,7 +40,7 @@ class MediaToResponseTransformer
     }
 
     /**
-     * @param array<Media> $medias
+     * @param array<MediaInterface> $medias
      * @return array<MediaResponse>
      */
     public function mediaCollectionToArrayResponse(array $medias): array

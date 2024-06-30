@@ -8,7 +8,7 @@ namespace Ranky\MediaBundle\Presentation\Form\DataTransformer;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
-use Ranky\MediaBundle\Domain\Model\Media;
+use Ranky\MediaBundle\Domain\Model\MediaInterface;
 use Ranky\MediaBundle\Domain\ValueObject\MediaId;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
@@ -42,7 +42,7 @@ class MediaCollectionTransformer implements DataTransformerInterface
             return \json_encode([], JSON_THROW_ON_ERROR);
         }
         $collection = $value->toArray();
-        $arrayIds   = array_map(static fn(Media $media) => $media->id()->asString(), $collection);
+        $arrayIds   = array_map(static fn(MediaInterface $media) => $media->id()->asString(), $collection);
 
         return \json_encode($arrayIds, JSON_THROW_ON_ERROR);
     }

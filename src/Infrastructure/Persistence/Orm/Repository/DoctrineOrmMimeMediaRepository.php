@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository;
@@ -6,16 +7,20 @@ namespace Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Ranky\MediaBundle\Domain\Contract\MimeMediaRepositoryInterface;
-use Ranky\MediaBundle\Domain\Model\Media;
+use Ranky\MediaBundle\Domain\Model\MediaInterface;
 
 /**
- * @extends ServiceEntityRepository<Media>
+ * @extends ServiceEntityRepository<MediaInterface>
  */
-final class DoctrineOrmMimeMediaRepository extends ServiceEntityRepository implements MimeMediaRepositoryInterface
+class DoctrineOrmMimeMediaRepository extends ServiceEntityRepository implements MimeMediaRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
+    /**
+     * @param ManagerRegistry $registry
+     * @param class-string $mediaEntity
+     */
+    public function __construct(ManagerRegistry $registry, string $mediaEntity)
     {
-        parent::__construct($registry, Media::class);
+        parent::__construct($registry, $mediaEntity);
     }
 
 
@@ -31,12 +36,11 @@ final class DoctrineOrmMimeMediaRepository extends ServiceEntityRepository imple
 
     public function getAllByType(): array
     {
-       return $this
+        return $this
             ->createQueryBuilder('m')
             ->select('MIME_TYPE(m.file.mime) as mimeType', 'count(m) as count')
             ->groupBy('mimeType')
             ->getQuery()->getResult();
-
     }
 
     public function getAllBySubType(): array

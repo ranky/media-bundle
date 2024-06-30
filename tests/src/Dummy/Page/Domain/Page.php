@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Ranky\MediaBundle\Domain\Model\Media;
+use Ranky\MediaBundle\Domain\Model\MediaInterface;
 use Ranky\MediaBundle\Domain\ValueObject\MediaId;
 
 #[ORM\Entity]
@@ -31,18 +31,18 @@ class Page
     private ?array $gallery;
 
 
-    #[ORM\ManyToOne(targetEntity: Media::class)]
+    #[ORM\ManyToOne(targetEntity: MediaInterface::class)]
     #[ORM\JoinColumn(name: 'media', referencedColumnName: 'id', nullable: true)]
-    private ?Media $media;
+    private ?MediaInterface $media;
 
     /**
      * Many pages have Many Media Files.
-     * @var ?Collection<int, Media>
+     * @var ?Collection<int, MediaInterface>
      */
     #[ORM\JoinTable(name: 'pages_medias')]
     #[ORM\JoinColumn(name: 'page_id', referencedColumnName: 'id')]
     #[ORM\InverseJoinColumn(name: 'media_id', referencedColumnName: 'id')]
-    #[ORM\ManyToMany(targetEntity: Media::class)]
+    #[ORM\ManyToMany(targetEntity: MediaInterface::class)]
     //#[ORM\OrderBy(['createdAt' => 'DESC'])]
     private ?Collection $medias;
 
@@ -87,26 +87,26 @@ class Page
         return $this;
     }
 
-    public function getMedia(): ?Media
+    public function getMedia(): ?MediaInterface
     {
         return $this->media;
     }
 
-    public function setMedia(?Media $media): self
+    public function setMedia(?MediaInterface $media): self
     {
         $this->media = $media;
 
         return $this;
     }
 
-    /** @return ?Collection<int, Media> */
+    /** @return ?Collection<int, MediaInterface> */
     public function getMedias(): ?Collection
     {
         return $this->medias;
     }
 
     /**
-     * @param ?Collection<int, Media> $medias
+     * @param ?Collection<int, MediaInterface> $medias
      * @return self
      */
     public function setMedias(?Collection $medias): self
@@ -117,7 +117,7 @@ class Page
     }
 
 
-    public function addMedia(Media $media): self
+    public function addMedia(MediaInterface $media): self
     {
         if ($this->medias && !$this->medias->contains($media)) {
             $this->medias[] = $media;
@@ -126,7 +126,7 @@ class Page
         return $this;
     }
 
-    public function removeMedia(Media $media): self
+    public function removeMedia(MediaInterface $media): self
     {
         if ($this->medias && $this->medias->contains($media)) {
             $this->medias->removeElement($media);

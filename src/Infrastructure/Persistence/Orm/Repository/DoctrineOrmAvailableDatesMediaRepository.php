@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository;
@@ -6,22 +7,26 @@ namespace Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Ranky\MediaBundle\Domain\Contract\AvailableDatesMediaRepositoryInterface;
-use Ranky\MediaBundle\Domain\Model\Media;
+use Ranky\MediaBundle\Domain\Model\MediaInterface;
 
 /**
- * @extends ServiceEntityRepository<Media>
+ * @extends ServiceEntityRepository<MediaInterface>
  */
-final class DoctrineOrmAvailableDatesMediaRepository extends ServiceEntityRepository implements
+class DoctrineOrmAvailableDatesMediaRepository extends ServiceEntityRepository implements
     AvailableDatesMediaRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
+    /**
+     * @param ManagerRegistry $registry
+     * @param class-string $mediaEntity
+     */
+    public function __construct(ManagerRegistry $registry, string $mediaEntity)
     {
-        parent::__construct($registry, Media::class);
+        parent::__construct($registry, $mediaEntity);
     }
 
 
     /**
-     * @return array|\Ranky\MediaBundle\Domain\Model\Media[]
+     * @return array|\Ranky\MediaBundle\Domain\Model\MediaInterface[]
      */
     public function getAll(): array
     {

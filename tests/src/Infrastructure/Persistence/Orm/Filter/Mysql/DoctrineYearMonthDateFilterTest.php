@@ -7,8 +7,8 @@ namespace Ranky\MediaBundle\Tests\Infrastructure\Persistence\Orm\Filter\Mysql  ;
 
 use Doctrine\ORM\QueryBuilder;
 use Ranky\MediaBundle\Domain\Criteria\MediaCriteria;
-use Ranky\MediaBundle\Domain\Model\Media;
 use Ranky\MediaBundle\Infrastructure\Persistence\Orm\Filter\DoctrineYearMonthDateFilterExtensionVisitor;
+use Ranky\MediaBundle\Tests\Dummy\Media\Domain\Media;
 use Ranky\MediaBundle\Tests\Infrastructure\Persistence\Orm\Dql\Mysql\BaseDbMysqlTestCase;
 use Ranky\SharedBundle\Filter\ConditionOperator;
 use Ranky\SharedBundle\Filter\ConditionFilter;

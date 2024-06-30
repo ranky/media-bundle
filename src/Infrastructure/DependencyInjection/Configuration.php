@@ -20,12 +20,20 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder(MediaBundleExtension::CONFIG_DOMAIN_NAME);
         $treeBuilder->getRootNode()
                     ->children()
+                        ->scalarNode('media_entity')
+                            ->info(
+                                'This is the fully qualified class name (FQCN) of the media entity class.'.
+                                ' This is required in order to assign entity to resolve_target_entities in Doctrine ORM.'
+                            )
+                            ->defaultValue('App\Entity\Media')
+                            ->example('App\Entity\Media')
+                        ->end()
                         ->scalarNode('user_entity')
                             ->info(
                                 'This is the fully qualified class name (FQCN) of the user entity class.'.
                                 ' This is required in order to get the username in case you are using a different UserIdentifier.'
                             )
-                            ->defaultValue(null)
+                            ->defaultValue('App\Entity\User')
                             ->example('App\Entity\User')
                         ->end()
                         ->scalarNode('user_identifier_property')

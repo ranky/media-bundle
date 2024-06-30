@@ -28,7 +28,7 @@ class MediaPathTransformer implements DataTransformerInterface
             return \json_encode($mediaIds, \JSON_THROW_ON_ERROR);
         }
 
-        return $this->mediaRepository->getByFileName($value)->id()->asString();
+        return $this->mediaRepository->findByFileName($value)?->id()->asString();
     }
 
     public function reverseTransform(mixed $value): string|array|null

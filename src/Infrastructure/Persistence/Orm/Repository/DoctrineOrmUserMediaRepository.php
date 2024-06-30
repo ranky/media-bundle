@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository;
@@ -6,21 +7,27 @@ namespace Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Ranky\MediaBundle\Domain\Contract\UserMediaRepositoryInterface;
-use Ranky\MediaBundle\Domain\Model\Media;
 use Ranky\SharedBundle\Domain\ValueObject\UserIdentifier;
 
 /**
  * @extends ServiceEntityRepository<\Symfony\Component\Security\Core\User\UserInterface>
  */
-final class DoctrineOrmUserMediaRepository extends ServiceEntityRepository implements UserMediaRepositoryInterface
+class DoctrineOrmUserMediaRepository extends ServiceEntityRepository implements UserMediaRepositoryInterface
 {
 
+    /**
+     * @param ManagerRegistry $registry
+     * @param class-string $userEntity
+     * @param string $userIdentifierProperty
+     * @param class-string $mediaEntity
+     */
     public function __construct(
         ManagerRegistry $registry,
         private readonly ?string $userEntity,
-        private readonly string $userIdentifierProperty
+        private readonly string $userIdentifierProperty,
+        string $mediaEntity
     ) {
-        parent::__construct($registry, Media::class);
+        parent::__construct($registry, $mediaEntity);
     }
 
 
@@ -39,7 +46,7 @@ final class DoctrineOrmUserMediaRepository extends ServiceEntityRepository imple
         if ($this->userIdentifierProperty === 'username') {
             return $userIdentifier->value();
         }
-        if (!$this->userEntity){
+        if (!$this->userEntity) {
             return UserIdentifier::DEFAULT_USER_IDENTIFIER;
         }
         try {

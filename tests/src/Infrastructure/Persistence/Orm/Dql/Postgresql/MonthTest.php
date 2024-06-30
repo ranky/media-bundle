@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Ranky\MediaBundle\Tests\Infrastructure\Persistence\Orm\Dql\Postgresql;
 
-use Ranky\MediaBundle\Domain\Model\Media;
+use Ranky\MediaBundle\Tests\Dummy\Media\Domain\Media;
 
 class MonthTest extends BaseDbPostgresqlTestCase
 {

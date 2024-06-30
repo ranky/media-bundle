@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ranky\MediaBundle\Infrastructure\Persistence\Orm\Filter;
 
 
-use Ranky\MediaBundle\Domain\Model\Media;
+use Ranky\MediaBundle\Domain\Model\MediaInterface;
 use Ranky\MediaBundle\Domain\ValueObject\MediaId;
 use Ranky\SharedBundle\Filter\ConditionFilter;
 use Ranky\SharedBundle\Filter\Criteria;
@@ -38,7 +38,7 @@ class DoctrineUlidFilterExtensionVisitor implements FilterExtensionVisitor
             ]);
             return $filter;
         }
-        
+
         if (!$value instanceof MediaId) {
             return $filter;
         }
@@ -56,7 +56,7 @@ class DoctrineUlidFilterExtensionVisitor implements FilterExtensionVisitor
     public function support(ConditionFilter $filter, Criteria $criteria): bool
     {
         return $filter->field() === 'm.id'
-            && \is_a($criteria::modelClass(), Media::class, true);
+            && \is_a($criteria::modelClass(), MediaInterface::class, true);
     }
 
     public static function driver(): string

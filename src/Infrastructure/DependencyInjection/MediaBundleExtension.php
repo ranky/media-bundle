@@ -7,10 +7,12 @@ namespace Ranky\MediaBundle\Infrastructure\DependencyInjection;
 use Ranky\MediaBundle\Application\DataTransformer\MediaToResponseTransformer;
 use Ranky\MediaBundle\Application\FileManipulation\CompressFile\CompressFile;
 use Ranky\MediaBundle\Application\FileManipulation\Thumbnails\GenerateThumbnails\AbstractGenerateImageThumbnails;
+use Ranky\MediaBundle\Domain\Contract\AvailableDatesMediaRepositoryInterface;
 use Ranky\MediaBundle\Domain\Contract\FileCompressInterface;
 use Ranky\MediaBundle\Domain\Contract\FileResizeInterface;
 use Ranky\MediaBundle\Domain\Contract\GenerateThumbnailsInterface;
 use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
+use Ranky\MediaBundle\Domain\Contract\MimeMediaRepositoryInterface;
 use Ranky\MediaBundle\Domain\Contract\UserMediaRepositoryInterface;
 use Ranky\MediaBundle\Domain\Enum\GifResizeDriver;
 use Ranky\MediaBundle\Domain\Enum\ImageResizeDriver;
@@ -27,7 +29,9 @@ use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\MimeSubType;
 use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\MimeType;
 use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\Month;
 use Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql\Year;
+use Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository\DoctrineOrmAvailableDatesMediaRepository;
 use Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository\DoctrineOrmMediaRepository;
+use Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository\DoctrineOrmMimeMediaRepository;
 use Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository\DoctrineOrmUserMediaRepository;
 use Ranky\MediaBundle\Infrastructure\Validation\UploadedFileValidator;
 use Symfony\Component\Config\FileLocator;
@@ -83,8 +87,31 @@ class MediaBundleExtension extends Extension implements PrependExtensionInterfac
         // Doctrine Media repository
         $doctrineOrmMediaRepositoryDefinition = new Definition(DoctrineOrmMediaRepository::class);
         $doctrineOrmMediaRepositoryDefinition->setAutowired(true);
+        $doctrineOrmMediaRepositoryDefinition->setArgument('$mediaEntity', $config['media_entity']);
         $container->setAlias(MediaRepositoryInterface::class, DoctrineOrmMediaRepository::class);
         $container->setDefinition(DoctrineOrmMediaRepository::class, $doctrineOrmMediaRepositoryDefinition);
+
+        $doctrineOrmMimeMediaRepositoryDefinition = new Definition(DoctrineOrmMimeMediaRepository::class);
+        $doctrineOrmMimeMediaRepositoryDefinition
+            ->setAutowired(true)
+            ->setArgument('$mediaEntity', $config['media_entity']);
+        $container->setAlias(MimeMediaRepositoryInterface::class, DoctrineOrmMimeMediaRepository::class);
+        $container->setDefinition(DoctrineOrmMimeMediaRepository::class, $doctrineOrmMimeMediaRepositoryDefinition);
+
+        $doctrineOrmAvailableDatesMediaRepositoryDefinition = new Definition(
+            DoctrineOrmAvailableDatesMediaRepository::class
+        );
+        $doctrineOrmAvailableDatesMediaRepositoryDefinition
+            ->setAutowired(true)
+            ->setArgument('$mediaEntity', $config['media_entity']);
+        $container->setAlias(
+            AvailableDatesMediaRepositoryInterface::class,
+            DoctrineOrmAvailableDatesMediaRepository::class
+        );
+        $container->setDefinition(
+            DoctrineOrmAvailableDatesMediaRepository::class,
+            $doctrineOrmAvailableDatesMediaRepositoryDefinition
+        );
 
 
         // Doctrine User Media repository
@@ -92,7 +119,9 @@ class MediaBundleExtension extends Extension implements PrependExtensionInterfac
         $doctrineOrmUserMediaRepositoryDefinition
             ->setAutowired(true)
             ->setArgument('$userEntity', $config['user_entity'])
-            ->setArgument('$userIdentifierProperty', $config['user_identifier_property']);
+            ->setArgument('$userIdentifierProperty', $config['user_identifier_property'])
+            ->setArgument('$mediaEntity', $config['media_entity']);
+
         $container->setAlias(UserMediaRepositoryInterface::class, DoctrineOrmUserMediaRepository::class);
         $container->setDefinition(DoctrineOrmUserMediaRepository::class, $doctrineOrmUserMediaRepositoryDefinition);
 
@@ -201,20 +230,19 @@ class MediaBundleExtension extends Extension implements PrependExtensionInterfac
 
     public function prepend(ContainerBuilder $container): void
     {
-
         $container->prependExtensionConfig('twig', [
             'form_themes' => [
                 '@RankyMedia/form.html.twig',
             ],
-            'globals' => [
-                'ranky_media' => '@Ranky\MediaBundle\Presentation\Twig\MediaTwigService',
+            'globals'     => [
+                'ranky_media' => '@Ranky\MediaBundle\Application\MediaService',
             ],
         ]);
         $container->prependExtensionConfig('framework', [
             'assets' => [
                 'packages' => [
                     'ranky_media' => [
-                        'base_path' => 'bundles/rankymedia/',
+                        'base_path'          => 'bundles/rankymedia/',
                         'json_manifest_path' => '%kernel.project_dir%/public/bundles/rankymedia/manifest.json',
                     ],
                 ],
@@ -228,26 +256,19 @@ class MediaBundleExtension extends Extension implements PrependExtensionInterfac
         $container->prependExtensionConfig('doctrine', [
             'dbal' => [
                 'types' => [
-                    'media_id' => MediaIdType::class,
+                    'media_id'             => MediaIdType::class,
                     'thumbnail_collection' => ThumbnailCollectionType::class,
                 ],
             ],
-            'orm' => [
+            'orm'  => [
                 'dql' => [
-                    'string_functions' => [
-                        'MIME_TYPE' => MimeType::class,
+                    'string_functions'   => [
+                        'MIME_TYPE'    => MimeType::class,
                         'MIME_SUBTYPE' => MimeSubType::class,
                     ],
                     'datetime_functions' => [
-                        'YEAR' => Year::class,
+                        'YEAR'  => Year::class,
                         'MONTH' => Month::class,
-                    ],
-                ],
-                'mappings' => [
-                    'RankyMediaBundle' => [
-                        'type' => 'attribute',
-                        'dir' => \dirname(__DIR__, 3).'/src/Domain',
-                        'prefix' => 'Ranky\MediaBundle\Domain',
                     ],
                 ],
             ],

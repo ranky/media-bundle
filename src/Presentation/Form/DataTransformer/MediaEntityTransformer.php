@@ -6,7 +6,7 @@ declare(strict_types=1);
 namespace Ranky\MediaBundle\Presentation\Form\DataTransformer;
 
 use Ranky\MediaBundle\Domain\Contract\MediaRepositoryInterface;
-use Ranky\MediaBundle\Domain\Model\Media;
+use Ranky\MediaBundle\Domain\Model\MediaInterface;
 use Ranky\MediaBundle\Domain\ValueObject\MediaId;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
@@ -23,7 +23,7 @@ class MediaEntityTransformer implements DataTransformerInterface
             return null;
         }
 
-        if (!$value instanceof Media) {
+        if (!$value instanceof MediaInterface) {
             throw new TransformationFailedException(
                 \sprintf(
                     'Expected a Media instance. %s type given',
@@ -35,7 +35,7 @@ class MediaEntityTransformer implements DataTransformerInterface
         return (string)$value->id();
     }
 
-    public function reverseTransform(mixed $value): ?Media
+    public function reverseTransform(mixed $value): ?MediaInterface
     {
         if (null === $value || '' === $value) {
             return null;

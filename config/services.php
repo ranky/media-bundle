@@ -7,11 +7,9 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use Ranky\MediaBundle\Application\FileManipulation\Thumbnails\GenerateThumbnails\AbstractGenerateImageThumbnails;
 use Ranky\MediaBundle\Application\FileManipulation\Thumbnails\GenerateThumbnails\GenerateGifImageThumbnails;
 use Ranky\MediaBundle\Application\FileManipulation\Thumbnails\GenerateThumbnails\GenerateImageThumbnails;
-use Ranky\MediaBundle\Domain\Contract\AvailableDatesMediaRepositoryInterface;
 use Ranky\MediaBundle\Domain\Contract\FilePathResolverInterface;
 use Ranky\MediaBundle\Domain\Contract\FileRepositoryInterface;
 use Ranky\MediaBundle\Domain\Contract\FileUrlResolverInterface;
-use Ranky\MediaBundle\Domain\Contract\MimeMediaRepositoryInterface;
 use Ranky\MediaBundle\Domain\Service\FileCompressHandler;
 use Ranky\MediaBundle\Domain\Service\FileResizeHandler;
 use Ranky\MediaBundle\Domain\Service\GenerateThumbnailsHandler;
@@ -24,8 +22,6 @@ use Ranky\MediaBundle\Infrastructure\FileManipulation\Thumbnails\Resize\Interven
 use Ranky\MediaBundle\Infrastructure\Filesystem\Local\LocalFilePathResolver;
 use Ranky\MediaBundle\Infrastructure\Filesystem\Local\LocalFileRepository;
 use Ranky\MediaBundle\Infrastructure\Filesystem\Local\LocalFileUrlResolver;
-use Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository\DoctrineOrmAvailableDatesMediaRepository;
-use Ranky\MediaBundle\Infrastructure\Persistence\Orm\Repository\DoctrineOrmMimeMediaRepository;
 use Ranky\MediaBundle\Infrastructure\Validation\UploadedFileValidator;
 
 return static function (ContainerConfigurator $configurator) {
@@ -53,13 +49,6 @@ return static function (ContainerConfigurator $configurator) {
     $services
         ->load('Ranky\\MediaBundle\\Presentation\\BackOffice\\', '../src/Presentation/BackOffice/*')
         ->tag('controller.service_arguments');
-
-    // Repositories
-    $services->set(DoctrineOrmAvailableDatesMediaRepository::class);
-    $services->alias(AvailableDatesMediaRepositoryInterface::class, DoctrineOrmAvailableDatesMediaRepository::class);
-
-    $services->set(DoctrineOrmMimeMediaRepository::class);
-    $services->alias(MimeMediaRepositoryInterface::class, DoctrineOrmMimeMediaRepository::class);
 
     // Local File Repository
     $services->set(LocalFileRepository::class);

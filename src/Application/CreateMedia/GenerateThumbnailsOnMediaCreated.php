@@ -31,6 +31,7 @@ class GenerateThumbnailsOnMediaCreated implements DomainEventSubscriber
 
     public function __invoke(MediaCreated $mediaCreated): void
     {
+
         $media = $this->mediaRepository->getById(MediaId::fromString($mediaCreated->aggregateId()));
         $this->generateThumbnailsHandler->generate($mediaCreated->aggregateId(), $media->file());
     }
