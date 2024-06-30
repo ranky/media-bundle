@@ -7,6 +7,7 @@ namespace Ranky\MediaBundle\Presentation\Twig;
 use Ranky\MediaBundle\Domain\Contract\FileUrlResolverInterface;
 use Ranky\MediaBundle\Domain\Model\MediaInterface;
 use Ranky\MediaBundle\Domain\ValueObject\MediaId;
+use Ranky\MediaBundle\Domain\ValueObject\Thumbnail;
 use Ranky\SharedBundle\Common\FileHelper;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -47,30 +48,46 @@ class MediaTwigExtension extends AbstractExtension
     }
 
     /**
-     * @param string|MediaInterface $path The the file path or media entity
+     * @param string|MediaInterface|Thumbnail $path The the file path or media entity or thumbnail
      * @param bool $absolute
      * @return string
      */
-    public function mediaUrl(string|MediaInterface $path, bool $absolute = false): string
+    public function mediaUrl(string|MediaInterface|Thumbnail $path, bool $absolute = false): string
     {
         if ($path instanceof MediaInterface) {
             $path = $path->file()->path();
+        }
+        if ($path instanceof Thumbnail) {
+            $path = $path->path();
         }
 
         return $this->fileUrlResolver->resolve($path, $absolute);
     }
 
     /**
-     * @param string|MediaInterface $path The file path or media entity
-     * @param string $breakpoint
+     * @param string|MediaInterface|Thumbnail $path The file path or media entity or thumbnail
+     * @param string|null $breakpoint
      * @param bool $absolute
      * @return string
      */
-    public function mediaThumbnailUrl(string|MediaInterface $path, string $breakpoint, bool $absolute = false): string
-    {
+    public function mediaThumbnailUrl(
+        string|MediaInterface|Thumbnail $path,
+        string|null $breakpoint = null,
+        bool $absolute = false
+    ): string {
         if ($path instanceof MediaInterface) {
             $path = $path->file()->path();
         }
+        if ($path instanceof Thumbnail) {
+            if (!$breakpoint) {
+                $breakpoint = $path->breakpoint();
+            }
+            $path = $path->path();
+        }
+        if (!$breakpoint) {
+            throw new \InvalidArgumentException('Breakpoint is required for thumbnail url');
+        }
+
         return $this->fileUrlResolver->resolveFromBreakpoint($breakpoint, $path, $absolute);
     }
 }

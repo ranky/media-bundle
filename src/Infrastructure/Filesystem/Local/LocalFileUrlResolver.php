@@ -55,6 +55,9 @@ final class LocalFileUrlResolver implements FileUrlResolverInterface
             $uploadUrl = (string) parse_url($uploadUrl, \PHP_URL_PATH);
             $siteUrl   = str_replace($uploadUrl, '', $siteUrl);
         }
+        if (\str_contains($path, $breakpoint)) {
+            $path = \str_replace($breakpoint, '', $path);
+        }
         if (\str_contains($path, $uploadUrl)) {
             $path = \str_replace(sprintf('%s/%s', $uploadUrl, $breakpoint), '', $path);
         }
