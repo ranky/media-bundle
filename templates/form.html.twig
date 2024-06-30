@@ -5,7 +5,7 @@
 {% endblock %}
 {% block ranky_media_file_manager_widget %}
     {% apply spaceless %}
-        <div class="ranky-media-form-type ranky-media-form-type--{{form.vars.name}} ranky-media-form-type--selection-{{- form.vars.multiple_selection ? 'multiple' : 'single' -}}"
+        <div class="ranky-media-form-type ranky-media-form-type--{{ form.vars.name }} ranky-media-form-type--selection-{{- form.vars.multiple_selection ? 'multiple' : 'single' -}}"
              id="ranky-media-form-type-{{- form.vars.id -}}">
             <div class="ranky-media-form-type__label">
                 {{ form_label(form) }}
@@ -21,7 +21,9 @@
                  data-multiple-selection="{{- form.vars.multiple_selection -}}"
             >
             </div>
-            {{- form_widget(form) -}}
+
+            {% set customValue = value.id ?? value %}
+            <input type="hidden" {{ block('widget_attributes') }} {% if customValue %} value="{{ customValue }}" {% endif %}/>
             <div class="ranky-media-form-type__error">
                 {{ form_errors(form) }}
             </div>

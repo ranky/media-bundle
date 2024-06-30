@@ -20,7 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class RankyMediaFileManagerType extends AbstractType
 {
 
-    public function __construct(private readonly MediaRepositoryInterface $mediaRepository)
+    public function __construct(protected readonly MediaRepositoryInterface $mediaRepository)
     {
     }
 
