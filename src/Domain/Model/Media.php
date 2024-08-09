@@ -90,8 +90,9 @@ class Media extends AggregateRoot implements MediaInterface
         UserIdentifier $userIdentifier,
         Dimension $dimension,
         Description $description
-    ): self {
-        $media            = new self($id, $file, $userIdentifier, $dimension, $description);
+    ): static {
+        /** @phpstan-ignore-next-line */
+        $media            = new static($id, $file, $userIdentifier, $dimension, $description);
         $now              = new \DateTimeImmutable();
         $media->createdAt = $now;
         $media->updatedAt = $now;
