@@ -1,5 +1,5 @@
 {
-  "name": "jarenal/media-bundle",
+  "name": "ranky/media-bundle",
   "description": "A complete and friendly media file manager for Symfony",
   "keywords": [ "media", "image", "thumbnails", "file", "resize", "compress", "bundle", "symfony" ],
   "type": "symfony-bundle",
