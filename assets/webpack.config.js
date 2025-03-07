@@ -58,7 +58,7 @@ Encore.setOutputPath(publicPath)
     .splitEntryChunks()
     .addCacheGroup('react', {
         node_modules: ['react', 'react-dom', 'scheduler', 'object-assign', 'loose-envify'],
-        name: 'react.17.0.2'
+        name: 'react.18.3.1'
     })
     //.addExternals({react: 'React', 'react-dom': 'ReactDOM'})
     .configureSplitChunks((splitChunks) => {
@@ -95,7 +95,7 @@ media.resolve = {
 
 /* media.entry['react'] = {
   import: ['react','react-dom'],
-  filename: 'react.17.0.2.js',
+  filename: 'react.18.3.1.js',
 };
  */
 Encore.reset();
