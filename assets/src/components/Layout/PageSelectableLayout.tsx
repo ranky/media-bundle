@@ -73,6 +73,9 @@ const PageSelectableLayout: React.FC<PageLayoutProps> = ({ pages, openModalFile 
                 {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
                 <label htmlFor={`ck-media-${media.id}`}>
                   <MimeList media={media} />
+                  <span className="file-name">
+                    {media.file.name}
+                  </span>
                 </label>
                 <button onClick={() => openModalFile(media.id)} type="button">
                   <svg
