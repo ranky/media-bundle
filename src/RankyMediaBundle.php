@@ -25,7 +25,7 @@ class RankyMediaBundle extends Bundle
                 DoctrineOrmMappingsPass::createAttributeMappingDriver(
                     namespaces: ['Ranky\MediaBundle\Domain'],
                     directories: [\dirname(__DIR__).'/src/Domain'],
-                    reportFieldsWhereDeclared: false,
+                    reportFieldsWhereDeclared: true,
                 )
             );
         }
