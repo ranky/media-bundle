@@ -8,6 +8,7 @@ on:
     paths-ignore:
       - '**/README.md'
       - 'assets/**'
+      - '.github/**'
   workflow_dispatch:
     inputs:
       debug_enabled:
