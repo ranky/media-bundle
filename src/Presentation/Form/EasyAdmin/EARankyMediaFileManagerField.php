@@ -18,6 +18,8 @@ if (\interface_exists('EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInte
         public const        OPTION_ASSOCIATION        = 'association';
         public const        OPTION_MODAL_TITLE        = 'modal_title';
         public const        OPTION_SAVE_PATH          = 'save_path';
+        public const        OPTION_PREVIEW_JUSTIFICATION = 'preview_justification';
+        public const        OPTION_BUTTON_JUSTIFICATION = 'button_justification';
 
         public static function new(string $propertyName, $label = null): self
         {
@@ -34,11 +36,28 @@ if (\interface_exists('EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInte
                     self::OPTION_MULTIPLE_SELECTION => false,
                     self::OPTION_ASSOCIATION        => false,
                     self::OPTION_MODAL_TITLE        => 'Media File Manager',
+                    self::OPTION_PREVIEW_JUSTIFICATION => 'center',
+                    self::OPTION_BUTTON_JUSTIFICATION => 'flex-end',
                 ])
                 ->addFormTheme('@RankyMedia/form.html.twig')
                 ->setTemplatePath('@RankyMedia/preview/easyadmin.html.twig')
                 ->setSortable(false);
         }
+
+        public function previewJustification(string $justification): self
+        {
+            $this->setFormTypeOption(self::OPTION_PREVIEW_JUSTIFICATION, $justification);
+
+            return $this;
+        }
+
+        public function buttonJustification(string $justification): self
+        {
+            $this->setFormTypeOption(self::OPTION_BUTTON_JUSTIFICATION, $justification);
+
+            return $this;
+        }
+
 
         public function multipleSelection(bool $isMultiple = true): self
         {

@@ -28,6 +28,9 @@ const renderMediaFormPreviews = () => {
       const isMultipleSelection = formSelect.getAttribute('data-multiple-selection') === 'true'
                 || formSelect.getAttribute('data-multiple-selection') === '1';
       const fieldId = formSelect.getAttribute('data-field-id');
+      const previewJustification = formSelect.getAttribute('data-preview-justification') || 'center';
+      const buttonJustification = formSelect.getAttribute('data-button-justification') || 'flex-end';
+
       Render(
         <App
           selectionMode
@@ -38,6 +41,8 @@ const renderMediaFormPreviews = () => {
         >
           <MediaFormPreview
             fieldId={fieldId}
+            previewJustification={previewJustification}
+            buttonJustification={buttonJustification}
             predefinedData={(formSelect.parentElement.querySelector(`input#${fieldId}`) as HTMLInputElement)?.value || null}
           />
         </App>,

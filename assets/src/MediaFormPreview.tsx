@@ -17,12 +17,16 @@ import useMediaRepository from '@rankyMedia/api/hook/useMediaRepository';
 type PropsType = {
   predefinedData: null | string | [];
   fieldId: string;
+  previewJustification?: string;
+  buttonJustification?: string;
 };
 
 const MediaManagerModal = React.lazy(() => import('@rankyMedia/MediaManagerModal'));
 
 const MediaFormPreview = ({
   predefinedData = null,
+  previewJustification = 'center',
+  buttonJustification = 'flex-end',
   fieldId,
 }: PropsType): React.ReactElement => {
   const previewRef = useRef<HTMLInputElement>();
@@ -91,7 +95,7 @@ const MediaFormPreview = ({
 
   return (
     <>
-      <div ref={previewRef} className="ranky-media-form-type__content__preview">
+      <div ref={previewRef} className="ranky-media-form-type__content__preview" style={{ justifyContent: previewJustification }}>
         {selectedMedia.length === 0
           ? (
             <div tabIndex={0} role="button" onClick={openMediaFileManager} onKeyDown={openMediaFileManager}>
@@ -113,7 +117,7 @@ const MediaFormPreview = ({
           })
           )}
       </div>
-      <div className="ranky-media-form-type__content__wrapper_button">
+      <div className="ranky-media-form-type__content__wrapper_button" style={{ justifyContent: buttonJustification }}>
         <button
           className="clean-selected-media-files"
           type="button"

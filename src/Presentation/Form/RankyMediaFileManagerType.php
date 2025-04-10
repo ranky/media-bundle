@@ -54,6 +54,8 @@ class RankyMediaFileManagerType extends AbstractType
         $resolver->setDefaults([
             'compound'           => false,
             'multiple_selection' => false,
+            'preview_justification' => 'center',
+            'button_justification' => 'center',
             'modal_title'        => 'Media File Manager',
             'association'        => false,
             'api_prefix'         => null,
@@ -66,6 +68,8 @@ class RankyMediaFileManagerType extends AbstractType
         $resolver->setAllowedTypes('association', 'bool');
         $resolver->setAllowedTypes('modal_title', 'string');
         $resolver->setAllowedTypes('api_prefix', ['string', 'null']);
+        $resolver->setAllowedTypes('preview_justification', 'string');
+        $resolver->setAllowedTypes('button_justification', 'string');
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
@@ -75,6 +79,8 @@ class RankyMediaFileManagerType extends AbstractType
             'api_prefix'         => $options['api_prefix'],
             'modal_title'        => $options['modal_title'],
             'association'        => $options['association'],
+            'preview_justification' => $options['preview_justification'],
+            'button_justification' => $options['button_justification'],
         ]);
     }
 
