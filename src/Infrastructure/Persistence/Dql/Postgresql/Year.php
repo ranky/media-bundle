@@ -6,7 +6,6 @@ namespace Ranky\MediaBundle\Infrastructure\Persistence\Dql\Postgresql;
 
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
 use Doctrine\ORM\Query\AST\Node;
-use Doctrine\ORM\Query\TokenType;
 use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
 use function class_exists;
