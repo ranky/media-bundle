@@ -5,9 +5,9 @@ namespace Ranky\MediaBundle\Infrastructure\Persistence\Dql\Mysql;
 
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
 use Doctrine\ORM\Query\AST\Node;
-use Doctrine\ORM\Query\Lexer;
 use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
+use function class_exists;
 
 
 /**
@@ -24,11 +24,16 @@ class Month extends FunctionNode
 
     public function parse(Parser $parser): void
     {
-        $parser->match(Lexer::T_IDENTIFIER);
-        $parser->match(Lexer::T_OPEN_PARENTHESIS);
+        if (!class_exists('Doctrine\ORM\Query\TokenType')) {
+            $tokenType = 'Doctrine\ORM\Query\Lexer';
+        } else {
+            $tokenType = 'Doctrine\ORM\Query\TokenType';
+        }
+        $parser->match($tokenType::T_IDENTIFIER);
+        $parser->match($tokenType::T_OPEN_PARENTHESIS);
 
         $this->date = $parser->ArithmeticPrimary();
 
-        $parser->match(Lexer::T_CLOSE_PARENTHESIS);
+        $parser->match($tokenType::T_CLOSE_PARENTHESIS);
     }
 }

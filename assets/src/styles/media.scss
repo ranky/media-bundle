@@ -338,12 +338,13 @@ body {
       }
 
       &--mode-selectable {
-
         .file-item {
           display: flex !important;
           position: relative !important;
           flex-direction: column !important;
           align-items: center !important;
+          width: 100%;
+
           button {
             display: block;
             border: none;
@@ -358,9 +359,11 @@ body {
             transition-duration: 0.2s;
             margin: 0;
             position: absolute;
-            bottom: 1px;
-            right: 1px;
-            vertical-align: middle;
+            bottom: 35px;
+            right: 0;
+            z-index: 1;
+            top: 99px;
+            height: 31px;
 
             &:hover {
               background-color: #374e7e;
@@ -390,10 +393,13 @@ body {
 
           label {
             position: relative;
-            display: block;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             cursor: pointer;
             margin: 0;
             font-weight: normal;
+            width: 100%;
 
             &:before {
               background-color: $link-color;
@@ -416,6 +422,19 @@ body {
 
             img {
               transition-duration: 0.1s;
+            }
+
+            .file-name {
+              display: block;
+              text-align: center;
+              margin-top: 5px;
+              font-size: 12px;
+              color: #333;
+              max-width: 130px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              height: 20px;
             }
           }
         }
