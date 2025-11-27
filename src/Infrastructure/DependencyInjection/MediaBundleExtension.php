@@ -57,8 +57,8 @@ class MediaBundleExtension extends Extension implements PrependExtensionInterfac
     /**
      * @param array<string, mixed> $configs
      * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
-     * @throws \Exception
      * @return void
+     * @throws \Exception
      */
     public function load(array $configs, ContainerBuilder $container): void
     {
@@ -82,6 +82,9 @@ class MediaBundleExtension extends Extension implements PrependExtensionInterfac
 
         // check valid configuration
         $this->checkConfiguration($config);
+
+        $mediaCreateDefinition = $container->getDefinition('Ranky\MediaBundle\Application\CreateMedia\CreateMedia');
+        $mediaCreateDefinition->setArgument('$mediaEntity', $config['media_entity']);
 
         /** Another way to define services */
         // Doctrine Media repository
