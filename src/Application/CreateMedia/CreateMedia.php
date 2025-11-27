@@ -24,7 +24,8 @@ class CreateMedia
         private readonly FileRepositoryInterface $fileRepository,
         private readonly FilePathResolverInterface $filePathResolver,
         private readonly DomainEventPublisher $domainEventPublisher,
-        private readonly MediaToResponseTransformer $responseTransformer
+        private readonly MediaToResponseTransformer $responseTransformer,
+        private readonly string $mediaEntity,
     ) {
     }
 
@@ -39,7 +40,9 @@ class CreateMedia
         // upload file
         $file = $this->fileRepository->upload($uploadedFileRequest);
         // create and save media
-        $media = Media::create(
+        $entityClass = $this->mediaEntity;
+        /** @var Media $entityClass */
+        $media = $entityClass::create(
             $id,
             $file,
             $userIdentifierVO,
