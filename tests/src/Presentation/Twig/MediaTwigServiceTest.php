@@ -6,6 +6,7 @@ namespace Ranky\MediaBundle\Tests\Presentation\Twig;
 
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ranky\MediaBundle\Application\CreateMedia\CreateMedia;
 use Ranky\MediaBundle\Application\DataTransformer\MediaToResponseTransformer;
 use Ranky\MediaBundle\Application\FindMedia\FindMediaByIds;
 use Ranky\MediaBundle\Application\FindMedia\FindMediaByPaths;
@@ -39,8 +40,10 @@ class MediaTwigServiceTest extends BaseUnitTestCase
         $findMediaByPaths = $this->createMock(FindMediaByPaths::class);
         $getMediaById     = $this->createMock(GetMediaById::class);
         $findMediaByIds   = $this->createMock(FindMediaByIds::class);
+        $createMedia      = $this->createMock(CreateMedia::class);
 
         $this->mediaTwigService = new MediaService(
+            $createMedia,
             $getMediaByPath,
             $findMediaByPaths,
             $getMediaById,
@@ -67,8 +70,10 @@ class MediaTwigServiceTest extends BaseUnitTestCase
         $findMediaByPaths = $this->createMock(FindMediaByPaths::class);
         $getMediaById     = $this->createMock(GetMediaById::class);
         $findMediaByIds   = $this->createMock(FindMediaByIds::class);
+        $createMedia      = $this->createMock(CreateMedia::class);
 
         $this->mediaTwigService = new MediaService(
+            $createMedia,
             $getMediaByPath,
             $findMediaByPaths,
             $getMediaById,

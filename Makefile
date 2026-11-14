@@ -36,7 +36,7 @@ endif
 ## Configuration ##
 HOST_UID ?= $(shell id -u)
 HOST_GID ?= $(shell id -g)
-HOST_IP = $(shell hostname -I | awk '{print $1}')
+HOST_IP := $(shell hostname -I | awk '{print $1}')
 
 ifeq ($(CI_ENABLED),true)
     # CI, Github Actions, runs-on: ubuntu-latest
@@ -69,8 +69,8 @@ ifeq ($(findstring $(firstword $(MAKECMDGOALS)),$(TARGETS)),)
 endif
 
 ## Help command
-DOCKER_VERSION=$(shell docker --version)
-DOCKER_COMPOSE_VERSION=$(shell docker compose version)
+DOCKER_VERSION := $(shell docker --version)
+DOCKER_COMPOSE_VERSION := $(shell docker compose version)
 help: ## Show this help
 	@echo "Environment $(DOCKER_ENV)"
 	@echo "$(DOCKER_VERSION)"

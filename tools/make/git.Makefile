@@ -4,6 +4,9 @@ NEXT_GIT_TAG_VERSION = $(shell git describe --abbrev=0 --tags | awk -F. '{$$NF =
 LAST_COMMIT = $(shell git rev-parse --short HEAD)
 GIT_REMOTE = $(shell git config --get remote.origin.url)
 
+# No exportar: con .EXPORT_ALL_VARIABLES y GNU Make >= 4.4 cada $(shell) las expandiría y se llamarían entre sí
+unexport CURRENT_GIT_TAG_VERSION PREVIOUS_GIT_TAG_VERSION NEXT_GIT_TAG_VERSION LAST_COMMIT GIT_REMOTE
+
 ##@ Git
 git-fixup: ## Fixup https://jordanelver.co.uk/blog/2020/06/04/fixing-commits-with-git-commit-fixup-and-git-rebase-autosquash/
 	git log -n 50 --pretty=format:'%h %s' --no-merges | fzf | cut -c -7 | xargs -o git commit --fixup
@@ -112,6 +115,97 @@ git-tag: ## create new tag version && push
 	git tag -a $(NEXT_GIT_TAG_VERSION) -m "Releasing version $(NEXT_GIT_TAG_VERSION)"
 	@echo "Pushing tag $(NEXT_GIT_TAG_VERSION)..."
 	git push --atomic origin HEAD --tags
+
+git-tag-semver: ## create new semver tag version interactively
+	@echo "Updating tags from remote..."
+	@git fetch --all --tags --force
+	@current_tag=$$(git describe --abbrev=0 --tags 2>/dev/null || true); \
+	last_commit=$$(git log -1 --pretty=format:'%h - %s (%cr) <%an>'); \
+	current_branch=$$(git rev-parse --abbrev-ref HEAD); \
+	dirty_status=$$(git status --porcelain); \
+	if [ -z "$$current_tag" ]; then \
+		base_tag="v0.0.0"; \
+		display_tag="(none)"; \
+		commits_since=$$(git rev-list --count HEAD); \
+	else \
+		base_tag="$$current_tag"; \
+		display_tag="$$current_tag"; \
+		commits_since=$$(git rev-list --count "$$current_tag"..HEAD); \
+	fi; \
+	prefix=""; \
+	case "$$base_tag" in v*|V*) prefix="v" ;; esac; \
+	version_core=$${base_tag#[vV]}; \
+	version_core=$${version_core%%[-+]*}; \
+	major=$$(echo "$$version_core" | awk -F. '{print $$1+0}'); \
+	minor=$$(echo "$$version_core" | awk -F. '{print $$2+0}'); \
+	patch=$$(echo "$$version_core" | awk -F. '{print $$3+0}'); \
+	next_patch="$${prefix}$${major}.$${minor}.$$((patch + 1))"; \
+	next_minor="$${prefix}$${major}.$$((minor + 1)).0"; \
+	next_major="$${prefix}$$((major + 1)).0.0"; \
+	echo ""; \
+	echo "=== Current repository info (read-only) ==="; \
+	echo "Origin:            $(GIT_REMOTE)"; \
+	echo "Branch:            $$current_branch"; \
+	echo "Last version:      $$display_tag"; \
+	echo "Last commit:       $$last_commit"; \
+	echo "Commits since tag: $$commits_since"; \
+	if [ -n "$$dirty_status" ]; then \
+		echo "Working tree:      DIRTY (uncommitted changes)"; \
+		echo ""; \
+		echo "WARNING: There are uncommitted changes that will NOT be included in the tag:"; \
+		git status --short; \
+		echo ""; \
+		echo "Do you want to continue anyway?"; \
+		echo "  1 - Yes, continue"; \
+		echo "  2 - No, abort (commit changes first)"; \
+		printf "Choose an option [1-2]: "; \
+		read -r dirty_choice; \
+		case "$$dirty_choice" in \
+			1) ;; \
+			*) echo "Aborted. Commit or stash your changes before creating a tag."; exit 0 ;; \
+		esac; \
+	else \
+		echo "Working tree:      clean"; \
+	fi; \
+	echo ""; \
+	echo "Select SemVer bump:"; \
+	echo "  1 - Patch ($$next_patch)"; \
+	echo "  2 - Minor ($$next_minor)"; \
+	echo "  3 - Major ($$next_major)"; \
+	echo ""; \
+	printf "Choose an option [1-3]: "; \
+	read -r choice; \
+	case "$$choice" in \
+		1) new_tag="$$next_patch" ;; \
+		2) new_tag="$$next_minor" ;; \
+		3) new_tag="$$next_major" ;; \
+		*) echo "Aborted. No tag was created."; exit 0 ;; \
+	esac; \
+	if git rev-parse -q --verify "refs/tags/$$new_tag" >/dev/null; then \
+		echo "Error: tag $$new_tag already exists."; \
+		exit 1; \
+	fi; \
+	echo "Creating tag $$new_tag..."; \
+	git tag -a "$$new_tag" -m "Releasing version $$new_tag"; \
+	echo "Tag $$new_tag created locally."; \
+	echo ""; \
+	echo "Do you want to push tag $$new_tag to origin?"; \
+	echo "  1 - Yes (git push --atomic origin HEAD $$new_tag)"; \
+	echo "  2 - No (keep local only)"; \
+	printf "Choose an option [1-2]: "; \
+	read -r push_choice; \
+	case "$$push_choice" in \
+		1) \
+			echo "Pushing tag $$new_tag..."; \
+			git push --atomic origin HEAD "$$new_tag" \
+			;; \
+		2) \
+			echo "Push skipped. Tag $$new_tag remains local." \
+			;; \
+		*) \
+			echo "Invalid option. Push skipped; tag $$new_tag remains local." \
+			;; \
+	esac
 
 ## other option with date: https://stackoverflow.com/a/21759466/2046442
 git-tag-from-last-commit: ## create new tag version from last commit && push
